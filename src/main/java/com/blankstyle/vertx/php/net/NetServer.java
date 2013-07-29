@@ -3,12 +3,10 @@ package com.blankstyle.vertx.php.net;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.AsyncResultHandler;
 import org.vertx.java.core.Handler;
-import org.vertx.java.core.net.NetSocket;
 
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.Value;
 
@@ -27,9 +25,9 @@ public class NetServer {
    * @return The called server instance.
    */
   public NetServer connectHandler(final Env env, final Callback callback) {
-    server.connectHandler(new Handler<NetSocket>() {
-      public void handle(NetSocket socket) {
-        callback.call(env, env.wrapJava(socket));
+    server.connectHandler(new Handler<org.vertx.java.core.net.NetSocket>() {
+      public void handle(org.vertx.java.core.net.NetSocket socket) {
+        callback.call(env, env.wrapJava(new NetSocket(socket)));
       }
     });
     return this;
