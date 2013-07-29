@@ -34,25 +34,27 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
    * @return The called server instance.
    */
   public HttpServer listen(final Env env, final NumberValue port, @Optional final Value host, @Optional final Value callback) {
-    if (host.isDefault()) {
-      server.listen(port.toInt());
+    if (host != null && !host.isDefault()) {
+      if (callback != null && !callback.isDefault()) {
+        server.listen(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.http.HttpServer>() {
+          public void handle(AsyncResult<org.vertx.java.core.http.HttpServer> result) {
+            callback.call(env, env.wrapJava(result));
+          }
+        });
+      }
+      else {
+        server.listen(port.toInt(), host.toString());
+      }
     }
-    else if (host.isCallable(env, false, null)) {
+    else if (callback != null && !callback.isDefault()) {
       server.listen(port.toInt(), new AsyncResultHandler<org.vertx.java.core.http.HttpServer>() {
-        public void handle(AsyncResult<org.vertx.java.core.http.HttpServer> result) {
-          host.call(env, env.wrapJava(result));
-        }
-      });
-    }
-    else if (callback.isDefault()) {
-      server.listen(port.toInt(), host.toString());
-    }
-    else {
-      server.listen(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.http.HttpServer>() {
         public void handle(AsyncResult<org.vertx.java.core.http.HttpServer> result) {
           callback.call(env, env.wrapJava(result));
         }
       });
+    }
+    else {
+      server.listen(port.toInt());
     }
     return this;
   }
