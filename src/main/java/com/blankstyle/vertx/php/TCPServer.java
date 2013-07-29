@@ -3,7 +3,6 @@ package com.blankstyle.vertx.php;
 import org.vertx.java.core.ServerSSLSupport;
 import org.vertx.java.core.ServerTCPSupport;
 
-import com.blankstyle.vertx.php.http.HttpServer;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
