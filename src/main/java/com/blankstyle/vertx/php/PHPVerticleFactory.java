@@ -18,9 +18,9 @@ public class PHPVerticleFactory implements VerticleFactory {
 
   private ClassLoader cl;
 
-  public static org.vertx.java.core.Vertx vertx;
+  private static org.vertx.java.core.Vertx vertx;
 
-  public static org.vertx.java.platform.Container container;
+  private static org.vertx.java.platform.Container container;
 
   /**
    * Initializes the factory.
@@ -90,6 +90,7 @@ public class PHPVerticleFactory implements VerticleFactory {
       context.addJavaClass("NetServer", com.blankstyle.vertx.php.net.NetServer.class);
       context.addJavaClass("NetClient", com.blankstyle.vertx.php.net.NetClient.class);
       context.init();
+      modules.init();
       Vertx.init(PHPVerticleFactory.vertx);
       Container.init(PHPVerticleFactory.container);
       try {
