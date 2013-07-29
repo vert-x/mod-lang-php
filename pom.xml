@@ -12,7 +12,7 @@
   <version>0.1.0</version>
   <packaging>jar</packaging>
   <name>Vertx PHP Integration</name>
-  <url>http://github.com/blankstyle/portal/</url>
+  <url>http://github.com/blankstyle/vertx-php</url>
 
   <properties>
     <version.number>0.1.0</version.number>

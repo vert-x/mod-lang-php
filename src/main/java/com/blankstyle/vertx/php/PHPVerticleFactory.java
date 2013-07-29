@@ -5,8 +5,6 @@ import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Verticle;
 import org.vertx.java.platform.VerticleFactory;
 
-import com.blankstyle.vertx.php.http.HttpModule;
-import com.blankstyle.vertx.php.net.NetModule;
 import com.caucho.quercus.QuercusContext;
 import com.caucho.quercus.QuercusDieException;
 import com.caucho.quercus.QuercusEngine;
@@ -14,7 +12,7 @@ import com.caucho.quercus.QuercusExitException;
 import com.caucho.quercus.module.ModuleContext;
 
 /**
- * A PHP verticle.
+ * A PHP verticle factory.
  */
 public class PHPVerticleFactory implements VerticleFactory {
 
@@ -24,6 +22,9 @@ public class PHPVerticleFactory implements VerticleFactory {
 
   public static org.vertx.java.platform.Container container;
 
+  /**
+   * Initializes the factory.
+   */
   @Override
   public void init(org.vertx.java.core.Vertx vertx, org.vertx.java.platform.Container container, ClassLoader cl) {
     this.cl = cl;
@@ -31,16 +32,25 @@ public class PHPVerticleFactory implements VerticleFactory {
     PHPVerticleFactory.container = container;
   }
 
+  /**
+   * Creates a verticle instance.
+   */
   @Override
   public Verticle createVerticle(String main) throws Exception {
     return new PHPVerticle(main);
   }
 
+  /**
+   * Reports an exception in the verticle.
+   */
   @Override
   public void reportException(Logger logger, Throwable t) {
     t.printStackTrace();
   }
 
+  /**
+   * Closes the verticle.
+   */
   @Override
   public void close() {
     
@@ -51,22 +61,28 @@ public class PHPVerticleFactory implements VerticleFactory {
    */
   private class PHPVerticle extends Verticle {
 
+    /**
+     * The path to the verticle PHP script.
+     */
     private final String script;
 
+    /**
+     * A Quercus script engine instance.
+     */
     QuercusEngine engine;
 
     PHPVerticle(String script) {
       this.script = script;
     }
 
+    /**
+     * Starts the verticle.
+     */
     @Override
     public void start() {
       engine = new QuercusEngine();
       QuercusContext context = engine.getQuercus();
       ModuleContext modules = context.getModuleContext();
-      modules.addModule("vertx", new VertxModule());
-      modules.addModule("vertx_http", new HttpModule());
-      modules.addModule("vertx_net", new NetModule());
       context.addJavaClass("Vertx", com.blankstyle.vertx.php.Vertx.class);
       context.addJavaClass("Container", com.blankstyle.vertx.php.Container.class);
       context.addJavaClass("HttpServer", com.blankstyle.vertx.php.http.HttpServer.class);
