@@ -2,6 +2,8 @@ package com.blankstyle.vertx.php.net;
 
 import org.vertx.java.core.Handler;
 
+import com.blankstyle.vertx.php.buffer.Buffer;
+import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
@@ -32,13 +34,71 @@ public class NetSocket {
     return env.createString(socket.remoteAddress().toString());
   }
 
+  /**
+   * Sets the socket data handler.
+   */
   public NetSocket dataHandler(final Env env, final Callback callback) {
     socket.dataHandler(new Handler<org.vertx.java.core.buffer.Buffer>() {
       public void handle(org.vertx.java.core.buffer.Buffer data) {
-        callback.call(env, env.wrapJava(data));
+        callback.call(env, env.wrapJava(new Buffer(data)));
       }
     });
     return this;
+  }
+
+  /**
+   * Pauses producing on the socket.
+   */
+  public NetSocket pause(Env env) {
+    socket.pause();
+    return this;
+  }
+
+  /**
+   * Resumes producing on the socket.
+   */
+  public NetSocket resume(Env env) {
+    socket.resume();
+    return this;
+  }
+
+  /**
+   * Sets the socket end handler.
+   */
+  public NetSocket endHandler(final Env env, final Callback callback) {
+    socket.endHandler(new Handler<Void>() {
+      public void handle(Void result) {
+        callback.call(env, env.wrapJava(result));
+      }
+    });
+    return this;
+  }
+
+  /**
+   * Sets the socket drain handler.
+   */
+  public NetSocket drainHandler(final Env env, final Callback callback) {
+    socket.drainHandler(new Handler<Void>() {
+      public void handle(Void result) {
+        callback.call(env, env.wrapJava(result));
+      }
+    });
+    return this;
+  }
+
+  /**
+   * Sets the max write queue size.
+   */
+  public NetSocket setWriteQueueMaxSize(Env env, Value value) {
+    socket.setWriteQueueMaxSize(value.toJavaInteger());
+    return this;
+  }
+
+  /**
+   * Indicates whether the write queue is full.
+   */
+  public BooleanValue writeQueueFull(Env env) {
+    return BooleanValue.create(socket.writeQueueFull());
   }
 
   /**
@@ -72,6 +132,18 @@ public class NetSocket {
    */
   public void close(Env env) {
     socket.close();
+  }
+
+  /**
+   * Sets the socket exception handler callback.
+   */
+  public NetSocket exceptionHandler(final Env env, final Callback callback) {
+    socket.exceptionHandler(new Handler<Throwable>() {
+      public void handle(Throwable e) {
+        callback.call(env, env.wrapJava(e));
+      }
+    });
+    return this;
   }
 
 }
