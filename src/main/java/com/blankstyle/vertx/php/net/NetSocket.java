@@ -2,7 +2,6 @@ package com.blankstyle.vertx.php.net;
 
 import org.vertx.java.core.Handler;
 
-import com.blankstyle.vertx.php.buffer.Buffer;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
@@ -40,7 +39,7 @@ public class NetSocket {
   public NetSocket dataHandler(final Env env, final Callback callback) {
     socket.dataHandler(new Handler<org.vertx.java.core.buffer.Buffer>() {
       public void handle(org.vertx.java.core.buffer.Buffer data) {
-        callback.call(env, env.wrapJava(new Buffer(data)));
+        callback.call(env, env.wrapJava(data));
       }
     });
     return this;
@@ -68,7 +67,7 @@ public class NetSocket {
   public NetSocket endHandler(final Env env, final Callback callback) {
     socket.endHandler(new Handler<Void>() {
       public void handle(Void result) {
-        callback.call(env, env.wrapJava(result));
+        callback.toCallable(env, false).call(env, env.wrapJava(result));
       }
     });
     return this;
@@ -80,7 +79,7 @@ public class NetSocket {
   public NetSocket drainHandler(final Env env, final Callback callback) {
     socket.drainHandler(new Handler<Void>() {
       public void handle(Void result) {
-        callback.call(env, env.wrapJava(result));
+        callback.toCallable(env, false).call(env, env.wrapJava(result));
       }
     });
     return this;
@@ -122,7 +121,7 @@ public class NetSocket {
   public void closeHandler(final Env env, final Callback callback) {
     socket.closeHandler(new Handler<Void>() {
       public void handle(Void result) {
-        callback.call(env, env.wrapJava(result));
+        callback.toCallable(env, false).call(env, env.wrapJava(result));
       }
     });
   }
@@ -140,7 +139,7 @@ public class NetSocket {
   public NetSocket exceptionHandler(final Env env, final Callback callback) {
     socket.exceptionHandler(new Handler<Throwable>() {
       public void handle(Throwable e) {
-        callback.call(env, env.wrapJava(e));
+        callback.toCallable(env, false).call(env, env.wrapJava(e));
       }
     });
     return this;

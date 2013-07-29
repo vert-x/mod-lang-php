@@ -89,6 +89,8 @@ public class PHPVerticleFactory implements VerticleFactory {
       context.addJavaClass("HttpClient", com.blankstyle.vertx.php.http.HttpClient.class);
       context.addJavaClass("NetServer", com.blankstyle.vertx.php.net.NetServer.class);
       context.addJavaClass("NetClient", com.blankstyle.vertx.php.net.NetClient.class);
+      context.addJavaClass("NetSocket", com.blankstyle.vertx.php.net.NetSocket.class);
+      context.addJavaClass("Buffer", org.vertx.java.core.buffer.Buffer.class);
       context.init();
       modules.init();
       Vertx.init(PHPVerticleFactory.vertx);

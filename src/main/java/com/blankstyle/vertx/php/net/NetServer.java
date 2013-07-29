@@ -10,6 +10,9 @@ import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.Value;
 
+/**
+ * A PHP compatible implementation of the Vert.x NetServer.
+ */
 public class NetServer {
 
   private org.vertx.java.core.net.NetServer server;
@@ -27,7 +30,7 @@ public class NetServer {
   public NetServer connectHandler(final Env env, final Callback callback) {
     server.connectHandler(new Handler<org.vertx.java.core.net.NetSocket>() {
       public void handle(org.vertx.java.core.net.NetSocket socket) {
-        callback.call(env, env.wrapJava(new NetSocket(socket)));
+        callback.toCallable(env, false).call(env, env.wrapJava(new NetSocket(socket)));
       }
     });
     return this;

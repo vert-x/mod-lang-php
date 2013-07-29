@@ -1,5 +1,6 @@
 package com.blankstyle.vertx.php;
 
+import com.blankstyle.vertx.php.eventbus.EventBus;
 import com.blankstyle.vertx.php.http.HttpClient;
 import com.blankstyle.vertx.php.http.HttpServer;
 import com.blankstyle.vertx.php.net.NetClient;
@@ -26,34 +27,37 @@ public final class Vertx {
   }
 
   /**
-   * Creates a TCP/SSL server.
-   * @return
+   * Returns the Vert.x event bus.
    */
-  public static NetServer createNetServer() {
+  public static EventBus eventBus(Env env) {
+    return new EventBus(Vertx.instance.eventBus());
+  }
+
+  /**
+   * Creates a TCP/SSL server.
+   */
+  public static NetServer createNetServer(Env env) {
     return new NetServer(Vertx.instance.createNetServer());
   }
 
   /**
    * Creates a TCP/SSL client.
-   * @return
    */
-  public static NetClient createNetClient() {
+  public static NetClient createNetClient(Env env) {
     return new NetClient(Vertx.instance.createNetClient());
   }
 
   /**
    * Creates an HTTP/HTTPS server.
-   * @return
    */
-  public static HttpServer createHttpServer() {
+  public static HttpServer createHttpServer(Env env) {
     return new HttpServer(Vertx.instance.createHttpServer());
   }
 
   /**
    * Creates an HTTP/HTTPS client.
-   * @return
    */
-  public static HttpClient createHttpClient() {
+  public static HttpClient createHttpClient(Env env) {
     return new HttpClient(Vertx.instance.createHttpClient());
   }
 
@@ -61,7 +65,7 @@ public final class Vertx {
    * Returns a boolean value indicating whether the current
    * thread is an event loop thread.
    */
-  public static BooleanValue isEventLoop() {
+  public static BooleanValue isEventLoop(Env env) {
     return BooleanValue.create(Vertx.instance.isEventLoop());
   }
 
@@ -69,11 +73,11 @@ public final class Vertx {
    * Returns a boolean value indicating whether the current
    * thread is a worker thread.
    */
-  public static BooleanValue isWorker() {
+  public static BooleanValue isWorker(Env env) {
     return BooleanValue.create(Vertx.instance.isWorker());
   }
 
-  public static void runOnContext() {
+  public static void runOnContext(Env env) {
     
   }
 
@@ -90,7 +94,7 @@ public final class Vertx {
    * @param id The timer id.
    * @return A value indicating whether the timer was successfully cancelled.
    */
-  public static BooleanValue cancelTimer(final long id) {
+  public static BooleanValue cancelTimer(Env env, final long id) {
     boolean result = Vertx.instance.cancelTimer(id);
     return BooleanValue.create(result);
   }
@@ -98,7 +102,7 @@ public final class Vertx {
   /**
    * Stops the eventbus and any resources managed by the eventbus.
    */
-  public static void stop() {
+  public static void stop(Env env) {
     Vertx.instance.stop();
   }
 
