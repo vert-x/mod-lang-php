@@ -4,6 +4,7 @@ import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.AsyncResultHandler;
 import org.vertx.java.core.Handler;
 
+import com.blankstyle.vertx.php.TCPServer;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
@@ -13,12 +14,14 @@ import com.caucho.quercus.env.Value;
 /**
  * A PHP compatible implementation of the Vert.x NetServer.
  */
-public class NetServer {
-
-  private org.vertx.java.core.net.NetServer server;
+public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
 
   public NetServer(org.vertx.java.core.net.NetServer server) {
-    this.server = server;
+    super(server);
+  }
+
+  public NetServer(Env env, org.vertx.java.core.net.NetServer server) {
+    super(server);
   }
 
   /**

@@ -7,6 +7,8 @@ import com.blankstyle.vertx.php.net.NetClient;
 import com.blankstyle.vertx.php.net.NetServer;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Env;
+import com.caucho.quercus.env.Value;
+import com.caucho.quercus.lib.JavaModule;
 
 /**
  * A static Vertx instance access class.
