@@ -19,10 +19,10 @@ public final class Context {
   /**
    * @param callback A callable PHP function, method, or closure.
    */
-  public void runOnContext(final Env env, final Callback callback) {
+  public void runOnContext(final Env env, final Callback handler) {
     context.runOnContext(new Handler<Void>() {
       public void handle(Void result) {
-        callback.call(env, env.wrapJava(result));
+        handler.call(env, env.wrapJava(result));
       }
     });
   }

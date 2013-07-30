@@ -8,10 +8,14 @@ import org.vertx.java.core.http.ServerWebSocket;
 
 import com.blankstyle.vertx.php.TCPServer;
 import com.caucho.quercus.annotation.Optional;
+import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.Value;
 
+/**
+ * A PHP compatible implementation of the Vert.x HttpServer/
+ */
 public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
 
   public HttpServer(org.vertx.java.core.http.HttpServer server) {
@@ -33,12 +37,12 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
    * begun listening. This is an optional argument.
    * @return The called server instance.
    */
-  public HttpServer listen(final Env env, final NumberValue port, @Optional final Value host, @Optional final Value callback) {
+  public HttpServer listen(final Env env, final NumberValue port, @Optional final Value host, @Optional final Callback handler) {
     if (host != null && !host.isDefault()) {
-      if (callback != null && !callback.isDefault()) {
+      if (handler != null && !handler.isDefault()) {
         server.listen(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.http.HttpServer>() {
           public void handle(AsyncResult<org.vertx.java.core.http.HttpServer> result) {
-            callback.call(env, env.wrapJava(result));
+            handler.call(env, env.wrapJava(result));
           }
         });
       }
@@ -46,10 +50,10 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
         server.listen(port.toInt(), host.toString());
       }
     }
-    else if (callback != null && !callback.isDefault()) {
+    else if (handler != null && !handler.isDefault()) {
       server.listen(port.toInt(), new AsyncResultHandler<org.vertx.java.core.http.HttpServer>() {
         public void handle(AsyncResult<org.vertx.java.core.http.HttpServer> result) {
-          callback.call(env, env.wrapJava(result));
+          handler.call(env, env.wrapJava(result));
         }
       });
     }

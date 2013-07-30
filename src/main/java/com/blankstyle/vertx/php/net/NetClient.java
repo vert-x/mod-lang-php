@@ -24,18 +24,18 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
   /**
    * Connects to a server.
    */
-  public NetClient connect(final Env env, final NumberValue port, @Optional final StringValue host, final Callback callback) {
+  public NetClient connect(final Env env, final NumberValue port, @Optional final StringValue host, final Callback handler) {
     if (host != null && !host.isDefault()) {
       client.connect(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.net.NetSocket>() {
         public void handle(AsyncResult<org.vertx.java.core.net.NetSocket> socket) {
-          callback.call(env, env.wrapJava(new NetSocket(socket.result())));
+          handler.call(env, env.wrapJava(new NetSocket(socket.result())));
         }
       });
     }
-    else if (callback != null && !callback.isDefault()) {
+    else if (handler != null && !handler.isDefault()) {
       client.connect(port.toInt(), new AsyncResultHandler<org.vertx.java.core.net.NetSocket>() {
         public void handle(AsyncResult<org.vertx.java.core.net.NetSocket> socket) {
-          callback.call(env, env.wrapJava(new NetSocket(socket.result())));
+          handler.call(env, env.wrapJava(new NetSocket(socket.result())));
         }
       });
     }

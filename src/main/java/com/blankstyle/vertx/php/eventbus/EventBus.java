@@ -27,10 +27,10 @@ public final class EventBus {
   /**
    * Registers a new event handler.
    */
-  public EventBus registerHandler(final Env env, final StringValue address, final Callback callback) {
+  public EventBus registerHandler(final Env env, final StringValue address, final Callback handler) {
     eventBus.registerHandler(address.toJavaString(), new Handler<Message>() {
       public void handle(Message message) {
-        callback.call(env, env.wrapJava(message));
+        handler.call(env, env.wrapJava(message));
       }
     });
     return this;
@@ -39,12 +39,12 @@ public final class EventBus {
   /**
    * Sends a message on the bus.
    */
-  public EventBus send(final Env env, final StringValue address, final Value message, @Optional final Callback callback) {
+  public EventBus send(final Env env, final StringValue address, final Value message, @Optional final Callback handler) {
     if (message.isBoolean()) {
-      if (callback != null && !callback.isDefault()) {
+      if (handler != null && !handler.isDefault()) {
         eventBus.send(address.toJavaString(), message.toJavaBoolean(), new Handler<Message>() {
           public void handle(Message message) {
-            callback.toCallable(env, false).call(env, env.wrapJava(message));
+            handler.toCallable(env, false).call(env, env.wrapJava(message));
           }
         });
       }
@@ -53,10 +53,10 @@ public final class EventBus {
       }
     }
     else if (message.isString()) {
-      if (callback != null && !callback.isDefault()) {
+      if (handler != null && !handler.isDefault()) {
         eventBus.send(address.toJavaString(), message.toJavaString(), new Handler<Message>() {
           public void handle(Message message) {
-            callback.toCallable(env, false).call(env, env.wrapJava(message));
+            handler.toCallable(env, false).call(env, env.wrapJava(message));
           }
         });
       }
@@ -65,10 +65,10 @@ public final class EventBus {
       }
     }
     else if (message.isNumeric()) {
-      if (callback != null && !callback.isDefault()) {
+      if (handler != null && !handler.isDefault()) {
         eventBus.send(address.toJavaString(), message.toJavaInteger(), new Handler<Message>() {
           public void handle(Message message) {
-            callback.toCallable(env, false).call(env, env.wrapJava(message));
+            handler.toCallable(env, false).call(env, env.wrapJava(message));
           }
         });
       }
@@ -77,10 +77,10 @@ public final class EventBus {
       }
     }
     else if (message.isArray()) {
-      if (callback != null && !callback.isDefault()) {
+      if (handler != null && !handler.isDefault()) {
         eventBus.send(address.toJavaString(), new JsonObject(JsonModule.json_encode(env, message, 0).toJavaString()), new Handler<Message>() {
           public void handle(Message message) {
-            callback.toCallable(env, false).call(env, env.wrapJava(message));
+            handler.toCallable(env, false).call(env, env.wrapJava(message));
           }
         });
       }
@@ -113,10 +113,10 @@ public final class EventBus {
   /**
    * Closes the event bus.
    */
-  public void close(final Env env, final Callback callback) {
+  public void close(final Env env, final Callback handler) {
     eventBus.close(new AsyncResultHandler<Void>() {
       public void handle(AsyncResult<Void> result) {
-        callback.toCallable(env, false).call(env, env.wrapJava(result));
+        handler.toCallable(env, false).call(env, env.wrapJava(result));
       }
     });
   }

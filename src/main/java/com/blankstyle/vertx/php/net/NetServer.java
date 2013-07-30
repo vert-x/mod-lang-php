@@ -30,10 +30,10 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    * @param callback A callable PHP item.
    * @return The called server instance.
    */
-  public NetServer connectHandler(final Env env, final Callback callback) {
+  public NetServer connectHandler(final Env env, final Callback handler) {
     server.connectHandler(new Handler<org.vertx.java.core.net.NetSocket>() {
       public void handle(org.vertx.java.core.net.NetSocket socket) {
-        callback.toCallable(env, false).call(env, env.wrapJava(new NetSocket(socket)));
+        handler.toCallable(env, false).call(env, env.wrapJava(new NetSocket(socket)));
       }
     });
     return this;
@@ -50,12 +50,12 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    * begun listening. This is an optional argument.
    * @return The called server instance.
    */
-  public NetServer listen(final Env env, final NumberValue port, @Optional final Value host, @Optional final Value callback) {
+  public NetServer listen(final Env env, final NumberValue port, @Optional final Value host, @Optional final Callback handler) {
     if (host != null && !host.isDefault()) {
-      if (callback != null && !callback.isDefault()) {
+      if (handler != null && !handler.isDefault()) {
         server.listen(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.net.NetServer>() {
           public void handle(AsyncResult<org.vertx.java.core.net.NetServer> result) {
-            callback.call(env, env.wrapJava(result));
+            handler.call(env, env.wrapJava(result));
           }
         });
       }
@@ -63,10 +63,10 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
         server.listen(port.toInt(), host.toString());
       }
     }
-    else if (callback != null && !callback.isDefault()) {
+    else if (handler != null && !handler.isDefault()) {
       server.listen(port.toInt(), new AsyncResultHandler<org.vertx.java.core.net.NetServer>() {
         public void handle(AsyncResult<org.vertx.java.core.net.NetServer> result) {
-          callback.call(env, env.wrapJava(result));
+          handler.call(env, env.wrapJava(result));
         }
       });
     }
@@ -89,14 +89,14 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    * @param callback An optional callable PHP item to be invoked when
    * the server is closed.
    */
-  public void close(final Env env, @Optional final Callback callback) {
-    if (callback == null) {
+  public void close(final Env env, @Optional final Callback handler) {
+    if (handler == null) {
       server.close();
     }
     else {
       server.close(new AsyncResultHandler<Void>() {
         public void handle(AsyncResult<Void> result) {
-          callback.call(env, env.wrapJava(result));
+          handler.call(env, env.wrapJava(result));
         }
       });
     }
