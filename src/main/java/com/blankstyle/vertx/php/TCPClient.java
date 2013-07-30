@@ -1,21 +1,97 @@
 package com.blankstyle.vertx.php;
 
-import org.vertx.java.core.SSLSupport;
+import org.vertx.java.core.ClientSSLSupport;
 import org.vertx.java.core.TCPSupport;
 
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
+import com.caucho.quercus.env.StringValue;
 
 /**
  * An abstract TCP server.
  */
-public abstract class TCPClient<T extends TCPSupport<T> & SSLSupport<T>> {
+public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> {
 
   protected T client;
 
   public TCPClient(T client) {
     this.client = client;
+  }
+
+  /**
+   * Indicates whether a certificate should trust all connections.
+   */
+  public boolean isTrustAll(Env env) {
+    return client.isTrustAll();
+  }
+
+  /**
+   * Sets the certificate trust all setting.
+   */
+  public TCPClient<T> setTrustAll(Env env, BooleanValue trustAll) {
+    client.setTrustAll(trustAll.toBoolean());
+    return this;
+  }
+
+  /**
+   * Indicates whether this is an SSL connection.
+   */
+  public boolean isSSL(Env env) {
+    return client.isSSL();
+  }
+
+  /**
+   * Sets the SSL status of the connection.
+   */
+  public TCPClient<T> setSSL(Env env, BooleanValue ssl) {
+    client.setSSL(ssl.toBoolean());
+    return this;
+  }
+
+  /**
+   * Returns the key store password.
+   */
+  public String getKeyStorePassword(Env env) {
+    return client.getKeyStorePassword();
+  }
+
+  /**
+   * Sets the key store password.
+   */
+  public TCPClient<T> setKeyStorePassword(Env env, StringValue pwd) {
+    client.setKeyStorePassword(pwd.toString());
+    return this;
+  }
+
+  /**
+   * Returns the key store path.
+   */
+  public String getKeyStorePath(Env env) {
+    return client.getKeyStorePath();
+  }
+
+  /**
+   * Sets the key store path.
+   */
+  public TCPClient<T> setKeyStorePath(Env env, StringValue path) {
+    client.setKeyStorePath(path.toString());
+    return this;
+  }
+
+  /**
+   * Returns the trust store password.
+   */
+  public String getTrustStorePassword(Env env) {
+    return client.getTrustStorePassword();
+  }
+
+  /**
+   * Sets the trust store password.
+   */
+  public TCPClient<T> setTrustStorePassword(Env env, StringValue pwd) {
+    client.setTrustStorePassword(pwd.toString());
+    return this;
   }
 
   /**

@@ -6,6 +6,7 @@ import org.vertx.java.core.ServerTCPSupport;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
+import com.caucho.quercus.env.StringValue;
 
 /**
  * An abstract TCP server.
@@ -45,6 +46,66 @@ public abstract class TCPServer<T extends ServerTCPSupport<T> & ServerSSLSupport
    */
   public TCPServer<T> setClientAuthRequired(Env env, BooleanValue required) {
     server.setClientAuthRequired(required.toBoolean());
+    return this;
+  }
+
+  /**
+   * Indicates whether this is an SSL connection.
+   */
+  public boolean isSSL(Env env) {
+    return server.isSSL();
+  }
+
+  /**
+   * Sets the SSL status of the connection.
+   */
+  public TCPServer<T> setSSL(Env env, BooleanValue ssl) {
+    server.setSSL(ssl.toBoolean());
+    return this;
+  }
+
+  /**
+   * Returns the key store password.
+   */
+  public String getKeyStorePassword(Env env) {
+    return server.getKeyStorePassword();
+  }
+
+  /**
+   * Sets the key store password.
+   */
+  public TCPServer<T> setKeyStorePassword(Env env, StringValue pwd) {
+    server.setKeyStorePassword(pwd.toString());
+    return this;
+  }
+
+  /**
+   * Returns the key store path.
+   */
+  public String getKeyStorePath(Env env) {
+    return server.getKeyStorePath();
+  }
+
+  /**
+   * Sets the key store path.
+   */
+  public TCPServer<T> setKeyStorePath(Env env, StringValue path) {
+    server.setKeyStorePath(path.toString());
+    return this;
+  }
+
+  /**
+   * Returns the trust store password.
+   */
+  public String getTrustStorePassword(Env env) {
+    return server.getTrustStorePassword();
+  }
+
+  /**
+   * Sets the trust store password.
+   */
+  public TCPServer<T> setTrustStorePassword(Env env, StringValue pwd) {
+    server.setTrustStorePassword(pwd.toString());
     return this;
   }
 
