@@ -1,11 +1,15 @@
 package com.blankstyle.vertx.php;
 
+import org.vertx.java.core.shareddata.SharedData;
+
 import com.blankstyle.vertx.php.eventbus.EventBus;
+import com.blankstyle.vertx.php.file.FileSystem;
 import com.blankstyle.vertx.php.http.HttpClient;
 import com.blankstyle.vertx.php.http.HttpServer;
 import com.blankstyle.vertx.php.net.NetClient;
 import com.blankstyle.vertx.php.net.NetServer;
 import com.caucho.quercus.env.BooleanValue;
+import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.lib.JavaModule;
@@ -26,13 +30,6 @@ public final class Vertx {
     if (Vertx.instance == null) {
       Vertx.instance = instance;
     }
-  }
-
-  /**
-   * Returns the Vert.x event bus.
-   */
-  public static EventBus eventBus(Env env) {
-    return new EventBus(Vertx.instance.eventBus());
   }
 
   /**
@@ -79,16 +76,43 @@ public final class Vertx {
     return BooleanValue.create(Vertx.instance.isWorker());
   }
 
-  public static void runOnContext(Env env) {
-    
+  /**
+   * Returns the Vert.x event bus.
+   */
+  public static EventBus eventBus(Env env) {
+    return new EventBus(Vertx.instance.eventBus());
+  }
+
+  /**
+   * Returns the Vertx FileSystem instance.
+   */
+  public static FileSystem fileSystem(Env env) {
+    return new FileSystem(Vertx.instance.fileSystem());
+  }
+
+  /**
+   * Returns the Vertx SharedData instance.
+   */
+  public static SharedData sharedData(Env env) {
+    return Vertx.instance.sharedData();
   }
 
   /**
    * Returns the current Vertx context.
    */
-  // public static Context currentContext(Env env) {
-  //  
-  // }
+  public static Context currentContext(Env env) {
+   return new Context(Vertx.instance.currentContext());
+  }
+
+  /**
+   * Put the handler on the event queue for the current loop
+   * (or worker context) so it will be run asynchronously ASAP
+   * after this event has been processed
+   * @param callback A callable PHP function, method, or closure.
+   */
+  public static void runOnContext(Env env, Callback callback) {
+    currentContext(env).runOnContext(env, callback);
+  }
 
   /**
    * Cancels the timer with the specified id.
