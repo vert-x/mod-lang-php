@@ -26,6 +26,10 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
     super(server);
   }
 
+  public org.vertx.java.core.http.HttpServer getVertxServer() {
+    return server;
+  }
+
   /**
    * Instructs the server to start listening on a host and port.
    *

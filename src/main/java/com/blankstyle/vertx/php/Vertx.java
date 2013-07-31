@@ -9,6 +9,7 @@ import com.blankstyle.vertx.php.http.HttpClient;
 import com.blankstyle.vertx.php.http.HttpServer;
 import com.blankstyle.vertx.php.net.NetClient;
 import com.blankstyle.vertx.php.net.NetServer;
+import com.blankstyle.vertx.php.sockjs.SockJSServer;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
@@ -65,6 +66,13 @@ public final class Vertx {
    */
   public static HttpClient createHttpClient(Env env) {
     return new HttpClient(Vertx.instance.createHttpClient());
+  }
+
+  /**
+   * Creates a SockJS server.
+   */
+  public static SockJSServer createSockJSServer(Env env, HttpServer server) {
+    return new SockJSServer(Vertx.instance.createSockJSServer(server.getVertxServer()));
   }
 
   /**
