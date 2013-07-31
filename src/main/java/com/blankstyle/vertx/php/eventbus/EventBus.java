@@ -26,6 +26,7 @@ public final class EventBus {
   /**
    * Registers a new event handler.
    */
+  @SuppressWarnings("rawtypes")
   public EventBus registerHandler(final Env env, final StringValue address, final Callback handler) {
     eventBus.registerHandler(address.toJavaString(), new Handler<Message>(env, handler));
     return this;
@@ -34,6 +35,7 @@ public final class EventBus {
   /**
    * Sends a message on the bus.
    */
+  @SuppressWarnings("rawtypes")
   public EventBus send(final Env env, final StringValue address, final Value message, @Optional final Callback handler) {
     if (message.isBoolean()) {
       if (handler != null && !handler.isDefault()) {

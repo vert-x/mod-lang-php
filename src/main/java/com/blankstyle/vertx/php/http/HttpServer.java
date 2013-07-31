@@ -7,7 +7,6 @@ import org.vertx.java.core.http.ServerWebSocket;
 import com.blankstyle.vertx.php.ArgumentModifier;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.TCPServer;
-import com.blankstyle.vertx.php.net.NetServer;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;

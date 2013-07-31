@@ -5,17 +5,20 @@ import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Verticle;
 import org.vertx.java.platform.VerticleFactory;
 
+import com.caucho.quercus.Location;
 import com.caucho.quercus.QuercusContext;
 import com.caucho.quercus.QuercusDieException;
 import com.caucho.quercus.QuercusEngine;
+import com.caucho.quercus.QuercusException;
 import com.caucho.quercus.QuercusExitException;
-import com.caucho.quercus.module.ModuleContext;
+import com.caucho.quercus.env.Env;
 
 /**
  * A PHP verticle factory.
  */
 public class PHPVerticleFactory implements VerticleFactory {
 
+  @SuppressWarnings("unused")
   private ClassLoader cl;
 
   private static org.vertx.java.core.Vertx vertx;
@@ -45,7 +48,34 @@ public class PHPVerticleFactory implements VerticleFactory {
    */
   @Override
   public void reportException(Logger logger, Throwable t) {
-    t.printStackTrace();
+    // A Quercus language exception.
+    if (t instanceof QuercusException) {
+      Env env = Env.getCurrent();
+      Location location = env.getLocation();
+
+      logger.error("\nAn exception occured in a PHP verticle.");
+
+      // TODO: This stack trace should show only PHP related called, not
+      // Java calls. Currently it only shows the trace of Java code execution.
+      // logger.error(env.getStackTraceAsString(t, env.getLocation()) + "\n");
+
+      String className = location.getClassName();
+      String funcName = location.getFunctionName();
+      if (funcName != "NULL" && !funcName.startsWith("__quercus_")) {
+        if (className != "NULL" && funcName != "NULL" && !funcName.startsWith("__quercus_")) {
+          logger.error(String.format("%s in %s on line %d in %s::%s()", t.getMessage(), location.getFileName(), location.getLineNumber(), className, funcName));
+        }
+        else {
+          logger.error(String.format("%s in %s on line %d in %s()", t.getMessage(), location.getFileName(), location.getLineNumber(), funcName));
+        }
+      }
+      else {
+        logger.error(String.format("%s in %s on line %d", t.getMessage(), location.getFileName(), location.getLineNumber()));
+      }
+    }
+    else {
+      t.printStackTrace();
+    }
   }
 
   /**
@@ -82,7 +112,12 @@ public class PHPVerticleFactory implements VerticleFactory {
     public void start() {
       engine = new QuercusEngine();
       QuercusContext context = engine.getQuercus();
-      ModuleContext modules = context.getModuleContext();
+
+      // Setting PHP's error_reporting to 0 makes Quercus give us more
+      // interesting exception messages and thus better error reporting.
+      context.setIni("error_reporting", "0");
+
+      // Make vertx-php classes available in the PHP code context.
       context.addJavaClass("Vertx", com.blankstyle.vertx.php.Vertx.class);
       context.addJavaClass("Container", com.blankstyle.vertx.php.Container.class);
       context.addJavaClass("Vertx\\Http\\HttpServer", com.blankstyle.vertx.php.http.HttpServer.class);
@@ -96,20 +131,21 @@ public class PHPVerticleFactory implements VerticleFactory {
       context.addJavaClass("Vertx\\Streams\\Pump", org.vertx.java.core.streams.Pump.class);
       context.addJavaClass("Vertx\\ParseTools\\RecordParser", org.vertx.java.core.parsetools.RecordParser.class);
       context.addJavaClass("Vertx\\SharedData\\SharedData", org.vertx.java.core.shareddata.SharedData.class);
-      context.init();
-      modules.init();
       Vertx.init(PHPVerticleFactory.vertx);
       Container.init(PHPVerticleFactory.container);
+
+      // Evaluate a single line script which includes the verticle
+      // script. This ensures that exceptions can be accurately logged
+      // because Quercus will record actual file names rather than a
+      // generic "eval" name.
       try {
-        try {
-          engine.executeFile(script);
-        }
-        catch (QuercusDieException e) {
-          // Do nothing.
-        }
-        catch (QuercusExitException e) {
-          // Do nothing.
-        }
+        engine.execute(String.format("<?php require '%s'; ?>", script));
+      }
+      catch (QuercusDieException e) {
+        // The interpreter died, do nothing.
+      }
+      catch (QuercusExitException e) {
+        // The interpreter exiting cleanly, do nothing.
       }
       catch (Exception e) {
         throw new VertxException(e);

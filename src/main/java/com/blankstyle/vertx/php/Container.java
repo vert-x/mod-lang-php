@@ -33,6 +33,7 @@ public final class Container {
   /**
    * Deploys a module.
    */
+  @SuppressWarnings("unchecked")
   public static void deployModule(final Env env, final StringValue moduleName, @Optional final ArrayValue config, @Optional final Value instances, @Optional final Callback handler) {
     if (instances.isDefault() && config.isDefault() && handler.isDefault()) {
       Container.instance.deployModule(moduleName.toJavaString());
@@ -63,6 +64,7 @@ public final class Container {
   /**
    * Deploys a verticle.
    */
+  @SuppressWarnings("unchecked")
   public static void deployVerticle(final Env env, final StringValue moduleName, @Optional final ArrayValue config, @Optional final Value instances, @Optional final Callback handler) {
     if (instances.isDefault() && config.isDefault() && handler.isDefault()) {
       Container.instance.deployVerticle(moduleName.toJavaString());
@@ -93,6 +95,7 @@ public final class Container {
   /**
    * Deploys a worker verticle.
    */
+  @SuppressWarnings("unchecked")
   public static void deployWorkerVerticle(final Env env, final StringValue moduleName, @Optional final ArrayValue config, @Optional final Value instances, @Optional final Callback handler) {
     if (instances.isDefault() && config.isDefault() && handler.isDefault()) {
       Container.instance.deployWorkerVerticle(moduleName.toJavaString());
