@@ -6,7 +6,7 @@ import com.caucho.quercus.env.Env;
 /**
  * A helper class for creating Vertx handlers that invoke PHP callbacks.
  */
-public final class Handler<T> implements org.vertx.java.core.Handler<T> {
+public class Handler<T> implements org.vertx.java.core.Handler<T> {
 
   /**
    * A Quercus environment.
