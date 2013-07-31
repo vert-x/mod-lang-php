@@ -1,11 +1,10 @@
 package com.blankstyle.vertx.php.eventbus;
 
 import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.AsyncResultHandler;
-import org.vertx.java.core.Handler;
 import org.vertx.java.core.eventbus.Message;
 import org.vertx.java.core.json.JsonObject;
 
+import com.blankstyle.vertx.php.Handler;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.StringValue;
@@ -28,11 +27,7 @@ public final class EventBus {
    * Registers a new event handler.
    */
   public EventBus registerHandler(final Env env, final StringValue address, final Callback handler) {
-    eventBus.registerHandler(address.toJavaString(), new Handler<Message>() {
-      public void handle(Message message) {
-        handler.call(env, env.wrapJava(message));
-      }
-    });
+    eventBus.registerHandler(address.toJavaString(), new Handler<Message>(env, handler));
     return this;
   }
 
@@ -42,11 +37,7 @@ public final class EventBus {
   public EventBus send(final Env env, final StringValue address, final Value message, @Optional final Callback handler) {
     if (message.isBoolean()) {
       if (handler != null && !handler.isDefault()) {
-        eventBus.send(address.toJavaString(), message.toJavaBoolean(), new Handler<Message>() {
-          public void handle(Message message) {
-            handler.toCallable(env, false).call(env, env.wrapJava(message));
-          }
-        });
+        eventBus.send(address.toJavaString(), message.toJavaBoolean(), new Handler<Message>(env, handler));
       }
       else {
         eventBus.send(address.toJavaString(), message.toJavaBoolean());
@@ -54,11 +45,7 @@ public final class EventBus {
     }
     else if (message.isString()) {
       if (handler != null && !handler.isDefault()) {
-        eventBus.send(address.toJavaString(), message.toJavaString(), new Handler<Message>() {
-          public void handle(Message message) {
-            handler.toCallable(env, false).call(env, env.wrapJava(message));
-          }
-        });
+        eventBus.send(address.toJavaString(), message.toJavaString(), new Handler<Message>(env, handler));
       }
       else {
         eventBus.send(address.toJavaString(), message.toJavaString());
@@ -66,11 +53,7 @@ public final class EventBus {
     }
     else if (message.isNumeric()) {
       if (handler != null && !handler.isDefault()) {
-        eventBus.send(address.toJavaString(), message.toJavaInteger(), new Handler<Message>() {
-          public void handle(Message message) {
-            handler.toCallable(env, false).call(env, env.wrapJava(message));
-          }
-        });
+        eventBus.send(address.toJavaString(), message.toJavaInteger(), new Handler<Message>(env, handler));
       }
       else {
         eventBus.send(address.toJavaString(), message.toJavaInteger());
@@ -78,11 +61,7 @@ public final class EventBus {
     }
     else if (message.isArray()) {
       if (handler != null && !handler.isDefault()) {
-        eventBus.send(address.toJavaString(), new JsonObject(JsonModule.json_encode(env, message, 0).toJavaString()), new Handler<Message>() {
-          public void handle(Message message) {
-            handler.toCallable(env, false).call(env, env.wrapJava(message));
-          }
-        });
+        eventBus.send(address.toJavaString(), new JsonObject(JsonModule.json_encode(env, message, 0).toJavaString()), new Handler<Message>(env, handler));
       }
       else {
         eventBus.send(address.toJavaString(), new JsonObject(JsonModule.json_encode(env, message, 0).toJavaString()));
@@ -114,11 +93,7 @@ public final class EventBus {
    * Closes the event bus.
    */
   public void close(final Env env, final Callback handler) {
-    eventBus.close(new AsyncResultHandler<Void>() {
-      public void handle(AsyncResult<Void> result) {
-        handler.toCallable(env, false).call(env, env.wrapJava(result));
-      }
-    });
+    eventBus.close(new Handler<AsyncResult<Void>>(env, handler));
   }
 
 }
