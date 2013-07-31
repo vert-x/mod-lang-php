@@ -1,7 +1,6 @@
 package com.blankstyle.vertx.php;
 
 import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.AsyncResultHandler;
 import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.core.logging.Logger;
 
@@ -42,12 +41,7 @@ public final class Container {
       Container.instance.deployModule(moduleName.toJavaString(), instances.toJavaInteger());
     }
     else if (!instances.isDefault() && config.isDefault() && !handler.isDefault()) {
-      Container.instance.deployModule(moduleName.toJavaString(), instances.toJavaInteger(), new AsyncResultHandler<String>() {
-        @Override
-        public void handle(AsyncResult<String> result) {
-          handler.toCallable(env, false).call(env, env.wrapJava(result));
-        }
-      });
+      Container.instance.deployModule(moduleName.toJavaString(), instances.toJavaInteger(), new Handler<AsyncResult<String>>(env, handler));
     }
     else if (!instances.isDefault() && !config.isDefault() && !handler.isDefault()) {
       Container.instance.deployModule(moduleName.toJavaString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toJavaInteger());
@@ -59,12 +53,7 @@ public final class Container {
    */
   public static void undeployModule(final Env env, StringValue deploymentID, @Optional final Callback handler) {
     if (handler != null && !handler.isDefault()) {
-      Container.instance.undeployModule(deploymentID.toString(), new AsyncResultHandler<Void>() {
-        @Override
-        public void handle(AsyncResult<Void> result) {
-          handler.call(env, env.wrapJava(result));
-        }
-      });
+      Container.instance.undeployModule(deploymentID.toString(), new Handler<AsyncResult<Void>>(env, handler));
     }
     else {
       Container.instance.undeployModule(deploymentID.toString());
@@ -82,12 +71,7 @@ public final class Container {
       Container.instance.deployVerticle(moduleName.toJavaString(), instances.toJavaInteger());
     }
     else if (!instances.isDefault() && config.isDefault() && !handler.isDefault()) {
-      Container.instance.deployVerticle(moduleName.toJavaString(), instances.toJavaInteger(), new AsyncResultHandler<String>() {
-        @Override
-        public void handle(AsyncResult<String> result) {
-          handler.toCallable(env, false).call(env, env.wrapJava(result));
-        }
-      });
+      Container.instance.deployVerticle(moduleName.toJavaString(), instances.toJavaInteger(), new Handler<AsyncResult<String>>(env, handler));
     }
     else if (!instances.isDefault() && !config.isDefault() && !handler.isDefault()) {
       Container.instance.deployVerticle(moduleName.toJavaString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toJavaInteger());
@@ -99,12 +83,7 @@ public final class Container {
    */
   public static void undeployVerticle(final Env env, StringValue deploymentID, @Optional final Callback handler) {
     if (handler != null && !handler.isDefault()) {
-      Container.instance.undeployVerticle(deploymentID.toString(), new AsyncResultHandler<Void>() {
-        @Override
-        public void handle(AsyncResult<Void> result) {
-          handler.call(env, env.wrapJava(result));
-        }
-      });
+      Container.instance.undeployVerticle(deploymentID.toString(), new Handler<AsyncResult<Void>>(env, handler));
     }
     else {
       Container.instance.undeployVerticle(deploymentID.toString());

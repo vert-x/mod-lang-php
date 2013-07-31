@@ -1,11 +1,9 @@
 package com.blankstyle.vertx.php.file;
 
 import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.AsyncResultHandler;
-import org.vertx.java.core.Handler;
 import org.vertx.java.core.buffer.Buffer;
 
-import com.blankstyle.vertx.php.net.NetSocket;
+import com.blankstyle.vertx.php.Handler;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Callback;
@@ -27,12 +25,7 @@ public final class AsyncFile {
    * Reads from the file.
    */
   public AsyncFile read(final Env env, Buffer buffer, int offset, int position, int length, final Callback handler) {
-    file.read(buffer, offset, position, length, new AsyncResultHandler<Buffer>() {
-      @Override
-      public void handle(AsyncResult<Buffer> buffer) {
-        handler.call(env, env.wrapJava(buffer));
-      }
-    });
+    file.read(buffer, offset, position, length, new Handler<AsyncResult<Buffer>>(env, handler));
     return this;
   }
 
@@ -40,24 +33,15 @@ public final class AsyncFile {
    * Writes a value to the socket.
    */
   public AsyncFile write(final Env env, Buffer buffer, int position, final Callback handler) {
-    file.write(buffer, position, new AsyncResultHandler<Void>() {
-      @Override
-      public void handle(AsyncResult<Void> result) {
-        handler.call(env, env.wrapJava(result));
-      }
-    });
+    file.write(buffer, position, new Handler<AsyncResult<Void>>(env, handler));
     return this;
   }
 
   /**
    * Sets the file data handler.
    */
-  public AsyncFile dataHandler(final Env env, final Callback callback) {
-    file.dataHandler(new Handler<org.vertx.java.core.buffer.Buffer>() {
-      public void handle(org.vertx.java.core.buffer.Buffer data) {
-        callback.call(env, env.wrapJava(data));
-      }
-    });
+  public AsyncFile dataHandler(final Env env, final Callback handler) {
+    file.dataHandler(new Handler<Buffer>(env, handler));
     return this;
   }
 
@@ -80,24 +64,16 @@ public final class AsyncFile {
   /**
    * Sets the file end handler.
    */
-  public AsyncFile endHandler(final Env env, final Callback callback) {
-    file.endHandler(new Handler<Void>() {
-      public void handle(Void result) {
-        callback.toCallable(env, false).call(env, env.wrapJava(result));
-      }
-    });
+  public AsyncFile endHandler(final Env env, final Callback handler) {
+    file.endHandler(new Handler<Void>(env, handler));
     return this;
   }
 
   /**
    * Sets the file drain handler.
    */
-  public AsyncFile drainHandler(final Env env, final Callback callback) {
-    file.drainHandler(new Handler<Void>() {
-      public void handle(Void result) {
-        callback.toCallable(env, false).call(env, env.wrapJava(result));
-      }
-    });
+  public AsyncFile drainHandler(final Env env, final Callback handler) {
+    file.drainHandler(new Handler<Void>(env, handler));
     return this;
   }
 
@@ -121,12 +97,7 @@ public final class AsyncFile {
    */
   public AsyncFile flush(final Env env, @Optional final Callback handler) {
     if (handler != null && !handler.isDefault()) {
-      file.flush(new AsyncResultHandler<Void>() {
-        @Override
-        public void handle(AsyncResult<Void> result) {
-          handler.call(env, env.wrapJava(result));
-        }
-      });
+      file.flush(new Handler<AsyncResult<Void>>(env, handler));
     }
     else {
       file.flush();
@@ -139,12 +110,7 @@ public final class AsyncFile {
    */
   public void close(final Env env, @Optional final Callback handler) {
     if (handler != null && !handler.isDefault()) {
-      file.flush(new AsyncResultHandler<Void>() {
-        @Override
-        public void handle(AsyncResult<Void> result) {
-          handler.call(env, env.wrapJava(result));
-        }
-      });
+      file.flush(new Handler<AsyncResult<Void>>(env, handler));
     }
     else {
       file.flush();
@@ -154,12 +120,8 @@ public final class AsyncFile {
   /**
    * Sets the socket exception handler callback.
    */
-  public AsyncFile exceptionHandler(final Env env, final Callback callback) {
-    file.exceptionHandler(new Handler<Throwable>() {
-      public void handle(Throwable e) {
-        callback.toCallable(env, false).call(env, env.wrapJava(e));
-      }
-    });
+  public AsyncFile exceptionHandler(final Env env, final Callback handler) {
+    file.exceptionHandler(new Handler<Throwable>(env, handler));
     return this;
   }
 

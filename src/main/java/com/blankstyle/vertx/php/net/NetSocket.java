@@ -1,6 +1,6 @@
 package com.blankstyle.vertx.php.net;
 
-import org.vertx.java.core.Handler;
+import com.blankstyle.vertx.php.Handler;
 
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Callback;
@@ -37,11 +37,7 @@ public class NetSocket {
    * Sets the socket data handler.
    */
   public NetSocket dataHandler(final Env env, final Callback handler) {
-    socket.dataHandler(new Handler<org.vertx.java.core.buffer.Buffer>() {
-      public void handle(org.vertx.java.core.buffer.Buffer data) {
-        handler.call(env, env.wrapJava(data));
-      }
-    });
+    socket.dataHandler(new Handler<org.vertx.java.core.buffer.Buffer>(env, handler));
     return this;
   }
 
@@ -65,11 +61,7 @@ public class NetSocket {
    * Sets the socket end handler.
    */
   public NetSocket endHandler(final Env env, final Callback handler) {
-    socket.endHandler(new Handler<Void>() {
-      public void handle(Void result) {
-        handler.toCallable(env, false).call(env, env.wrapJava(result));
-      }
-    });
+    socket.endHandler(new Handler<Void>(env, handler));
     return this;
   }
 
@@ -77,11 +69,7 @@ public class NetSocket {
    * Sets the socket drain handler.
    */
   public NetSocket drainHandler(final Env env, final Callback handler) {
-    socket.drainHandler(new Handler<Void>() {
-      public void handle(Void result) {
-        handler.toCallable(env, false).call(env, env.wrapJava(result));
-      }
-    });
+    socket.drainHandler(new Handler<Void>(env, handler));
     return this;
   }
 
@@ -119,11 +107,7 @@ public class NetSocket {
    * Sets the socket close handler.
    */
   public void closeHandler(final Env env, final Callback handler) {
-    socket.closeHandler(new Handler<Void>() {
-      public void handle(Void result) {
-        handler.toCallable(env, false).call(env, env.wrapJava(result));
-      }
-    });
+    socket.closeHandler(new Handler<Void>(env, handler));
   }
 
   /**
@@ -137,11 +121,7 @@ public class NetSocket {
    * Sets the socket exception handler callback.
    */
   public NetSocket exceptionHandler(final Env env, final Callback handler) {
-    socket.exceptionHandler(new Handler<Throwable>() {
-      public void handle(Throwable e) {
-        handler.toCallable(env, false).call(env, env.wrapJava(e));
-      }
-    });
+    socket.exceptionHandler(new Handler<Throwable>(env, handler));
     return this;
   }
 

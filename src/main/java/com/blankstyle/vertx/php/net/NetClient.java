@@ -1,8 +1,9 @@
 package com.blankstyle.vertx.php.net;
 
 import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.AsyncResultHandler;
 
+import com.blankstyle.vertx.php.ArgumentModifier;
+import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.TCPClient;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.Callback;
@@ -24,20 +25,56 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
   /**
    * Connects to a server.
    */
-  public NetClient connect(final Env env, final NumberValue port, @Optional final StringValue host, final Callback handler) {
+  public NetClient connect(final Env env, final NumberValue port, @Optional final StringValue host, @Optional final Callback handler) {
     if (host != null && !host.isDefault()) {
-      client.connect(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.net.NetSocket>() {
-        public void handle(AsyncResult<org.vertx.java.core.net.NetSocket> socket) {
-          handler.call(env, env.wrapJava(new NetSocket(socket.result())));
+      client.connect(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetSocket>, AsyncResult<NetSocket>>() {
+        @Override
+        public AsyncResult<NetSocket> modify(final AsyncResult<org.vertx.java.core.net.NetSocket> socket) {
+          return new AsyncResult<NetSocket>() {
+            @Override
+            public NetSocket result() {
+              return new NetSocket(socket.result());
+            }
+            @Override
+            public Throwable cause() {
+              return socket.cause();
+            }
+            @Override
+            public boolean succeeded() {
+              return socket.succeeded();
+            }
+            @Override
+            public boolean failed() {
+              return socket.failed();
+            }
+          };
         }
-      });
+      }));
     }
-    else if (handler != null && !handler.isDefault()) {
-      client.connect(port.toInt(), new AsyncResultHandler<org.vertx.java.core.net.NetSocket>() {
-        public void handle(AsyncResult<org.vertx.java.core.net.NetSocket> socket) {
-          handler.call(env, env.wrapJava(new NetSocket(socket.result())));
+    else {
+      client.connect(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetSocket>, AsyncResult<NetSocket>>() {
+        @Override
+        public AsyncResult<NetSocket> modify(final AsyncResult<org.vertx.java.core.net.NetSocket> socket) {
+          return new AsyncResult<NetSocket>() {
+            @Override
+            public NetSocket result() {
+              return new NetSocket(socket.result());
+            }
+            @Override
+            public Throwable cause() {
+              return socket.cause();
+            }
+            @Override
+            public boolean succeeded() {
+              return socket.succeeded();
+            }
+            @Override
+            public boolean failed() {
+              return socket.failed();
+            }
+          };
         }
-      });
+      }));
     }
     return this;
   }

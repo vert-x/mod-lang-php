@@ -1,6 +1,5 @@
 package com.blankstyle.vertx.php;
 
-import org.vertx.java.core.Handler;
 import org.vertx.java.core.shareddata.SharedData;
 
 import com.blankstyle.vertx.php.eventbus.EventBus;
@@ -9,12 +8,11 @@ import com.blankstyle.vertx.php.http.HttpClient;
 import com.blankstyle.vertx.php.http.HttpServer;
 import com.blankstyle.vertx.php.net.NetClient;
 import com.blankstyle.vertx.php.net.NetServer;
+
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.LongValue;
-import com.caucho.quercus.env.Value;
-import com.caucho.quercus.lib.JavaModule;
 
 /**
  * A static Vertx instance access class.
@@ -120,12 +118,7 @@ public final class Vertx {
    * Sets a timed handler.
    */
   public static LongValue setTimer(final Env env, LongValue delay, final Callback handler) {
-    Vertx.instance.setTimer(delay.toLong(), new Handler<Long>() {
-      @Override
-      public void handle(Long result) {
-        handler.call(env, env.wrapJava(result));
-      }
-    });
+    Vertx.instance.setTimer(delay.toLong(), new Handler<Long>(env, handler));
     return delay;
   }
 
@@ -133,12 +126,7 @@ public final class Vertx {
    * Sets a periodic handler.
    */
   public static LongValue setPeriodic(final Env env, LongValue delay, final Callback handler) {
-    Vertx.instance.setPeriodic(delay.toLong(), new Handler<Long>() {
-      @Override
-      public void handle(Long result) {
-        handler.call(env, env.wrapJava(result));
-      }
-    });
+    Vertx.instance.setPeriodic(delay.toLong(), new Handler<Long>(env, handler));
     return delay;
   }
 

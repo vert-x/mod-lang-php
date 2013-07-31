@@ -1,7 +1,5 @@
 package com.blankstyle.vertx.php;
 
-import org.vertx.java.core.Handler;
-
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 
@@ -20,11 +18,7 @@ public final class Context {
    * @param callback A callable PHP function, method, or closure.
    */
   public void runOnContext(final Env env, final Callback handler) {
-    context.runOnContext(new Handler<Void>() {
-      public void handle(Void result) {
-        handler.call(env, env.wrapJava(result));
-      }
-    });
+    context.runOnContext(new Handler<Void>(env, handler));
   }
 
 }

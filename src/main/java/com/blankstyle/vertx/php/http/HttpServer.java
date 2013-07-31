@@ -1,12 +1,13 @@
 package com.blankstyle.vertx.php.http;
 
 import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.AsyncResultHandler;
-import org.vertx.java.core.Handler;
 import org.vertx.java.core.http.HttpServerRequest;
 import org.vertx.java.core.http.ServerWebSocket;
 
+import com.blankstyle.vertx.php.ArgumentModifier;
+import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.TCPServer;
+import com.blankstyle.vertx.php.net.NetServer;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
@@ -40,22 +41,58 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
   public HttpServer listen(final Env env, final NumberValue port, @Optional final Value host, @Optional final Callback handler) {
     if (host != null && !host.isDefault()) {
       if (handler != null && !handler.isDefault()) {
-        server.listen(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.http.HttpServer>() {
-          public void handle(AsyncResult<org.vertx.java.core.http.HttpServer> result) {
-            handler.call(env, env.wrapJava(result));
+        server.listen(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.http.HttpServer>>(env, handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.http.HttpServer>, AsyncResult<HttpServer>>() {
+          @Override
+          public AsyncResult<HttpServer> modify(final AsyncResult<org.vertx.java.core.http.HttpServer> server) {
+            return new AsyncResult<HttpServer>() {
+              @Override
+              public HttpServer result() {
+                return new HttpServer(server.result());
+              }
+              @Override
+              public Throwable cause() {
+                return server.cause();
+              }
+              @Override
+              public boolean succeeded() {
+                return server.succeeded();
+              }
+              @Override
+              public boolean failed() {
+                return server.failed();
+              }
+            };
           }
-        });
+        }));
       }
       else {
         server.listen(port.toInt(), host.toString());
       }
     }
     else if (handler != null && !handler.isDefault()) {
-      server.listen(port.toInt(), new AsyncResultHandler<org.vertx.java.core.http.HttpServer>() {
-        public void handle(AsyncResult<org.vertx.java.core.http.HttpServer> result) {
-          handler.call(env, env.wrapJava(result));
+      server.listen(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.http.HttpServer>>(env, handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.http.HttpServer>, AsyncResult<HttpServer>>() {
+        @Override
+        public AsyncResult<HttpServer> modify(final AsyncResult<org.vertx.java.core.http.HttpServer> server) {
+          return new AsyncResult<HttpServer>() {
+            @Override
+            public HttpServer result() {
+              return new HttpServer(server.result());
+            }
+            @Override
+            public Throwable cause() {
+              return server.cause();
+            }
+            @Override
+            public boolean succeeded() {
+              return server.succeeded();
+            }
+            @Override
+            public boolean failed() {
+              return server.failed();
+            }
+          };
         }
-      });
+      }));
     }
     else {
       server.listen(port.toInt());
@@ -66,16 +103,12 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
   /**
    * Creates or gets the server request handler.
    */
-  public Value requestHandler(final Env env, @Optional final Value handler) {
+  public Value requestHandler(final Env env, @Optional final Callback handler) {
     if (handler != null && !handler.isDefault()) {
       if (!handler.isCallable(env, true, null)) {
         env.error("Argument to HttpServer::requestHandler() must be callable.");
       }
-      server.requestHandler(new Handler<HttpServerRequest>() {
-        public void handle(HttpServerRequest request) {
-          handler.call(env, env.wrapJava(request));
-        }
-      });
+      server.requestHandler(new Handler<HttpServerRequest>(env, handler));
       return env.wrapJava(this);
     }
     else {
@@ -86,16 +119,12 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
   /**
    * Creates or gets the server websocket handler.
    */
-  public Value websocketHandler(final Env env, @Optional final Value handler) {
+  public Value websocketHandler(final Env env, @Optional final Callback handler) {
     if (handler != null && !handler.isDefault()) {
       if (!handler.isCallable(env, true, null)) {
         env.error("Argument to HttpServer::websocketHandler() must be callable.");
       }
-      server.websocketHandler(new Handler<ServerWebSocket>() {
-        public void handle(ServerWebSocket socket) {
-          handler.call(env, env.wrapJava(socket));
-        }
-      });
+      server.websocketHandler(new Handler<ServerWebSocket>(env, handler));
       return env.wrapJava(this);
     }
     else {
