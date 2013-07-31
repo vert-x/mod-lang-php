@@ -6,9 +6,10 @@ import org.vertx.java.core.logging.Logger;
 
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.ArrayValue;
+import com.caucho.quercus.env.ArrayValueImpl;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.Value;
+import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.StringValue;
 
 import java.util.HashMap;
@@ -34,18 +35,20 @@ public final class Container {
    * Deploys a module.
    */
   @SuppressWarnings("unchecked")
-  public static void deployModule(final Env env, final StringValue moduleName, @Optional final ArrayValue config, @Optional final Value instances, @Optional final Callback handler) {
-    if (instances.isDefault() && config.isDefault() && handler.isDefault()) {
-      Container.instance.deployModule(moduleName.toJavaString());
+  public static void deployModule(final Env env, final StringValue moduleName, @Optional final ArrayValue config, @Optional("1") final NumberValue instances, @Optional final Callback handler) {
+    boolean hasConfig = config != null && !config.isDefault();
+    boolean hasHandler = handler != null && !handler.isDefault();
+    if (hasConfig && hasHandler) {
+      Container.instance.deployModule(moduleName.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(), new Handler<AsyncResult<String>>(env, handler));
     }
-    else if (!instances.isDefault() && config.isDefault() && handler.isDefault()) {
-      Container.instance.deployModule(moduleName.toJavaString(), instances.toJavaInteger());
+    else if (hasConfig) {
+      Container.instance.deployModule(moduleName.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
     }
-    else if (!instances.isDefault() && config.isDefault() && !handler.isDefault()) {
-      Container.instance.deployModule(moduleName.toJavaString(), instances.toJavaInteger(), new Handler<AsyncResult<String>>(env, handler));
+    else if (hasHandler) {
+      Container.instance.deployModule(moduleName.toString(), instances.toInt(), new Handler<AsyncResult<String>>(env, handler));
     }
-    else if (!instances.isDefault() && !config.isDefault() && !handler.isDefault()) {
-      Container.instance.deployModule(moduleName.toJavaString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toJavaInteger());
+    else {
+      Container.instance.deployModule(moduleName.toString(), instances.toInt());
     }
   }
 
@@ -65,18 +68,20 @@ public final class Container {
    * Deploys a verticle.
    */
   @SuppressWarnings("unchecked")
-  public static void deployVerticle(final Env env, final StringValue moduleName, @Optional final ArrayValue config, @Optional final Value instances, @Optional final Callback handler) {
-    if (instances.isDefault() && config.isDefault() && handler.isDefault()) {
-      Container.instance.deployVerticle(moduleName.toJavaString());
+  public static void deployVerticle(final Env env, final StringValue main, @Optional final ArrayValue config, @Optional("1") final NumberValue instances, @Optional final Callback handler) {
+    boolean hasConfig = config != null && !config.isDefault();
+    boolean hasHandler = handler != null && !handler.isDefault();
+    if (hasConfig && hasHandler) {
+      Container.instance.deployVerticle(main.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(), new Handler<AsyncResult<String>>(env, handler));
     }
-    else if (!instances.isDefault() && config.isDefault() && handler.isDefault()) {
-      Container.instance.deployVerticle(moduleName.toJavaString(), instances.toJavaInteger());
+    else if (hasConfig) {
+      Container.instance.deployVerticle(main.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
     }
-    else if (!instances.isDefault() && config.isDefault() && !handler.isDefault()) {
-      Container.instance.deployVerticle(moduleName.toJavaString(), instances.toJavaInteger(), new Handler<AsyncResult<String>>(env, handler));
+    else if (hasHandler) {
+      Container.instance.deployVerticle(main.toString(), instances.toInt(), new Handler<AsyncResult<String>>(env, handler));
     }
-    else if (!instances.isDefault() && !config.isDefault() && !handler.isDefault()) {
-      Container.instance.deployVerticle(moduleName.toJavaString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toJavaInteger());
+    else {
+      Container.instance.deployVerticle(main.toString(), instances.toInt());
     }
   }
 
@@ -93,26 +98,29 @@ public final class Container {
   }
 
   /**
-   * Deploys a worker verticle.
+   * Deploys a verticle.
    */
   @SuppressWarnings("unchecked")
-  public static void deployWorkerVerticle(final Env env, final StringValue moduleName, @Optional final ArrayValue config, @Optional final Value instances, @Optional final Callback handler) {
-    if (instances.isDefault() && config.isDefault() && handler.isDefault()) {
-      Container.instance.deployWorkerVerticle(moduleName.toJavaString());
+  public static void deployWorkerVerticle(final Env env, final StringValue main, @Optional final ArrayValue config, @Optional("1") final NumberValue instances) {
+    boolean hasConfig = config != null && !config.isDefault();
+    if (hasConfig) {
+      Container.instance.deployWorkerVerticle(main.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
     }
-    else if (!instances.isDefault() && config.isDefault() && handler.isDefault()) {
-      Container.instance.deployWorkerVerticle(moduleName.toJavaString(), instances.toJavaInteger());
-    }
-    else if (!instances.isDefault() && !config.isDefault() && !handler.isDefault()) {
-      Container.instance.deployWorkerVerticle(moduleName.toJavaString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toJavaInteger());
+    else {
+      Container.instance.deployWorkerVerticle(main.toString(), instances.toInt());
     }
   }
 
   /**
    * Returns the current Vertx container environment.
    */
-  public static Map<String, String> env(Env env) {
-    return Container.instance.env();
+  public static ArrayValue env(Env env) {
+    Map<String, String> map = Container.instance.env();
+    ArrayValue array = new ArrayValueImpl();
+    for (Map.Entry<String, String> entry : map.entrySet()) {
+      array.append(env.createString(entry.getKey()), env.createString(entry.getValue()));
+    }
+    return array;
   }
 
   /**
@@ -132,8 +140,13 @@ public final class Container {
   /**
    * Returns the Vertx configuration.
    */
-  public static JsonObject config(Env env) {
-    return Container.instance.config();
+  public static ArrayValue config(Env env) {
+    JsonObject config = Container.instance.config();
+    ArrayValue array = new ArrayValueImpl();
+    for (Map.Entry<String, Object> entry : config.toMap().entrySet()) {
+      array.append(env.createString(entry.getKey()), env.wrapJava(entry.getValue()));
+    }
+    return array;
   }
 
 }

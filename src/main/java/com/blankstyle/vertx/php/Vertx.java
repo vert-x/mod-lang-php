@@ -1,5 +1,6 @@
 package com.blankstyle.vertx.php;
 
+import org.vertx.java.core.logging.Logger;
 import org.vertx.java.core.shareddata.SharedData;
 
 import com.blankstyle.vertx.php.eventbus.EventBus;
@@ -8,7 +9,6 @@ import com.blankstyle.vertx.php.http.HttpClient;
 import com.blankstyle.vertx.php.http.HttpServer;
 import com.blankstyle.vertx.php.net.NetClient;
 import com.blankstyle.vertx.php.net.NetServer;
-
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
@@ -30,6 +30,13 @@ public final class Vertx {
     if (Vertx.instance == null) {
       Vertx.instance = instance;
     }
+  }
+
+  /**
+   * Allows the Vert.x logger to be accessed via the static Vertx PHP class.
+   */
+  public static Logger logger(Env env) {
+    return Container.logger();
   }
 
   /**
