@@ -26,9 +26,21 @@ public final class EventBus {
   /**
    * Registers a new event handler.
    */
-  @SuppressWarnings("rawtypes")
-  public EventBus registerHandler(final Env env, final StringValue address, final Callback handler) {
-    eventBus.registerHandler(address.toJavaString(), new Handler<Message>(env, handler));
+  public EventBus registerHandler(final Env env, final StringValue address, final Callback handler, @Optional final Callback resultHandler) {
+    if (resultHandler != null && !resultHandler.isDefault()) {
+      eventBus.registerHandler(address.toString(), new Handler<Message<?>>(env, handler), new Handler<AsyncResult<Void>>(env, resultHandler));
+    }
+    else {
+      eventBus.registerHandler(address.toString(), new Handler<Message<?>>(env, handler));
+    }
+    return this;
+  }
+
+  /**
+   * Registers a new local event handler.
+   */
+  public EventBus registerLocalHandler(final Env env, final StringValue address, final Callback handler) {
+    eventBus.registerLocalHandler(address.toString(), new Handler<Message<?>>(env, handler));
     return this;
   }
 
@@ -39,34 +51,34 @@ public final class EventBus {
   public EventBus send(final Env env, final StringValue address, final Value message, @Optional final Callback handler) {
     if (message.isBoolean()) {
       if (handler != null && !handler.isDefault()) {
-        eventBus.send(address.toJavaString(), message.toJavaBoolean(), new Handler<Message>(env, handler));
+        eventBus.send(address.toString(), message.toBoolean(), new Handler<Message>(env, handler));
       }
       else {
-        eventBus.send(address.toJavaString(), message.toJavaBoolean());
+        eventBus.send(address.toString(), message.toBoolean());
       }
     }
     else if (message.isString()) {
       if (handler != null && !handler.isDefault()) {
-        eventBus.send(address.toJavaString(), message.toJavaString(), new Handler<Message>(env, handler));
+        eventBus.send(address.toString(), message.toString(), new Handler<Message>(env, handler));
       }
       else {
-        eventBus.send(address.toJavaString(), message.toJavaString());
+        eventBus.send(address.toString(), message.toString());
       }
     }
     else if (message.isNumeric()) {
       if (handler != null && !handler.isDefault()) {
-        eventBus.send(address.toJavaString(), message.toJavaInteger(), new Handler<Message>(env, handler));
+        eventBus.send(address.toString(), message.toInt(), new Handler<Message>(env, handler));
       }
       else {
-        eventBus.send(address.toJavaString(), message.toJavaInteger());
+        eventBus.send(address.toString(), message.toInt());
       }
     }
     else if (message.isArray()) {
       if (handler != null && !handler.isDefault()) {
-        eventBus.send(address.toJavaString(), new JsonObject(JsonModule.json_encode(env, message, 0).toJavaString()), new Handler<Message>(env, handler));
+        eventBus.send(address.toString(), new JsonObject(JsonModule.json_encode(env, message, 0).toString()), new Handler<Message>(env, handler));
       }
       else {
-        eventBus.send(address.toJavaString(), new JsonObject(JsonModule.json_encode(env, message, 0).toJavaString()));
+        eventBus.send(address.toString(), new JsonObject(JsonModule.json_encode(env, message, 0).toString()));
       }
     }
     return this;
@@ -77,16 +89,16 @@ public final class EventBus {
    */
   public EventBus publish(final Env env, final Value address, final Value message) {
     if (message.isBoolean()) {
-      eventBus.send(address.toJavaString(), message.toJavaBoolean());
+      eventBus.send(address.toString(), message.toBoolean());
     }
     else if (message.isString()) {
-      eventBus.send(address.toJavaString(), message.toJavaString());
+      eventBus.send(address.toString(), message.toString());
     }
     else if (message.isNumeric()) {
-      eventBus.send(address.toJavaString(), message.toJavaInteger());
+      eventBus.send(address.toString(), message.toInt());
     }
     else if (message.isArray()) {
-      eventBus.send(address.toJavaString(), new JsonObject(JsonModule.json_encode(env, message, 0).toJavaString()));
+      eventBus.send(address.toString(), new JsonObject(JsonModule.json_encode(env, message, 0).toString()));
     }
     return this;
   }
