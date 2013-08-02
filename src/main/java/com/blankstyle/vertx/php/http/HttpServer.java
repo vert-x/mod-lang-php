@@ -1,7 +1,6 @@
 package com.blankstyle.vertx.php.http;
 
 import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.http.HttpServerRequest;
 import org.vertx.java.core.http.ServerWebSocket;
 
 import com.blankstyle.vertx.php.ArgumentModifier;
@@ -111,7 +110,12 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
       if (!handler.isCallable(env, true, null)) {
         env.error("Argument to HttpServer::requestHandler() must be callable.");
       }
-      server.requestHandler(new Handler<HttpServerRequest>(env, handler));
+      server.requestHandler(new Handler<org.vertx.java.core.http.HttpServerRequest>(env, handler, new ArgumentModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+        @Override
+        public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+          return new HttpServerRequest(request);
+        }
+      }));
       return env.wrapJava(this);
     }
     else {

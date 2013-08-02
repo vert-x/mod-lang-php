@@ -26,6 +26,10 @@ public class HttpClientResponse implements ReadStream, ExceptionSupport {
     this.response = response;
   }
 
+  public Value __getField(Env env, Value name) {
+    return env.wrapJava(this).callMethod(env, env.createString(name.toString()));
+  }
+
   @Override
   public Value pause(Env env) {
     response.pause();

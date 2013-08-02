@@ -29,6 +29,10 @@ public class HttpServerRequest implements ReadStream {
     this.request = request;
   }
 
+  public Value __getField(Env env, Value name) {
+    return env.wrapJava(this).callMethod(env, env.createString(name.toString()));
+  }
+
   public Value headers(Env env) {
     return env.wrapJava(request.headers());
   }
@@ -58,7 +62,7 @@ public class HttpServerRequest implements ReadStream {
   }
 
   public Value response(Env env) {
-    return env.wrapJava(request.response());
+    return env.wrapJava(new HttpServerResponse(request.response()));
   }
 
   public Value version(Env env) {

@@ -1,9 +1,8 @@
 package com.blankstyle.vertx.php.http;
 
-import org.vertx.java.core.http.HttpClientResponse;
-
 import com.blankstyle.vertx.php.TCPClient;
 import com.blankstyle.vertx.php.Handler;
+import com.blankstyle.vertx.php.ArgumentModifier;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.NumberValue;
@@ -119,7 +118,7 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Connects to the server.
    */
   public HttpClient connect(final Env env, StringValue uri, final Callback handler) {
-    client.connect(uri.toString(), new Handler<HttpClientResponse>(env, handler));
+    client.connect(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -127,7 +126,7 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a request.
    */
   public HttpClient request(final Env env, StringValue method, StringValue uri, final Callback handler) {
-    client.request(method.toString(), uri.toString(), new Handler<HttpClientResponse>(env, handler));
+    client.request(method.toString(), uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -135,7 +134,7 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a GET request.
    */
   public HttpClient get(final Env env, StringValue uri, final Callback handler) {
-    client.get(uri.toString(), new Handler<HttpClientResponse>(env, handler));
+    client.get(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -143,7 +142,7 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a GET request.
    */
   public HttpClient getNow(final Env env, StringValue uri, final Callback handler) {
-    client.getNow(uri.toString(), new Handler<HttpClientResponse>(env, handler));
+    client.getNow(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -151,7 +150,7 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a PUT request.
    */
   public HttpClient put(final Env env, StringValue uri, final Callback handler) {
-    client.put(uri.toString(), new Handler<HttpClientResponse>(env, handler));
+    client.put(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -159,7 +158,7 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a POST request.
    */
   public HttpClient post(final Env env, StringValue uri, final Callback handler) {
-    client.post(uri.toString(), new Handler<HttpClientResponse>(env, handler));
+    client.post(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -167,7 +166,7 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a DELETE request.
    */
   public HttpClient delete(final Env env, StringValue uri, final Callback handler) {
-    client.delete(uri.toString(), new Handler<HttpClientResponse>(env, handler));
+    client.delete(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -175,7 +174,7 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a HEAD request.
    */
   public HttpClient head(final Env env, StringValue uri, final Callback handler) {
-    client.head(uri.toString(), new Handler<HttpClientResponse>(env, handler));
+    client.head(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -183,7 +182,7 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a PATCH request.
    */
   public HttpClient patch(final Env env, StringValue uri, final Callback handler) {
-    client.patch(uri.toString(), new Handler<HttpClientResponse>(env, handler));
+    client.patch(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -191,7 +190,7 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a TRACE request.
    */
   public HttpClient trace(final Env env, StringValue uri, final Callback handler) {
-    client.trace(uri.toString(), new Handler<HttpClientResponse>(env, handler));
+    client.trace(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -199,8 +198,20 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes an OPTIONS request.
    */
   public HttpClient options(final Env env, StringValue uri, final Callback handler) {
-    client.options(uri.toString(), new Handler<HttpClientResponse>(env, handler));
+    client.options(uri.toString(), createResponseHandler(env, handler));
     return this;
+  }
+
+  /**
+   * Creates a client response handler.
+   */
+  private Handler<org.vertx.java.core.http.HttpClientResponse> createResponseHandler(Env env, Callback handler) {
+    return new Handler<org.vertx.java.core.http.HttpClientResponse>(env, handler, new ArgumentModifier<org.vertx.java.core.http.HttpClientResponse, HttpClientResponse>() {
+      @Override
+      public HttpClientResponse modify(org.vertx.java.core.http.HttpClientResponse response) {
+        return new HttpClientResponse(response);
+      }
+    });
   }
 
   /**
