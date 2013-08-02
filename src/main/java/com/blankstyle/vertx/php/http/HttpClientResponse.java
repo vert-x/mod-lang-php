@@ -2,11 +2,13 @@ package com.blankstyle.vertx.php.http;
 
 import org.vertx.java.core.buffer.Buffer;
 
+import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.ReadStream;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
+import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
 
 /**
@@ -14,7 +16,7 @@ import com.caucho.quercus.env.Value;
  *
  * @author Jordan Halterman
  */
-public class HttpClientResponse implements ReadStream<HttpClientResponse>, ExceptionSupport<HttpClientResponse> {
+public class HttpClientResponse implements ReadStream<HttpClientResponse>, ExceptionSupport<HttpClientResponse>, Gettable {
 
   private org.vertx.java.core.http.HttpClientResponse response;
 
@@ -26,8 +28,9 @@ public class HttpClientResponse implements ReadStream<HttpClientResponse>, Excep
     this.response = response;
   }
 
-  public Value __getField(Env env, Value name) {
-    return env.wrapJava(this).callMethod(env, env.createString(name.toString()));
+  @Override
+  public Value __getField(Env env, StringValue name) {
+    return env.wrapJava(this).callMethod(env, name);
   }
 
   @Override

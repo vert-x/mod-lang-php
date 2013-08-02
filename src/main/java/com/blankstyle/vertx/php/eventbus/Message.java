@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.vertx.java.core.json.JsonObject;
 
 import com.blankstyle.vertx.php.ArgumentModifier;
+import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.ArrayValue;
@@ -16,12 +17,17 @@ import com.caucho.quercus.env.StringValue;
 /**
  * A PHP compatible implementation of the Vert.x message.
  */
-public class Message<T> {
+public class Message<T> implements Gettable {
 
   private org.vertx.java.core.eventbus.Message<T> message;
 
   public Message(org.vertx.java.core.eventbus.Message<T> message) {
     this.message = message;
+  }
+
+  @Override
+  public Value __getField(Env env, StringValue name) {
+    return env.wrapJava(this).callMethod(env, name);
   }
 
   /**

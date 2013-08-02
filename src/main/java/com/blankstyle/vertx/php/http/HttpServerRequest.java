@@ -5,11 +5,13 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import org.vertx.java.core.buffer.Buffer;
 
 import com.blankstyle.vertx.php.ArgumentModifier;
+import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ReadStream;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
+import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
 
 /**
@@ -17,7 +19,7 @@ import com.caucho.quercus.env.Value;
  *
  * @author Jordan Halterman
  */
-public class HttpServerRequest implements ReadStream<HttpServerRequest> {
+public class HttpServerRequest implements ReadStream<HttpServerRequest>, Gettable {
 
   private org.vertx.java.core.http.HttpServerRequest request;
 
@@ -29,8 +31,9 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest> {
     this.request = request;
   }
 
-  public Value __getField(Env env, Value name) {
-    return env.wrapJava(this).callMethod(env, env.createString(name.toString()));
+  @Override
+  public Value __getField(Env env, StringValue name) {
+    return env.wrapJava(this).callMethod(env, name);
   }
 
   public Value headers(Env env) {

@@ -26,14 +26,17 @@ public final class EventBus {
   /**
    * Registers a new event handler.
    */
-  public EventBus registerHandler(final Env env, final StringValue address, final Callback handler, @Optional final Callback resultHandler) {
-    if (resultHandler != null && !resultHandler.isDefault()) {
+  public EventBus registerHandler(Env env, final StringValue address, Callback handler, @Optional Value resultHandler) {
+    if (resultHandler != null && !resultHandler.isNull()) {
+      if (!resultHandler.isCallable(env, false, null)) {
+        env.error("Handler argument to EventBus::registerHandler() must be callable.");
+      }
       eventBus.registerHandler(address.toString(), new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, handler, new ArgumentModifier<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
         @Override
         public Message<Object> modify(org.vertx.java.core.eventbus.Message<Object> message) {
           return new Message<Object>(message);
         }
-      }), new Handler<AsyncResult<Void>>(env, resultHandler));
+      }), new Handler<AsyncResult<Void>>(env, (Callback) resultHandler));
     }
     else {
       eventBus.registerHandler(address.toString(), new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, handler, new ArgumentModifier<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
@@ -49,21 +52,27 @@ public final class EventBus {
   /**
    * Registers a new local event handler.
    */
-  public EventBus registerLocalHandler(final Env env, final StringValue address, final Callback handler) {
-    eventBus.registerLocalHandler(address.toString(), new Handler<org.vertx.java.core.eventbus.Message<?>>(env, handler));
+  public EventBus registerLocalHandler(Env env, StringValue address, Value handler) {
+    if (handler == null || handler.isNull() || !handler.isCallable(env, false, null)) {
+      env.error("Handler argument to EventBus::registerLocalHandler() must be callable.");
+    }
+    eventBus.registerLocalHandler(address.toString(), new Handler<org.vertx.java.core.eventbus.Message<?>>(env, (Callback) handler));
     return this;
   }
 
   /**
    * Sends a message on the bus.
    */
-  public EventBus send(final Env env, final StringValue address, final Value message, @Optional final Callback handler) {
+  public EventBus send(Env env, StringValue address, final Value message, @Optional Value handler) {
     boolean hasHandler = false;
     Handler<org.vertx.java.core.eventbus.Message<Object>> sendHandler = null;
 
-    if (handler != null && !handler.isDefault()) {
+    if (handler != null && !handler.isNull()) {
+      if (!handler.isCallable(env, false, null)) {
+        env.error("Handler argument to EventBus::send() must be callable.");
+      }
       hasHandler = true;
-      sendHandler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, handler, new ArgumentModifier<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
+      sendHandler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, (Callback) handler, new ArgumentModifier<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
         @Override
         public Message<Object> modify(org.vertx.java.core.eventbus.Message<Object> arg) {
           return new Message<Object>(arg);
@@ -109,7 +118,7 @@ public final class EventBus {
   /**
    * Publishes a message to the event bus.
    */
-  public EventBus publish(final Env env, final Value address, final Value message) {
+  public EventBus publish(Env env, Value address, Value message) {
     if (message.isBoolean()) {
       eventBus.send(address.toString(), message.toBoolean());
     }
@@ -128,8 +137,11 @@ public final class EventBus {
   /**
    * Closes the event bus.
    */
-  public void close(final Env env, final Callback handler) {
-    eventBus.close(new Handler<AsyncResult<Void>>(env, handler));
+  public void close(Env env, Value handler) {
+    if (handler == null || handler.isNull() || !handler.isCallable(env, false, null)) {
+      env.error("Handler argument to EventBus::close() must be callable.");
+    }
+    eventBus.close(new Handler<AsyncResult<Void>>(env, (Callback) handler));
   }
 
 }

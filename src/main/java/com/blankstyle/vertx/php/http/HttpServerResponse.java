@@ -1,5 +1,6 @@
 package com.blankstyle.vertx.php.http;
 
+import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.WriteStream;
@@ -16,7 +17,7 @@ import com.caucho.quercus.env.Value;
  *
  * @author Jordan Halterman
  */
-public class HttpServerResponse implements WriteStream<HttpServerResponse>, ExceptionSupport<HttpServerResponse> {
+public class HttpServerResponse implements WriteStream<HttpServerResponse>, ExceptionSupport<HttpServerResponse>, Gettable {
 
   private org.vertx.java.core.http.HttpServerResponse response;
 
@@ -28,17 +29,22 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
     this.response = response;
   }
 
+  @Override
+  public Value __getField(Env env, StringValue name) {
+    return env.wrapJava(this).callMethod(env, name);
+  }
+
   /**
    * Returns the response status code.
    */
-  public Value getStatusCode(Env env) {
+  public Value statusCode(Env env) {
     return env.wrapJava(response.getStatusCode());
   }
 
   /**
    * Sets the response status code.
    */
-  public Value setStatusCode(Env env, NumberValue statusCode) {
+  public Value statusCode(Env env, NumberValue statusCode) {
     response.setStatusCode(statusCode.toInt());
     return env.wrapJava(this);
   }
@@ -46,14 +52,14 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
   /**
    * Returns the response status message.
    */
-  public Value getStatusMessage(Env env) {
+  public Value statusMessage(Env env) {
     return env.createString(response.getStatusMessage());
   }
 
   /**
    * Sets the response status message.
    */
-  public HttpServerResponse setStatusMessage(Env env, StringValue message) {
+  public HttpServerResponse statusMessage(Env env, StringValue message) {
     response.setStatusMessage(message.toString());
     return this;
   }

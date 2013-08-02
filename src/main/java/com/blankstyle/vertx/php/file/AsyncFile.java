@@ -4,16 +4,20 @@ import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.buffer.Buffer;
 
 import com.blankstyle.vertx.php.Handler;
+import com.blankstyle.vertx.php.streams.ReadStream;
+import com.blankstyle.vertx.php.streams.WriteStream;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
+import com.caucho.quercus.env.NumberValue;
+import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x AsyncFile.
  */
-public final class AsyncFile {
+public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<AsyncFile> {
 
   private org.vertx.java.core.file.AsyncFile file;
 
@@ -24,24 +28,40 @@ public final class AsyncFile {
   /**
    * Reads from the file.
    */
-  public AsyncFile read(final Env env, Buffer buffer, int offset, int position, int length, final Callback handler) {
-    file.read(buffer, offset, position, length, new Handler<AsyncResult<Buffer>>(env, handler));
+  public AsyncFile read(Env env, Buffer buffer, NumberValue offset, NumberValue position, NumberValue length, Callback handler) {
+    file.read(buffer, offset.toInt(), position.toInt(), length.toInt(), new Handler<AsyncResult<Buffer>>(env, handler));
     return this;
   }
 
   /**
    * Writes a value to the socket.
    */
-  public AsyncFile write(final Env env, Buffer buffer, int position, final Callback handler) {
-    file.write(buffer, position, new Handler<AsyncResult<Void>>(env, handler));
+  public AsyncFile write(Env env, Buffer buffer, NumberValue position, Callback handler) {
+    file.write(buffer, position.toInt(), new Handler<AsyncResult<Void>>(env, handler));
+    return this;
+  }
+
+  /**
+   * Writes a value to the socket.
+   */
+  public AsyncFile write(Env env, Value data, StringValue enc) {
+    file.write(new Buffer(data.toString()));
     return this;
   }
 
   /**
    * Sets the file data handler.
    */
-  public AsyncFile dataHandler(final Env env, final Callback handler) {
+  public AsyncFile dataHandler(Env env, Callback handler) {
     file.dataHandler(new Handler<Buffer>(env, handler));
+    return this;
+  }
+
+  /**
+   * Sets an internal data handler on the stream.
+   */
+  public AsyncFile dataHandler(org.vertx.java.core.Handler<Buffer> handler) {
+    file.dataHandler(handler);
     return this;
   }
 
@@ -64,7 +84,7 @@ public final class AsyncFile {
   /**
    * Sets the file end handler.
    */
-  public AsyncFile endHandler(final Env env, final Callback handler) {
+  public AsyncFile endHandler(Env env, Callback handler) {
     file.endHandler(new Handler<Void>(env, handler));
     return this;
   }
@@ -72,15 +92,23 @@ public final class AsyncFile {
   /**
    * Sets the file drain handler.
    */
-  public AsyncFile drainHandler(final Env env, final Callback handler) {
+  public AsyncFile drainHandler(Env env, Callback handler) {
     file.drainHandler(new Handler<Void>(env, handler));
+    return this;
+  }
+
+  /**
+   * Sets an internal drain handler on the stream.
+   */
+  public AsyncFile drainHandler(org.vertx.java.core.Handler<Void> handler) {
+    file.drainHandler(handler);
     return this;
   }
 
   /**
    * Sets the max write queue size.
    */
-  public AsyncFile setWriteQueueMaxSize(Env env, Value value) {
+  public AsyncFile writeQueueMaxSize(Env env, NumberValue value) {
     file.setWriteQueueMaxSize(value.toJavaInteger());
     return this;
   }
@@ -95,8 +123,8 @@ public final class AsyncFile {
   /**
    * Flushes the file.
    */
-  public AsyncFile flush(final Env env, @Optional final Callback handler) {
-    if (handler != null && !handler.isDefault()) {
+  public AsyncFile flush(Env env, @Optional Callback handler) {
+    if (handler != null && !handler.isNull()) {
       file.flush(new Handler<AsyncResult<Void>>(env, handler));
     }
     else {
@@ -108,8 +136,8 @@ public final class AsyncFile {
   /**
    * Closes the file.
    */
-  public void close(final Env env, @Optional final Callback handler) {
-    if (handler != null && !handler.isDefault()) {
+  public void close(Env env, @Optional Callback handler) {
+    if (handler != null && !handler.isNull()) {
       file.flush(new Handler<AsyncResult<Void>>(env, handler));
     }
     else {
@@ -120,7 +148,7 @@ public final class AsyncFile {
   /**
    * Sets the socket exception handler callback.
    */
-  public AsyncFile exceptionHandler(final Env env, final Callback handler) {
+  public AsyncFile exceptionHandler(Env env, Callback handler) {
     file.exceptionHandler(new Handler<Throwable>(env, handler));
     return this;
   }

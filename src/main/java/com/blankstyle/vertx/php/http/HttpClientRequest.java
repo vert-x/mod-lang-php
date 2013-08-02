@@ -1,5 +1,6 @@
 package com.blankstyle.vertx.php.http;
 
+import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.WriteStream;
@@ -16,7 +17,7 @@ import com.caucho.quercus.env.Value;
  *
  * @author Jordan Halterman
  */
-public class HttpClientRequest implements WriteStream<HttpClientRequest>, ExceptionSupport<HttpClientRequest> {
+public class HttpClientRequest implements WriteStream<HttpClientRequest>, ExceptionSupport<HttpClientRequest>, Gettable {
 
   private org.vertx.java.core.http.HttpClientRequest request;
 
@@ -26,6 +27,11 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
 
   public HttpClientRequest(Env env, org.vertx.java.core.http.HttpClientRequest request) {
     this.request = request;
+  }
+
+  @Override
+  public Value __getField(Env env, StringValue name) {
+    return env.wrapJava(this).callMethod(env, name);
   }
 
   /**
@@ -85,17 +91,17 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
     return this;
   }
 
-  public HttpClientRequest setTimeout(Env env, Value timeoutMs) {
+  public HttpClientRequest timeout(Env env, Value timeoutMs) {
     request.setTimeout(timeoutMs.toInt());
     return this;
   }
 
-  public HttpClientRequest setChunked(Env env, BooleanValue chunked) {
+  public HttpClientRequest chunked(Env env, BooleanValue chunked) {
     request.setChunked(chunked.toBoolean());
     return this;
   }
 
-  public BooleanValue isChunked(Env env) {
+  public BooleanValue chunked(Env env) {
     return BooleanValue.create(request.isChunked());
   }
 

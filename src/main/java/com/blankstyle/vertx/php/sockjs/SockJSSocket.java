@@ -42,6 +42,12 @@ public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJ
   }
 
   @Override
+  public SockJSSocket drainHandler(org.vertx.java.core.Handler<Void> handler) {
+    socket.drainHandler(handler);
+    return this;
+  }
+
+  @Override
   public SockJSSocket writeQueueMaxSize(Env env, NumberValue size) {
     socket.setWriteQueueMaxSize(size.toInt());
     return this;
@@ -78,6 +84,12 @@ public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJ
   }
 
   @Override
+  public SockJSSocket dataHandler(org.vertx.java.core.Handler<Buffer> handler) {
+    socket.dataHandler(handler);
+    return this;
+  }
+
+  @Override
   public SockJSSocket endHandler(Env env, Callback handler) {
     socket.endHandler(new Handler<Void>(env, handler));
     return this;
@@ -88,18 +100,6 @@ public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJ
    */
   public void close(Env env) {
     socket.close();
-  }
-
-  @Override
-  public SockJSSocket drainHandler(org.vertx.java.core.Handler<Void> handler) {
-    socket.drainHandler(handler);
-    return this;
-  }
-
-  @Override
-  public SockJSSocket dataHandler(org.vertx.java.core.Handler<Buffer> handler) {
-    socket.dataHandler(handler);
-    return this;
   }
 
 }
