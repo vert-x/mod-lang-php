@@ -132,7 +132,7 @@ public final class Vertx {
   /**
    * Sets a timed handler.
    */
-  public static LongValue setTimer(final Env env, LongValue delay, final Callback handler) {
+  public static LongValue setTimer(Env env, LongValue delay, Callback handler) {
     Vertx.instance.setTimer(delay.toLong(), new Handler<Long>(env, handler));
     return delay;
   }
@@ -140,7 +140,7 @@ public final class Vertx {
   /**
    * Sets a periodic handler.
    */
-  public static LongValue setPeriodic(final Env env, LongValue delay, final Callback handler) {
+  public static LongValue setPeriodic(Env env, LongValue delay, Callback handler) {
     Vertx.instance.setPeriodic(delay.toLong(), new Handler<Long>(env, handler));
     return delay;
   }
@@ -151,8 +151,8 @@ public final class Vertx {
    * @param id The timer id.
    * @return A value indicating whether the timer was successfully cancelled.
    */
-  public static BooleanValue cancelTimer(Env env, final long id) {
-    boolean result = Vertx.instance.cancelTimer(id);
+  public static BooleanValue cancelTimer(Env env, LongValue id) {
+    boolean result = Vertx.instance.cancelTimer(id.toLong());
     return BooleanValue.create(result);
   }
 

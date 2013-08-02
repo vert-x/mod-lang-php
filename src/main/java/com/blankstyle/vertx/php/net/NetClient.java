@@ -25,7 +25,7 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
   /**
    * Connects to a server.
    */
-  public NetClient connect(final Env env, final NumberValue port, @Optional final StringValue host, @Optional final Callback handler) {
+  public NetClient connect(Env env, NumberValue port, @Optional StringValue host, @Optional Callback handler) {
     if (host != null && !host.isDefault()) {
       client.connect(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetSocket>, AsyncResult<NetSocket>>() {
         @Override

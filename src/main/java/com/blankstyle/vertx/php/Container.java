@@ -35,7 +35,7 @@ public final class Container {
    * Deploys a module.
    */
   @SuppressWarnings("unchecked")
-  public static void deployModule(final Env env, final StringValue moduleName, @Optional final ArrayValue config, @Optional("1") final NumberValue instances, @Optional final Callback handler) {
+  public static void deployModule(Env env, StringValue moduleName, @Optional ArrayValue config, @Optional("1") NumberValue instances, @Optional Callback handler) {
     boolean hasConfig = config != null && !config.isDefault();
     boolean hasHandler = handler != null && !handler.isDefault();
     if (hasConfig && hasHandler) {
@@ -55,7 +55,7 @@ public final class Container {
   /**
    * Undeploys a module.
    */
-  public static void undeployModule(final Env env, StringValue deploymentID, @Optional final Callback handler) {
+  public static void undeployModule(Env env, StringValue deploymentID, @Optional Callback handler) {
     if (handler != null && !handler.isDefault()) {
       Container.instance.undeployModule(deploymentID.toString(), new Handler<AsyncResult<Void>>(env, handler));
     }
@@ -68,7 +68,7 @@ public final class Container {
    * Deploys a verticle.
    */
   @SuppressWarnings("unchecked")
-  public static void deployVerticle(final Env env, final StringValue main, @Optional final ArrayValue config, @Optional("1") final NumberValue instances, @Optional final Callback handler) {
+  public static void deployVerticle(Env env, StringValue main, @Optional ArrayValue config, @Optional("1") NumberValue instances, @Optional Callback handler) {
     boolean hasConfig = config != null && !config.isDefault();
     boolean hasHandler = handler != null && !handler.isDefault();
     if (hasConfig && hasHandler) {
@@ -88,7 +88,7 @@ public final class Container {
   /**
    * Undeploys a verticle.
    */
-  public static void undeployVerticle(final Env env, StringValue deploymentID, @Optional final Callback handler) {
+  public static void undeployVerticle(Env env, StringValue deploymentID, @Optional Callback handler) {
     if (handler != null && !handler.isDefault()) {
       Container.instance.undeployVerticle(deploymentID.toString(), new Handler<AsyncResult<Void>>(env, handler));
     }
@@ -101,7 +101,7 @@ public final class Container {
    * Deploys a verticle.
    */
   @SuppressWarnings("unchecked")
-  public static void deployWorkerVerticle(final Env env, final StringValue main, @Optional final ArrayValue config, @Optional("1") final NumberValue instances) {
+  public static void deployWorkerVerticle(Env env, StringValue main, @Optional ArrayValue config, @Optional("1") NumberValue instances) {
     boolean hasConfig = config != null && !config.isDefault();
     if (hasConfig) {
       Container.instance.deployWorkerVerticle(main.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());

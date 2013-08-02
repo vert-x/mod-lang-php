@@ -39,7 +39,7 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
   /**
    * Sets the socket data handler.
    */
-  public NetSocket dataHandler(final Env env, final Callback handler) {
+  public NetSocket dataHandler(Env env, Callback handler) {
     socket.dataHandler(new Handler<org.vertx.java.core.buffer.Buffer>(env, handler));
     return this;
   }
@@ -63,7 +63,7 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
   /**
    * Sets the socket end handler.
    */
-  public NetSocket endHandler(final Env env, final Callback handler) {
+  public NetSocket endHandler(Env env, Callback handler) {
     socket.endHandler(new Handler<Void>(env, handler));
     return this;
   }
@@ -71,7 +71,7 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
   /**
    * Sets the socket drain handler.
    */
-  public NetSocket drainHandler(final Env env, final Callback handler) {
+  public NetSocket drainHandler(Env env, Callback handler) {
     socket.drainHandler(new Handler<Void>(env, handler));
     return this;
   }
@@ -109,7 +109,7 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
   /**
    * Sets the socket close handler.
    */
-  public void closeHandler(final Env env, final Callback handler) {
+  public void closeHandler(Env env, Callback handler) {
     socket.closeHandler(new Handler<Void>(env, handler));
   }
 
@@ -123,7 +123,7 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
   /**
    * Sets the socket exception handler callback.
    */
-  public NetSocket exceptionHandler(final Env env, final Callback handler) {
+  public NetSocket exceptionHandler(Env env, Callback handler) {
     socket.exceptionHandler(new Handler<Throwable>(env, handler));
     return this;
   }

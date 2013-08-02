@@ -30,11 +30,11 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    * @param callback A callable PHP item.
    * @return The called server instance.
    */
-  public NetServer connectHandler(final Env env, final Callback handler) {
+  public NetServer connectHandler(Env env, Callback handler) {
     server.connectHandler(new Handler<org.vertx.java.core.net.NetSocket>(env, handler, new ArgumentModifier<org.vertx.java.core.net.NetSocket, NetSocket>() {
       @Override
-      public NetSocket modify(org.vertx.java.core.net.NetSocket arg) {
-        return new NetSocket(arg);
+      public NetSocket modify(org.vertx.java.core.net.NetSocket socket) {
+        return new NetSocket(socket);
       }
     }));
     return this;
@@ -51,7 +51,7 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    * begun listening. This is an optional argument.
    * @return The called server instance.
    */
-  public NetServer listen(final Env env, final NumberValue port, @Optional final Value host, @Optional final Callback handler) {
+  public NetServer listen(Env env, NumberValue port, @Optional Value host, @Optional Callback handler) {
     if (host != null && !host.isDefault()) {
       if (handler != null && !handler.isDefault()) {
         server.listen(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.net.NetServer>>(env, handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetServer>, AsyncResult<NetServer>>() {
@@ -126,7 +126,7 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    * @param callback An optional callable PHP item to be invoked when
    * the server is closed.
    */
-  public void close(final Env env, @Optional final Callback handler) {
+  public void close(Env env, @Optional Callback handler) {
     if (handler == null) {
       server.close();
     }
