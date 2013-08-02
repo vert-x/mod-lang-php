@@ -31,7 +31,7 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    * @return The called server instance.
    */
   public NetServer connectHandler(Env env, Callback handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+    if (handler == null || handler.isNull() || !handler.isCallable(env, false, null)) {
       env.error("Argument to NetServer::connectHandler() must be callable.");
     }
     server.connectHandler(new Handler<org.vertx.java.core.net.NetSocket>(env, handler, new ArgumentModifier<org.vertx.java.core.net.NetSocket, NetSocket>() {
@@ -59,7 +59,7 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
       env.error("Argument to NetServer::listen() must be callable.");
     }
     if (host != null && !host.isDefault()) {
-      if (handler != null && !handler.isDefault()) {
+      if (handler != null && !handler.isNull()) {
         server.listen(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.net.NetServer>>(env, (Callback) handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetServer>, AsyncResult<NetServer>>() {
           @Override
           public AsyncResult<NetServer> modify(final AsyncResult<org.vertx.java.core.net.NetServer> server) {
@@ -88,7 +88,7 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
         server.listen(port.toInt(), host.toString());
       }
     }
-    else if (handler != null && !handler.isDefault()) {
+    else if (handler != null && !handler.isNull()) {
       server.listen(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.net.NetServer>>(env, (Callback) handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetServer>, AsyncResult<NetServer>>() {
         @Override
         public AsyncResult<NetServer> modify(final AsyncResult<org.vertx.java.core.net.NetServer> server) {

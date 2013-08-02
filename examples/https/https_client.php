@@ -1,6 +1,6 @@
 <?php
 
-$client = Vertx::createHttpClient()->port(4443)->ssl(TRUE)->trustAll(TRUE);
+$client = Vertx::createHttpClient()->setPort(4443)->setSSL(TRUE);
 
 $client->getNow('/', function($response) {
   $log = Container::logger();
