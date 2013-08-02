@@ -131,6 +131,7 @@ public class PHPVerticleFactory implements VerticleFactory {
       context.addJavaClass("Vertx\\Streams\\Pump", com.blankstyle.vertx.php.streams.Pump.class);
       context.addJavaClass("Vertx\\ParseTools\\RecordParser", org.vertx.java.core.parsetools.RecordParser.class);
       context.addJavaClass("Vertx\\SharedData\\SharedData", org.vertx.java.core.shareddata.SharedData.class);
+
       Vertx.init(PHPVerticleFactory.vertx);
       Container.init(PHPVerticleFactory.container);
 
