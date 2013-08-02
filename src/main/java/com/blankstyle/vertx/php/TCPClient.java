@@ -1,5 +1,8 @@
 package com.blankstyle.vertx.php;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.vertx.java.core.ClientSSLSupport;
 import org.vertx.java.core.TCPSupport;
 
@@ -12,12 +15,64 @@ import com.caucho.quercus.env.Value;
 /**
  * An abstract TCP server.
  */
-public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> {
+public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> implements Gettable, Settable {
 
   protected T client;
 
   public TCPClient(T client) {
     this.client = client;
+  }
+
+  /**
+   * Gets a field value.
+   */
+  public Value __getField(Env env, StringValue name) {
+    try {
+      Method method = this.getClass().getMethod(name.toString());
+      return env.wrapJava(method.invoke(this));
+    }
+    catch (SecurityException e) {
+      env.error(e);
+    }
+    catch (NoSuchMethodException e) {
+      env.error(e);
+    }
+    catch (IllegalArgumentException e) {
+      env.error(e);
+    }
+    catch (IllegalAccessException e) {
+      env.error(e);
+    }
+    catch (InvocationTargetException e) {
+      env.error(e);
+    }
+    return env.wrapJava(null);
+  }
+
+  /**
+   * Sets a field value.
+   */
+  public Value __setField(Env env, StringValue name, Value value) {
+    try {
+      Method method = this.getClass().getMethod(name.toString());
+      return env.wrapJava(method.invoke(this, value));
+    }
+    catch (SecurityException e) {
+      env.error(e);
+    }
+    catch (NoSuchMethodException e) {
+      env.error(e);
+    }
+    catch (IllegalArgumentException e) {
+      env.error(e);
+    }
+    catch (IllegalAccessException e) {
+      env.error(e);
+    }
+    catch (InvocationTargetException e) {
+      env.error(e);
+    }
+    return env.wrapJava(null);
   }
 
   /**
