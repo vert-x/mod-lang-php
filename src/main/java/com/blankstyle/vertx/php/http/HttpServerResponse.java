@@ -132,7 +132,7 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
   }
 
   @Override
-  public HttpServerResponse setWriteQueueMaxSize(Env env, NumberValue size) {
+  public HttpServerResponse writeQueueMaxSize(Env env, NumberValue size) {
     response.setWriteQueueMaxSize(size.toInt());
     return this;
   }

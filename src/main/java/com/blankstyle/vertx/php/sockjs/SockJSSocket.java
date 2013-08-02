@@ -42,7 +42,7 @@ public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJ
   }
 
   @Override
-  public SockJSSocket setWriteQueueMaxSize(Env env, NumberValue size) {
+  public SockJSSocket writeQueueMaxSize(Env env, NumberValue size) {
     socket.setWriteQueueMaxSize(size.toInt());
     return this;
   }

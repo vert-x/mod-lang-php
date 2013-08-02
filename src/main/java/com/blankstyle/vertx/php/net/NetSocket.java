@@ -93,7 +93,7 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
   /**
    * Sets the max write queue size.
    */
-  public NetSocket setWriteQueueMaxSize(Env env, NumberValue value) {
+  public NetSocket writeQueueMaxSize(Env env, NumberValue value) {
     socket.setWriteQueueMaxSize(value.toInt());
     return this;
   }

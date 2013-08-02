@@ -100,7 +100,7 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
   }
 
   @Override
-  public HttpClientRequest setWriteQueueMaxSize(Env env, NumberValue size) {
+  public HttpClientRequest writeQueueMaxSize(Env env, NumberValue size) {
     request.setWriteQueueMaxSize(size.toInt());
     return this;
   }

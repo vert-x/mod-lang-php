@@ -39,7 +39,7 @@ public interface WriteStream<T> {
    * @param size A PHP number value.
    * @return The stream implementation.
    */
-  public T setWriteQueueMaxSize(Env env, NumberValue size);
+  public T writeQueueMaxSize(Env env, NumberValue size);
 
   /**
    * Returns a boolean value indicating whether the write

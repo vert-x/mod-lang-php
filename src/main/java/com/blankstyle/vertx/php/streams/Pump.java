@@ -51,7 +51,7 @@ public class Pump {
     this.readStream = readStream;
     this.writeStream = writeStream;
     if (writeQueueMaxSize != null) {
-      this.writeStream.setWriteQueueMaxSize(env, writeQueueMaxSize);
+      this.writeStream.writeQueueMaxSize(env, writeQueueMaxSize);
     }
   }
 
@@ -66,7 +66,7 @@ public class Pump {
    * Sets the write queue max size.
    */
   public Pump setWriteQueueMaxSize(Env env, NumberValue maxSize) {
-    writeStream.setWriteQueueMaxSize(env, maxSize);
+    writeStream.writeQueueMaxSize(env, maxSize);
     return this;
   }
 

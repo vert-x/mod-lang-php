@@ -3,6 +3,7 @@ package com.blankstyle.vertx.php.http;
 import org.vertx.java.core.buffer.Buffer;
 import org.vertx.java.core.http.WebSocketVersion;
 
+import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.ReadStream;
@@ -19,7 +20,7 @@ import com.caucho.quercus.env.Value;
  * 
  * @author Jordan Halterman
  */
-public class WebSocket implements ReadStream<WebSocket>, WriteStream<WebSocket>, ExceptionSupport<WebSocket> {
+public class WebSocket implements ReadStream<WebSocket>, WriteStream<WebSocket>, ExceptionSupport<WebSocket>, Gettable {
 
   private org.vertx.java.core.http.WebSocket socket;
 
@@ -36,6 +37,11 @@ public class WebSocket implements ReadStream<WebSocket>, WriteStream<WebSocket>,
 
   public WebSocket(Env env, org.vertx.java.core.http.WebSocketBase<?> socket) {
     this.socket = (org.vertx.java.core.http.WebSocket) socket;
+  }
+
+  @Override
+  public Value __getField(Env env, StringValue name) {
+    return env.wrapJava(this).callMethod(env, name);
   }
 
   @Override
@@ -81,7 +87,7 @@ public class WebSocket implements ReadStream<WebSocket>, WriteStream<WebSocket>,
   }
 
   @Override
-  public WebSocket setWriteQueueMaxSize(Env env, NumberValue size) {
+  public WebSocket writeQueueMaxSize(Env env, NumberValue size) {
     socket.setWriteQueueMaxSize(size.toInt());
     return this;
   }
