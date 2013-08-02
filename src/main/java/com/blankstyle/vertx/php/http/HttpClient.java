@@ -14,8 +14,6 @@ import com.caucho.quercus.env.Env;
  */
 public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
 
-  private org.vertx.java.core.http.HttpClient client;
-
   public HttpClient(org.vertx.java.core.http.HttpClient client) {
     super(client);
   }
