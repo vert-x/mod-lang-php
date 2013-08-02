@@ -1,0 +1,43 @@
+package com.blankstyle.vertx.php.streams;
+
+import com.caucho.quercus.annotation.Optional;
+import com.caucho.quercus.env.BooleanValue;
+import com.caucho.quercus.env.StringValue;
+import com.caucho.quercus.env.Callback;
+import com.caucho.quercus.env.Env;
+import com.caucho.quercus.env.NumberValue;
+import com.caucho.quercus.env.Value;
+
+/**
+ * A PHP compatible implementation of the Vert.x WriteStream.
+ */
+public interface WriteStream {
+
+  /**
+   * Writes data to the stream.
+   */
+  public Value write(Env env, Value data, @Optional StringValue enc);
+
+  /**
+   * Adds a drain handler to the stream.
+   *
+   * @param handler A PHP callback.
+   * @return The stream implementation.
+   */
+  public Value drainHandler(Env env, Callback handler);
+
+  /**
+   * Sets the max write queue size.
+   *
+   * @param size A PHP number value.
+   * @return The stream implementation.
+   */
+  public Value setWriteQueueMaxSize(Env env, NumberValue size);
+
+  /**
+   * Returns a boolean value indicating whether the write
+   * queue is full.
+   */
+  public BooleanValue writeQueueFull(Env env);
+
+}
