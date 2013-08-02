@@ -19,7 +19,7 @@ import com.caucho.quercus.env.Value;
  * 
  * @author Jordan Halterman
  */
-public class WebSocket implements ReadStream, WriteStream, ExceptionSupport {
+public class WebSocket implements ReadStream<WebSocket>, WriteStream<WebSocket>, ExceptionSupport<WebSocket> {
 
   private org.vertx.java.core.http.WebSocket socket;
 
@@ -39,17 +39,17 @@ public class WebSocket implements ReadStream, WriteStream, ExceptionSupport {
   }
 
   @Override
-  public Value write(Env env, Value data, StringValue enc) {
+  public WebSocket write(Env env, Value data, StringValue enc) {
     socket.write(new Buffer(data.toString()));
-    return env.wrapJava(this);
+    return this;
   }
 
   /**
    * Writes data to the socket as a binary frame.
    */
-  public Value writeBinaryFrame(Env env, Value data) {
+  public WebSocket writeBinaryFrame(Env env, Value data) {
     socket.writeBinaryFrame(new Buffer(data.toString()));
-    return env.wrapJava(this);
+    return this;
   }
 
   /**
@@ -62,9 +62,9 @@ public class WebSocket implements ReadStream, WriteStream, ExceptionSupport {
   /**
    * Writes data to the socket as a text frame.
    */
-  public Value writeTextFrame(Env env, Value data) {
+  public WebSocket writeTextFrame(Env env, Value data) {
     socket.writeTextFrame(data.toString());
-    return env.wrapJava(this);
+    return this;
   }
 
   /**
@@ -75,15 +75,15 @@ public class WebSocket implements ReadStream, WriteStream, ExceptionSupport {
   }
 
   @Override
-  public Value drainHandler(Env env, Callback handler) {
+  public WebSocket drainHandler(Env env, Callback handler) {
     socket.drainHandler(new Handler<Void>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value setWriteQueueMaxSize(Env env, NumberValue size) {
+  public WebSocket setWriteQueueMaxSize(Env env, NumberValue size) {
     socket.setWriteQueueMaxSize(size.toInt());
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
@@ -92,33 +92,33 @@ public class WebSocket implements ReadStream, WriteStream, ExceptionSupport {
   }
 
   @Override
-  public Value pause(Env env) {
+  public WebSocket pause(Env env) {
     socket.pause();
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value resume(Env env) {
+  public WebSocket resume(Env env) {
     socket.resume();
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value dataHandler(Env env, Callback handler) {
+  public WebSocket dataHandler(Env env, Callback handler) {
     socket.dataHandler(new Handler<Buffer>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value endHandler(Env env, Callback handler) {
+  public WebSocket endHandler(Env env, Callback handler) {
     socket.endHandler(new Handler<Void>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value exceptionHandler(Env env, Callback handler) {
+  public WebSocket exceptionHandler(Env env, Callback handler) {
     socket.exceptionHandler(new Handler<Throwable>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
   public Value closeHandler(Env env, Callback handler) {

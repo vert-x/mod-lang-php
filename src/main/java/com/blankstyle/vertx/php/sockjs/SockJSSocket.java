@@ -17,7 +17,7 @@ import com.caucho.quercus.env.Value;
  *
  * @author JordanHalterman
  */
-public class SockJSSocket implements ReadStream, WriteStream {
+public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJSSocket> {
 
   private org.vertx.java.core.sockjs.SockJSSocket socket;
 
@@ -30,21 +30,21 @@ public class SockJSSocket implements ReadStream, WriteStream {
   }
 
   @Override
-  public Value write(Env env, Value data, StringValue enc) {
+  public SockJSSocket write(Env env, Value data, StringValue enc) {
     socket.write(new Buffer(data.toString()));
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value drainHandler(Env env, Callback handler) {
+  public SockJSSocket drainHandler(Env env, Callback handler) {
     socket.drainHandler(new Handler<Void>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value setWriteQueueMaxSize(Env env, NumberValue size) {
+  public SockJSSocket setWriteQueueMaxSize(Env env, NumberValue size) {
     socket.setWriteQueueMaxSize(size.toInt());
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
@@ -60,27 +60,27 @@ public class SockJSSocket implements ReadStream, WriteStream {
   }
 
   @Override
-  public Value pause(Env env) {
+  public SockJSSocket pause(Env env) {
     socket.pause();
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value resume(Env env) {
+  public SockJSSocket resume(Env env) {
     socket.resume();
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value dataHandler(Env env, Callback handler) {
+  public SockJSSocket dataHandler(Env env, Callback handler) {
     socket.dataHandler(new Handler<Buffer>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value endHandler(Env env, Callback handler) {
+  public SockJSSocket endHandler(Env env, Callback handler) {
     socket.endHandler(new Handler<Void>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
   /**

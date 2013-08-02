@@ -2,7 +2,6 @@ package com.blankstyle.vertx.php.streams;
 
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x ReadStream.
