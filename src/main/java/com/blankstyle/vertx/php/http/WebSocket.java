@@ -30,12 +30,12 @@ public class WebSocket implements ReadStream, WriteStream, ExceptionSupport {
   public static final WebSocketVersion HYBI_08 = WebSocketVersion.HYBI_08;
   public static final WebSocketVersion RFC6455 = WebSocketVersion.RFC6455;
 
-  public WebSocket(org.vertx.java.core.http.WebSocket socket) {
-    this.socket = socket;
+  public WebSocket(org.vertx.java.core.http.WebSocketBase<?> socket) {
+    this.socket = (org.vertx.java.core.http.WebSocket) socket;
   }
 
-  public WebSocket(Env env, org.vertx.java.core.http.WebSocket socket) {
-    this.socket = socket;
+  public WebSocket(Env env, org.vertx.java.core.http.WebSocketBase<?> socket) {
+    this.socket = (org.vertx.java.core.http.WebSocket) socket;
   }
 
   @Override
