@@ -3,8 +3,8 @@ package com.blankstyle.vertx.php.http;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
 import org.vertx.java.core.buffer.Buffer;
-import org.vertx.java.core.http.HttpServerFileUpload;
 
+import com.blankstyle.vertx.php.ArgumentModifier;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ReadStream;
 import com.caucho.quercus.env.BooleanValue;
@@ -108,7 +108,12 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest> {
   }
 
   public HttpServerRequest uploadHandler(Env env, Callback handler) {
-    request.uploadHandler(new Handler<HttpServerFileUpload>(env, handler));
+    request.uploadHandler(new Handler<org.vertx.java.core.http.HttpServerFileUpload>(env, handler, new ArgumentModifier<org.vertx.java.core.http.HttpServerFileUpload, HttpServerFileUpload>() {
+      @Override
+      public HttpServerFileUpload modify(org.vertx.java.core.http.HttpServerFileUpload upload) {
+        return new HttpServerFileUpload(upload);
+      }
+    }));
     return this;
   }
 
