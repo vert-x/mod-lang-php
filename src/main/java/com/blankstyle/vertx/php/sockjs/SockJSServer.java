@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
-import org.vertx.java.core.sockjs.SockJSSocket;
 
+import com.blankstyle.vertx.php.ArgumentModifier;
 import com.blankstyle.vertx.php.Handler;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.ArrayValue;
@@ -49,7 +49,13 @@ public class SockJSServer {
    */
   @SuppressWarnings("unchecked")
   public SockJSServer installApp(Env env, ArrayValue config, Callback handler) {
-    server.installApp(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), new Handler<SockJSSocket>(env, handler));
+    server.installApp(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())),
+                      new Handler<org.vertx.java.core.sockjs.SockJSSocket>(env, handler, new ArgumentModifier<org.vertx.java.core.sockjs.SockJSSocket, SockJSSocket>() {
+                        @Override
+                        public SockJSSocket modify(org.vertx.java.core.sockjs.SockJSSocket socket) {
+                          return new SockJSSocket(socket);
+                        }
+                      }));
     return this;
   }
 
