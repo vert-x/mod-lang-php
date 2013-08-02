@@ -1,17 +1,20 @@
 package com.blankstyle.vertx.php.net;
 
 import com.blankstyle.vertx.php.Handler;
-
+import com.blankstyle.vertx.php.streams.ExceptionSupport;
+import com.blankstyle.vertx.php.streams.ReadStream;
+import com.blankstyle.vertx.php.streams.WriteStream;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
+import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.StringValue;
 
 /**
  * A PHP compatible implementation of the Vert.x NetSocket.
  */
-public class NetSocket {
+public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>, ExceptionSupport<NetSocket> {
 
   org.vertx.java.core.net.NetSocket socket;
 
@@ -76,8 +79,8 @@ public class NetSocket {
   /**
    * Sets the max write queue size.
    */
-  public NetSocket setWriteQueueMaxSize(Env env, Value value) {
-    socket.setWriteQueueMaxSize(value.toJavaInteger());
+  public NetSocket setWriteQueueMaxSize(Env env, NumberValue value) {
+    socket.setWriteQueueMaxSize(value.toInt());
     return this;
   }
 
@@ -91,7 +94,7 @@ public class NetSocket {
   /**
    * Writes a value to the socket.
    */
-  public NetSocket write(Env env, Value value) {
+  public NetSocket write(Env env, Value value, StringValue enc) {
     socket.write(value.toJavaString());
     return this;
   }
