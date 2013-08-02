@@ -153,4 +153,8 @@ public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<Async
     return this;
   }
 
+  public String toString() {
+    return "php:Vertx\\File\\AsyncFile";
+  }
+
 }

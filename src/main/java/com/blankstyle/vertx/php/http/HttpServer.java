@@ -191,4 +191,8 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
     server.close();
   }
 
+  public String toString() {
+    return "php:Vertx\\Http\\HttpServer";
+  }
+
 }

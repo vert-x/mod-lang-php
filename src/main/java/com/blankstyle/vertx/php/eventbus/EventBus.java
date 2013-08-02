@@ -159,4 +159,8 @@ public final class EventBus {
     eventBus.close(new Handler<AsyncResult<Void>>(env, (Callback) handler));
   }
 
+  public String toString() {
+    return "php:Vertx\\EventBus";
+  }
+
 }

@@ -166,4 +166,8 @@ public class WebSocket implements ReadStream<WebSocket>, WriteStream<WebSocket>,
     return this;
   }
 
+  public String toString() {
+    return "php:Vertx\\Http\\WebSocket";
+  }
+
 }

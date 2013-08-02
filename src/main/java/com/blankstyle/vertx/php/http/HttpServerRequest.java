@@ -153,4 +153,8 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest>, Gettabl
     return this;
   }
 
+  public String toString() {
+    return "php:Vertx\\Http\\HttpServerRequest";
+  }
+
 }

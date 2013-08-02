@@ -113,4 +113,8 @@ public class HttpClientResponse implements ReadStream<HttpClientResponse>, Excep
     return this;
   }
 
+  public String toString() {
+    return "php:Vertx\\Http\\HttpClientResponse";
+  }
+
 }

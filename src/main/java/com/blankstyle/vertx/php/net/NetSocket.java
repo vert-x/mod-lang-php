@@ -157,4 +157,8 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
     return this;
   }
 
+  public String toString() {
+    return "php:Vertx\\Net\\NetSocket";
+  }
+
 }

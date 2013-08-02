@@ -4,4 +4,4 @@ $config = array(
   'age' => 823823,
 );
 
-Container::deployVertcle('deploy/child.php', $config);
+Container::deployVerticle('deploy/child.php', $config);

@@ -252,8 +252,8 @@ public final class FileSystem {
   /**
    * Executes an asynchronous open call.
    */
-  public FileSystem open(final Env env, StringValue path, @Optional StringValue perms, @Optional BooleanValue read, @Optional BooleanValue write, @Optional BooleanValue createNew, @Optional BooleanValue flush, final Callback handler) {
-    if ((perms != null && !perms.isDefault()) && (read != null && !read.isDefault()) && (write != null && !write.isDefault()) && (createNew != null && !createNew.isDefault()) && (flush != null && !flush.isDefault())) {
+  public FileSystem open(final Env env, StringValue path, @Optional StringValue perms, @Optional BooleanValue read, @Optional BooleanValue write, @Optional BooleanValue createNew, @Optional BooleanValue flush, Callback handler) {
+    if ((perms != null && !perms.isNull()) && (read != null && !read.isNull()) && (write != null && !write.isNull()) && (createNew != null && !createNew.isNull()) && (flush != null && !flush.isNull())) {
       fileSystem.open(path.toString(), perms.toString(), read.toBoolean(), write.toBoolean(), createNew.toBoolean(), flush.toBoolean(), new Handler<AsyncResult<org.vertx.java.core.file.AsyncFile>>(env, handler));
     }
     else if ((perms != null && !perms.isDefault()) && (read != null && !read.isDefault()) && (write != null && !write.isDefault()) && (createNew != null && !createNew.isDefault())) {
@@ -275,7 +275,7 @@ public final class FileSystem {
    * Executes a synchronous open call.
    */
   public org.vertx.java.core.file.AsyncFile openSync(Env env, StringValue path, @Optional StringValue perms, @Optional BooleanValue read, @Optional BooleanValue write, @Optional BooleanValue createNew, @Optional BooleanValue flush) {
-    if ((perms != null && !perms.isDefault()) && (read != null && !read.isDefault()) && (write != null && !write.isDefault()) && (createNew != null && !createNew.isDefault()) && (flush != null && !flush.isDefault())) {
+    if ((perms != null && !perms.isNull()) && (read != null && !read.isNull()) && (write != null && !write.isNull()) && (createNew != null && !createNew.isNull()) && (flush != null && !flush.isNull())) {
       return fileSystem.openSync(path.toString(), perms.toString(), read.toBoolean(), write.toBoolean(), createNew.toBoolean(), flush.toBoolean());
     }
     else if ((perms != null && !perms.isDefault()) && (read != null && !read.isDefault()) && (write != null && !write.isDefault()) && (createNew != null && !createNew.isDefault())) {
@@ -295,7 +295,7 @@ public final class FileSystem {
   /**
    * Executes an asynchronous props call.
    */
-  public FileSystem props(final Env env, StringValue path, final Callback handler) {
+  public FileSystem props(Env env, StringValue path, Callback handler) {
     fileSystem.props(path.toString(), new Handler<AsyncResult<FileProps>>(env, handler));
     return this;
   }
@@ -311,8 +311,8 @@ public final class FileSystem {
   /**
    * Executes an asynchronous readdir call.
    */
-  public FileSystem readDir(final Env env, StringValue path, @Optional StringValue filter, final Callback handler) {
-    if (filter != null && !filter.isDefault()) {
+  public FileSystem readDir(Env env, StringValue path, @Optional StringValue filter, Callback handler) {
+    if (filter != null && !filter.isNull()) {
       fileSystem.readDir(path.toString(), filter.toString(), new Handler<AsyncResult<String[]>>(env, handler));
     }
     else {
@@ -336,7 +336,7 @@ public final class FileSystem {
   /**
    * Executes an asynchronous readfile call.
    */
-  public FileSystem readFile(final Env env, StringValue path, final Callback handler) {
+  public FileSystem readFile(Env env, StringValue path, Callback handler) {
     fileSystem.readFile(path.toString(), new Handler<AsyncResult<Buffer>>(env, handler));
     return this;
   }
@@ -352,7 +352,7 @@ public final class FileSystem {
   /**
    * Executes an asynchronous read symlink call.
    */
-  public FileSystem readSymlink(final Env env, StringValue link, final Callback handler) {
+  public FileSystem readSymlink(Env env, StringValue link, Callback handler) {
     fileSystem.readSymlink(link.toString(), new Handler<AsyncResult<String>>(env, handler));
     return this;
   }
@@ -367,7 +367,7 @@ public final class FileSystem {
   /**
    * Executes an asynchronous symlink call.
    */
-  public FileSystem symlink(final Env env, StringValue link, StringValue existing, final Callback handler) {
+  public FileSystem symlink(Env env, StringValue link, StringValue existing, Callback handler) {
     fileSystem.symlink(link.toString(), existing.toString(), new Handler<AsyncResult<Void>>(env, handler));
     return this;
   }
@@ -383,7 +383,7 @@ public final class FileSystem {
   /**
    * Executes an asynchronous truncate call.
    */
-  public FileSystem truncate(final Env env, StringValue path, NumberValue len, final Callback handler) {
+  public FileSystem truncate(Env env, StringValue path, NumberValue len, Callback handler) {
     fileSystem.truncate(path.toString(), len.toLong(), new Handler<AsyncResult<Void>>(env, handler));
     return this;
   }
@@ -399,7 +399,7 @@ public final class FileSystem {
   /**
    * Executes an asynchronous unlink call.
    */
-  public FileSystem unlink(final Env env, StringValue link, final Callback handler) {
+  public FileSystem unlink(Env env, StringValue link, Callback handler) {
     fileSystem.unlink(link.toString(), new Handler<AsyncResult<Void>>(env, handler));
     return this;
   }
@@ -415,7 +415,7 @@ public final class FileSystem {
   /**
    * Executes an asynchronous write file call.
    */
-  public FileSystem writeFile(final Env env, StringValue path, Buffer data, final Callback handler) {
+  public FileSystem writeFile(Env env, StringValue path, Buffer data, Callback handler) {
     fileSystem.writeFile(path.toString(), data, new Handler<AsyncResult<Void>>(env, handler));
     return this;
   }
@@ -426,6 +426,10 @@ public final class FileSystem {
   public FileSystem writeFileSync(Env env, StringValue path, Buffer data) {
     fileSystem.writeFileSync(path.toString(), data);
     return this;
+  }
+
+  public String toString() {
+    return "php:Vertx\\FileSystem";
   }
 
 }

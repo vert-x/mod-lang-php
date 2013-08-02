@@ -150,4 +150,8 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
     client.close();
   }
 
+  public String toString() {
+    return "php:Vertx\\Net\\NetClient";
+  }
+
 }

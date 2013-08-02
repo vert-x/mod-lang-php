@@ -36,4 +36,8 @@ public final class Context {
     context.runOnContext(new Handler<Void>(env, handler));
   }
 
+  public String toString() {
+    return "php:Vertx\\Context";
+  }
+
 }

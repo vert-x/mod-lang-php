@@ -122,4 +122,8 @@ public class Message<T> implements Gettable {
     return env.createString(message.replyAddress());
   }
 
+  public String toString() {
+    return "php:Vertx\\EventBus\\Message";
+  }
+
 }

@@ -96,4 +96,8 @@ public class HttpServerFileUpload implements ReadStream<HttpServerFileUpload> {
     return this;
   }
 
+  public String toString() {
+    return "php:Vertx\\Http\\HttpServerFileUpload";
+  }
+
 }

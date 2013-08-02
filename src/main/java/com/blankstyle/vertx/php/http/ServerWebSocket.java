@@ -62,4 +62,8 @@ public class ServerWebSocket extends WebSocket {
     return env.wrapJava(this);
   }
 
+  public String toString() {
+    return "php:Vertx\\Http\\ServerWebSocket";
+  }
+
 }

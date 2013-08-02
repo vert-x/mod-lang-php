@@ -177,4 +177,8 @@ public final class Container {
     return array;
   }
 
+  public String toString() {
+    return "php:Vertx\\Container";
+  }
+
 }

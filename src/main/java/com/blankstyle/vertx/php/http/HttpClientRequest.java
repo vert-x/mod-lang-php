@@ -143,4 +143,8 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
     return this;
   }
 
+  public String toString() {
+    return "php:Vertx\\Http\\HttpClientRequest";
+  }
+
 }

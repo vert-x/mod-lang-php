@@ -59,4 +59,8 @@ public class Handler<T> implements org.vertx.java.core.Handler<T> {
     }
   }
 
+  public String toString() {
+    return "php:Vertx\\Handler";
+  }
+
 }

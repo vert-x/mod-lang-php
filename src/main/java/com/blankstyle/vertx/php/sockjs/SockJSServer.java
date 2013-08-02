@@ -81,4 +81,8 @@ public class SockJSServer {
     return this;
   }
 
+  public String toString() {
+    return "php:Vertx\\SockJS\\SockJSServer";
+  }
+
 }

@@ -156,4 +156,8 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
     }
   }
 
+  public String toString() {
+    return "php:Vertx\\Net\\NetServer";
+  }
+
 }

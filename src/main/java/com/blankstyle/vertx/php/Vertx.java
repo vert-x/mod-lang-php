@@ -178,4 +178,8 @@ public final class Vertx {
     Vertx.instance.stop();
   }
 
+  public String toString() {
+    return "php:Vertx";
+  }
+
 }

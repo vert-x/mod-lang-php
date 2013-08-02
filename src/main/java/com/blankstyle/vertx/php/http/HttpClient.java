@@ -279,4 +279,8 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
     client.close();
   }
 
+  public String toString() {
+    return "php:Vertx\\Http\\HttpClient";
+  }
+
 }

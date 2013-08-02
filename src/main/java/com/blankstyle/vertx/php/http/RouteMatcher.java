@@ -312,4 +312,8 @@ public class RouteMatcher {
     matcher.handle(request);
   }
 
+  public String toString() {
+    return "php:Vertx\\Http\\RouteMatcher";
+  }
+
 }

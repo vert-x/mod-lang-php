@@ -117,4 +117,8 @@ public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJ
     socket.close();
   }
 
+  public String toString() {
+    return "php:Vertx\\SockJS\\SockJSSocket";
+  }
+
 }

@@ -300,4 +300,8 @@ public abstract class TCPServer<T extends ServerTCPSupport<T> & ServerSSLSupport
     return this;
   }
 
+  public String toString() {
+    return "php:Vertx\\TCPServer";
+  }
+
 }

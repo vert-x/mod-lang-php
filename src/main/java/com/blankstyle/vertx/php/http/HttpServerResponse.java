@@ -175,4 +175,8 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
     return this;
   }
 
+  public String toString() {
+    return "php:Vertx\\Http\\HttpServerResponse";
+  }
+
 }

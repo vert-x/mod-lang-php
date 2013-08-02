@@ -285,5 +285,9 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
     return this;
   }
 
+  public String toString() {
+    return "php:Vertx\\TCPClient";
+  }
+
 }
 
