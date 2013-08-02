@@ -7,6 +7,7 @@ import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.StringValue;
+import com.caucho.quercus.env.Value;
 
 /**
  * An abstract TCP server.
@@ -22,14 +23,14 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> {
   /**
    * Indicates whether a certificate should trust all connections.
    */
-  public boolean isTrustAll(Env env) {
-    return client.isTrustAll();
+  public BooleanValue trustAll(Env env) {
+    return BooleanValue.create(client.isTrustAll());
   }
 
   /**
    * Sets the certificate trust all setting.
    */
-  public TCPClient<T> setTrustAll(Env env, BooleanValue trustAll) {
+  public TCPClient<T> trustAll(Env env, BooleanValue trustAll) {
     client.setTrustAll(trustAll.toBoolean());
     return this;
   }
@@ -37,14 +38,14 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> {
   /**
    * Indicates whether this is an SSL connection.
    */
-  public boolean isSSL(Env env) {
-    return client.isSSL();
+  public BooleanValue ssl(Env env) {
+    return BooleanValue.create(client.isSSL());
   }
 
   /**
    * Sets the SSL status of the connection.
    */
-  public TCPClient<T> setSSL(Env env, BooleanValue ssl) {
+  public TCPClient<T> ssl(Env env, BooleanValue ssl) {
     client.setSSL(ssl.toBoolean());
     return this;
   }
@@ -52,14 +53,14 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> {
   /**
    * Returns the key store password.
    */
-  public String getKeyStorePassword(Env env) {
-    return client.getKeyStorePassword();
+  public StringValue keyStorePassword(Env env) {
+    return env.createString(client.getKeyStorePassword());
   }
 
   /**
    * Sets the key store password.
    */
-  public TCPClient<T> setKeyStorePassword(Env env, StringValue pwd) {
+  public TCPClient<T> keyStorePassword(Env env, StringValue pwd) {
     client.setKeyStorePassword(pwd.toString());
     return this;
   }
@@ -67,14 +68,14 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> {
   /**
    * Returns the key store path.
    */
-  public String getKeyStorePath(Env env) {
-    return client.getKeyStorePath();
+  public StringValue keyStorePath(Env env) {
+    return env.createString(client.getKeyStorePath());
   }
 
   /**
    * Sets the key store path.
    */
-  public TCPClient<T> setKeyStorePath(Env env, StringValue path) {
+  public TCPClient<T> keyStorePath(Env env, StringValue path) {
     client.setKeyStorePath(path.toString());
     return this;
   }
@@ -82,14 +83,14 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> {
   /**
    * Returns the trust store password.
    */
-  public String getTrustStorePassword(Env env) {
-    return client.getTrustStorePassword();
+  public StringValue trustStorePassword(Env env) {
+    return env.createString(client.getTrustStorePassword());
   }
 
   /**
    * Sets the trust store password.
    */
-  public TCPClient<T> setTrustStorePassword(Env env, StringValue pwd) {
+  public TCPClient<T> trustStorePassword(Env env, StringValue pwd) {
     client.setTrustStorePassword(pwd.toString());
     return this;
   }
@@ -97,74 +98,74 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> {
   /**
    * Returns the send buffer size.
    */
-  public int getSendBufferSize(Env env) {
-    return client.getSendBufferSize();
+  public Value sendBufferSize(Env env) {
+    return env.wrapJava(client.getSendBufferSize());
   }
 
   /**
    * Set the TCP send buffer size for connections created by this instance to size in bytes.
    */
-  public TCPClient<T> setSendBufferSize(Env env, int size) {
-    client.setSendBufferSize(size);
+  public TCPClient<T> sendBufferSize(Env env, NumberValue size) {
+    client.setSendBufferSize(size.toInt());
     return this;
   }
 
   /**
    * Returns the receive buffer size.
    */
-  public int getReceiveBufferSize(Env env) {
-    return client.getReceiveBufferSize();
+  public Value receiveBufferSize(Env env) {
+    return env.wrapJava(client.getReceiveBufferSize());
   }
 
   /**
    * Set the TCP receive buffer size for connections created by this instance to size in bytes.
    */
-  public TCPClient<T> setReceiveBufferSize(Env env, int size) {
-    client.setReceiveBufferSize(size);
+  public TCPClient<T> receiveBufferSize(Env env, NumberValue size) {
+    client.setReceiveBufferSize(size.toInt());
     return this;
   }
 
   /**
    * The value of TCP reuse address.
    */
-  public boolean isReuseAddress(Env env) {
-    return client.isReuseAddress();
+  public BooleanValue reuseAddress(Env env) {
+    return BooleanValue.create(client.isReuseAddress());
   }
 
   /**
    * Set the TCP reuseAddress setting for connections created by this instance to reuse.
    */
-  public TCPClient<T> setReuseAddress(Env env, boolean reuse) {
-    client.setReuseAddress(reuse);
+  public TCPClient<T> reuseAddress(Env env, BooleanValue reuse) {
+    client.setReuseAddress(reuse.toBoolean());
     return this;
   }
 
   /**
    * Returns the value of TCP so linger.
    */
-  public int getSoLinger(Env env) {
-    return client.getSoLinger();
+  public Value soLinger(Env env) {
+    return env.wrapJava(client.getSoLinger());
   }
 
   /**
    * Set the TCP soLinger setting for connections created by this instance to linger.
    */
-  public TCPClient<T> setSoLinger(Env env, int linger) {
-    client.setReceiveBufferSize(linger);
+  public TCPClient<T> soLinger(Env env, NumberValue linger) {
+    client.setReceiveBufferSize(linger.toInt());
     return this;
   }
 
   /**
    * Returns a boolean indicating whether TCP keep alive is enabled.
    */
-  public boolean isTCPKeepAlive(Env env) {
-    return client.isTCPKeepAlive();
+  public BooleanValue keepAlive(Env env) {
+    return BooleanValue.create(client.isTCPKeepAlive());
   }
 
   /**
    * Set the TCP keepAlive setting for connections created by this instance to keepAlive.
    */
-  public TCPClient<T> setTCPKeepAlive(Env env, BooleanValue keepAlive) {
+  public TCPClient<T> keepAlive(Env env, BooleanValue keepAlive) {
     client.setTCPKeepAlive(keepAlive.toBoolean());
     return this;
   }
@@ -172,14 +173,14 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> {
   /**
    * Returns a boolean indicating whether Nagle's algorithm is enabled.
    */
-  public boolean isTCPNoDelay(Env env) {
-    return client.isTCPNoDelay();
+  public BooleanValue noDelay(Env env) {
+    return BooleanValue.create(client.isTCPNoDelay());
   }
 
   /**
    * If tcpNoDelay is set to true then Nagle's algorithm will turned off for the TCP connections created by this instance.
    */
-  public TCPClient<T> setTCPNoDelay(Env env, BooleanValue tcpNoDelay) {
+  public TCPClient<T> noDelay(Env env, BooleanValue tcpNoDelay) {
     client.setTCPNoDelay(tcpNoDelay.toBoolean());
     return this;
   }
@@ -187,14 +188,14 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> {
   /**
    * Returns the value of TCP traffic class.
    */
-  public int getTrafficClass(Env env) {
-    return client.getTrafficClass();
+  public Value trafficClass(Env env) {
+    return env.wrapJava(client.getTrafficClass());
   }
 
   /**
    * Set the TCP trafficClass setting for connections created by this instance to trafficClass.
    */
-  public TCPClient<T> setTrafficClass(Env env, NumberValue trafficClass) {
+  public TCPClient<T> trafficClass(Env env, NumberValue trafficClass) {
     client.setReceiveBufferSize(trafficClass.toInt());
     return this;
   }
@@ -202,14 +203,14 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> {
   /**
    * Returns a boolean indicating whether pooled buffers are used.
    */
-  public boolean isUsePooledBuffers(Env env) {
-    return client.isUsePooledBuffers();
+  public BooleanValue usePooledBuffers(Env env) {
+    return BooleanValue.create(client.isUsePooledBuffers());
   }
 
   /**
    * Set if vertx should use pooled buffers for performance reasons.
    */
-  public TCPClient<T> setUsePooledBuffers(Env env, BooleanValue pooledBuffers) {
+  public TCPClient<T> usePooledBuffers(Env env, BooleanValue pooledBuffers) {
     client.setUsePooledBuffers(pooledBuffers.toBoolean());
     return this;
   }
