@@ -3,10 +3,12 @@ package com.blankstyle.vertx.php;
 import org.vertx.java.core.ServerSSLSupport;
 import org.vertx.java.core.ServerTCPSupport;
 
+import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.StringValue;
+import com.caucho.quercus.env.Value;
 
 /**
  * An abstract TCP server.
@@ -20,212 +22,212 @@ public abstract class TCPServer<T extends ServerTCPSupport<T> & ServerSSLSupport
   }
 
   /**
-   * Returns the server accept backlog.
+   * Gets the accept backlog option.
    */
-  public int getAcceptBacklog(Env env) {
-    return server.getAcceptBacklog();
+  public Value acceptBacklog(Env env) {
+    return env.wrapJava(server.getAcceptBacklog());
   }
 
   /**
-   * Sets the server accept backlog.
+   * Sets the accept backlog option.
    */
-  public TCPServer<T> setAcceptBacklog(Env env, int backlog) {
-    server.setAcceptBacklog(backlog);
+  public TCPServer<T> acceptBacklog(Env env, NumberValue backlog) {
+    server.setAcceptBacklog(backlog.toInt());
     return this;
   }
 
   /**
-   * Indicates whether client authentication is required.
+   * Gets the client authorization required option.
    */
-  public boolean isClientAuthRequired(Env env) {
-    return server.isClientAuthRequired();
+  public BooleanValue clientAuthRequired(Env env) {
+    return BooleanValue.create(server.isClientAuthRequired());
   }
 
   /**
-   * Sets client authentication requirements.
+   * Sets the client authorization required option.
    */
-  public TCPServer<T> setClientAuthRequired(Env env, BooleanValue required) {
+  public TCPServer<?> clientAuthRequired(Env env, BooleanValue required) {
     server.setClientAuthRequired(required.toBoolean());
     return this;
   }
 
   /**
-   * Indicates whether this is an SSL connection.
+   * Gets the SSL option.
    */
-  public boolean isSSL(Env env) {
-    return server.isSSL();
+  public BooleanValue ssl(Env env) {
+    return BooleanValue.create(server.isSSL());
   }
 
   /**
-   * Sets the SSL status of the connection.
+   * Sets the SSL option.
    */
-  public TCPServer<T> setSSL(Env env, BooleanValue ssl) {
+  public TCPServer<?> ssl(Env env, BooleanValue ssl) {
     server.setSSL(ssl.toBoolean());
     return this;
   }
 
   /**
-   * Returns the key store password.
+   * Gets the key store password option.
    */
-  public String getKeyStorePassword(Env env) {
-    return server.getKeyStorePassword();
+  public StringValue keyStorePassword(Env env) {
+    return env.createString(server.getKeyStorePassword());
   }
 
   /**
-   * Sets the key store password.
+   * Sets the key store password option.
    */
-  public TCPServer<T> setKeyStorePassword(Env env, StringValue pwd) {
+  public TCPServer<T> keyStorePassword(Env env, StringValue pwd) {
     server.setKeyStorePassword(pwd.toString());
     return this;
   }
 
   /**
-   * Returns the key store path.
+   * Gets the key store path option.
    */
-  public String getKeyStorePath(Env env) {
-    return server.getKeyStorePath();
+  public StringValue keyStorePath(Env env) {
+    return env.createString(server.getKeyStorePath());
   }
 
   /**
-   * Sets the key store path.
+   * Sets the key store path option.
    */
-  public TCPServer<T> setKeyStorePath(Env env, StringValue path) {
-    server.setKeyStorePath(path.toString());
+  public TCPServer<T> keyStorePath(Env env, StringValue pwd) {
+    server.setKeyStorePath(pwd.toString());
     return this;
   }
 
   /**
-   * Returns the trust store password.
+   * Gets the trust store password option.
    */
-  public String getTrustStorePassword(Env env) {
-    return server.getTrustStorePassword();
+  public StringValue trustStorePassword(Env env) {
+    return env.createString(server.getTrustStorePassword());
   }
 
   /**
-   * Sets the trust store password.
+   * Sets the trust store password option.
    */
-  public TCPServer<T> setTrustStorePassword(Env env, StringValue pwd) {
+  public TCPServer<T> trustStorePassword(Env env, StringValue pwd) {
     server.setTrustStorePassword(pwd.toString());
     return this;
   }
 
   /**
-   * Returns the send buffer size.
+   * Gets the send buffer size option.
    */
-  public int getSendBufferSize(Env env) {
-    return server.getSendBufferSize();
+  public Value sendBufferSize(Env env) {
+    return env.wrapJava(server.getSendBufferSize());
   }
 
   /**
-   * Set the TCP send buffer size for connections created by this instance to size in bytes.
+   * Sets the send buffer size option.
    */
-  public TCPServer<T> setSendBufferSize(Env env, int size) {
-    server.setSendBufferSize(size);
+  public TCPServer<T> sendBufferSize(Env env, NumberValue size) {
+    server.setSendBufferSize(size.toInt());
     return this;
   }
 
   /**
-   * Returns the receive buffer size.
+   * Gets the receive buffer size option.
    */
-  public int getReceiveBufferSize(Env env) {
-    return server.getReceiveBufferSize();
+  public Value receiveBufferSize(Env env) {
+    return env.wrapJava(server.getReceiveBufferSize());
   }
 
   /**
-   * Set the TCP receive buffer size for connections created by this instance to size in bytes.
+   * Sets the receive buffer size option.
    */
-  public TCPServer<T> setReceiveBufferSize(Env env, int size) {
-    server.setReceiveBufferSize(size);
+  public TCPServer<T> receiveBufferSize(Env env, NumberValue size) {
+    server.setReceiveBufferSize(size.toInt());
     return this;
   }
 
   /**
-   * The value of TCP reuse address.
+   * Gets the reuse address option.
    */
-  public boolean isReuseAddress(Env env) {
-    return server.isReuseAddress();
+  public BooleanValue reuseAddress(Env env) {
+    return BooleanValue.create(server.isReuseAddress());
   }
 
   /**
-   * Set the TCP reuseAddress setting for connections created by this instance to reuse.
+   * Sets the reuse address option.
    */
-  public TCPServer<T> setReuseAddress(Env env, boolean reuse) {
-    server.setReuseAddress(reuse);
+  public TCPServer<?> reuseAddress(Env env, BooleanValue reuseAddress) {
+    server.setReuseAddress(reuseAddress.toBoolean());
     return this;
   }
 
   /**
-   * Returns the value of TCP so linger.
+   * Gets the so linger option.
    */
-  public int getSoLinger(Env env) {
-    return server.getSoLinger();
+  public Value soLinger(Env env) {
+    return env.wrapJava(server.getSoLinger());
   }
 
   /**
-   * Set the TCP soLinger setting for connections created by this instance to linger.
+   * Sets the so linger option.
    */
-  public TCPServer<T> setSoLinger(Env env, int linger) {
-    server.setReceiveBufferSize(linger);
+  public TCPServer<T> soLinger(Env env, NumberValue soLinger) {
+    server.setSoLinger(soLinger.toInt());
     return this;
   }
 
   /**
-   * Returns a boolean indicating whether TCP keep alive is enabled.
+   * Gets the keep alive option.
    */
-  public boolean isTCPKeepAlive(Env env) {
-    return server.isTCPKeepAlive();
+  public BooleanValue keepAlive(Env env) {
+    return BooleanValue.create(server.isTCPKeepAlive());
   }
 
   /**
-   * Set the TCP keepAlive setting for connections created by this instance to keepAlive.
+   * Sets the keep alive option.
    */
-  public TCPServer<T> setTCPKeepAlive(Env env, BooleanValue keepAlive) {
+  public TCPServer<?> keepAlive(Env env, BooleanValue keepAlive) {
     server.setTCPKeepAlive(keepAlive.toBoolean());
     return this;
   }
 
   /**
-   * Returns a boolean indicating whether Nagle's algorithm is enabled.
+   * Gets the no delay option.
    */
-  public boolean isTCPNoDelay(Env env) {
-    return server.isTCPNoDelay();
+  public BooleanValue noDelay(Env env) {
+    return BooleanValue.create(server.isTCPNoDelay());
   }
 
   /**
-   * If tcpNoDelay is set to true then Nagle's algorithm will turned off for the TCP connections created by this instance.
+   * Sets the no delay option.
    */
-  public TCPServer<T> setTCPNoDelay(Env env, BooleanValue tcpNoDelay) {
-    server.setTCPNoDelay(tcpNoDelay.toBoolean());
+  public TCPServer<?> noDelay(Env env, BooleanValue noDelay) {
+    server.setTCPNoDelay(noDelay.toBoolean());
     return this;
   }
 
   /**
-   * Returns the value of TCP traffic class.
+   * Gets the traffic class option.
    */
-  public int getTrafficClass(Env env) {
-    return server.getTrafficClass();
+  public Value trafficClass(Env env) {
+    return env.wrapJava(server.getTrafficClass());
   }
 
   /**
-   * Set the TCP trafficClass setting for connections created by this instance to trafficClass.
+   * Sets the traffic class option.
    */
-  public TCPServer<T> setTrafficClass(Env env, NumberValue trafficClass) {
-    server.setReceiveBufferSize(trafficClass.toInt());
+  public TCPServer<T> trafficClass(Env env, NumberValue trafficClass) {
+    server.setTrafficClass(trafficClass.toInt());
     return this;
   }
 
   /**
-   * Returns a boolean indicating whether pooled buffers are used.
+   * Gets the use pooled buffers option.
    */
-  public boolean isUsePooledBuffers(Env env) {
-    return server.isUsePooledBuffers();
+  public BooleanValue usePooledBuffers(Env env) {
+    return BooleanValue.create(server.isUsePooledBuffers());
   }
 
   /**
-   * Set if vertx should use pooled buffers for performance reasons.
+   * Sets the use pooled buffers option.
    */
-  public TCPServer<T> setUsePooledBuffers(Env env, BooleanValue pooledBuffers) {
-    server.setUsePooledBuffers(pooledBuffers.toBoolean());
+  public TCPServer<?> usePooledBuffers(Env env, BooleanValue usePooledBuffers) {
+    server.setUsePooledBuffers(usePooledBuffers.toBoolean());
     return this;
   }
 
