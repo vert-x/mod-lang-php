@@ -16,7 +16,7 @@ import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x WebSocket.
- *
+ * 
  * @author Jordan Halterman
  */
 public class WebSocket implements ReadStream, WriteStream, ExceptionSupport {

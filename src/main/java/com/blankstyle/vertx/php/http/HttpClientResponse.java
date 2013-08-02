@@ -14,7 +14,7 @@ import com.caucho.quercus.env.Value;
  *
  * @author Jordan Halterman
  */
-public class HttpClientResponse implements ReadStream, ExceptionSupport {
+public class HttpClientResponse implements ReadStream<HttpClientResponse>, ExceptionSupport<HttpClientResponse> {
 
   private org.vertx.java.core.http.HttpClientResponse response;
 
@@ -31,15 +31,15 @@ public class HttpClientResponse implements ReadStream, ExceptionSupport {
   }
 
   @Override
-  public Value pause(Env env) {
+  public HttpClientResponse pause(Env env) {
     response.pause();
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value resume(Env env) {
+  public HttpClientResponse resume(Env env) {
     response.resume();
-    return env.wrapJava(this);
+    return this;
   }
 
   public Value cookies(Env env) {
@@ -67,26 +67,26 @@ public class HttpClientResponse implements ReadStream, ExceptionSupport {
   }
 
   @Override
-  public Value dataHandler(Env env, Callback handler) {
+  public HttpClientResponse dataHandler(Env env, Callback handler) {
     response.dataHandler(new Handler<Buffer>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
-  public Value bodyHandler(Env env, Callback handler) {
+  public HttpClientResponse bodyHandler(Env env, Callback handler) {
     response.bodyHandler(new Handler<Buffer>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value endHandler(Env env, Callback handler) {
+  public HttpClientResponse endHandler(Env env, Callback handler) {
     response.endHandler(new Handler<Void>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value exceptionHandler(Env env, Callback handler) {
+  public HttpClientResponse exceptionHandler(Env env, Callback handler) {
     response.exceptionHandler(new Handler<Throwable>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
 }

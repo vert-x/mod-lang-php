@@ -7,7 +7,7 @@ import com.caucho.quercus.env.Value;
 /**
  * A PHP compatible implementation of the Vert.x ExceptionSupport interface.
  */
-public interface ExceptionSupport {
+public interface ExceptionSupport<T> {
 
   /**
    * Sets an exception handler.
@@ -15,6 +15,6 @@ public interface ExceptionSupport {
    * @param handler A PHP callback.
    * @return The called object.
    */
-  public Value exceptionHandler(Env env, Callback handler);
+  public T exceptionHandler(Env env, Callback handler);
 
 }

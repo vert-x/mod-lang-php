@@ -16,7 +16,7 @@ import com.caucho.quercus.env.Value;
  *
  * @author Jordan Halterman
  */
-public class HttpServerResponse implements WriteStream, ExceptionSupport {
+public class HttpServerResponse implements WriteStream<HttpServerResponse>, ExceptionSupport<HttpServerResponse> {
 
   private org.vertx.java.core.http.HttpServerResponse response;
 
@@ -53,9 +53,9 @@ public class HttpServerResponse implements WriteStream, ExceptionSupport {
   /**
    * Sets the response status message.
    */
-  public Value setStatusMessage(Env env, StringValue message) {
+  public HttpServerResponse setStatusMessage(Env env, StringValue message) {
     response.setStatusMessage(message.toString());
-    return env.wrapJava(this);
+    return this;
   }
 
   /**
@@ -75,28 +75,28 @@ public class HttpServerResponse implements WriteStream, ExceptionSupport {
   /**
    * Puts an HTTP header.
    */
-  public Value putHeader(Env env, StringValue name, Value value) {
+  public HttpServerResponse putHeader(Env env, StringValue name, Value value) {
     response.putHeader(name.toString(), value.toString());
-    return env.wrapJava(this);
+    return this;
   }
 
   /**
    * Sends a file to the client.
    */
-  public Value sendFile(Env env, StringValue filename) {
+  public HttpServerResponse sendFile(Env env, StringValue filename) {
     response.sendFile(filename.toString());
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value write(Env env, Value data, @Optional StringValue enc) {
+  public HttpServerResponse write(Env env, Value data, @Optional StringValue enc) {
     if (enc != null && !enc.isDefault()) {
       response.write(data.toString(), enc.toString());
     }
     else {
       response.write(data.toString());
     }
-    return env.wrapJava(this);
+    return this;
   }
 
   public void end() {
@@ -112,19 +112,19 @@ public class HttpServerResponse implements WriteStream, ExceptionSupport {
   }
 
   @Override
-  public Value drainHandler(Env env, Callback handler) {
+  public HttpServerResponse drainHandler(Env env, Callback handler) {
     response.drainHandler(new Handler<Void>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
-  public Value closeHandler(Env env, Callback handler) {
+  public HttpServerResponse closeHandler(Env env, Callback handler) {
     response.closeHandler(new Handler<Void>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
-  public Value setChunked(Env env, BooleanValue chunked) {
+  public HttpServerResponse setChunked(Env env, BooleanValue chunked) {
     response.setChunked(chunked.toBoolean());
-    return env.wrapJava(this);
+    return this;
   }
 
   public BooleanValue isChunked(Env env) {
@@ -132,9 +132,9 @@ public class HttpServerResponse implements WriteStream, ExceptionSupport {
   }
 
   @Override
-  public Value setWriteQueueMaxSize(Env env, NumberValue size) {
+  public HttpServerResponse setWriteQueueMaxSize(Env env, NumberValue size) {
     response.setWriteQueueMaxSize(size.toInt());
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
@@ -143,9 +143,9 @@ public class HttpServerResponse implements WriteStream, ExceptionSupport {
   }
 
   @Override
-  public Value exceptionHandler(Env env, Callback handler) {
+  public HttpServerResponse exceptionHandler(Env env, Callback handler) {
     response.exceptionHandler(new Handler<Throwable>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
 }

@@ -16,7 +16,7 @@ import com.caucho.quercus.env.Value;
  *
  * @author Jordan Halterman
  */
-public class HttpClientRequest implements WriteStream, ExceptionSupport {
+public class HttpClientRequest implements WriteStream<HttpClientRequest>, ExceptionSupport<HttpClientRequest> {
 
   private org.vertx.java.core.http.HttpClientRequest request;
 
@@ -52,19 +52,19 @@ public class HttpClientRequest implements WriteStream, ExceptionSupport {
   }
 
   @Override
-  public Value write(Env env, Value data, @Optional StringValue enc) {
+  public HttpClientRequest write(Env env, Value data, @Optional StringValue enc) {
     if (enc != null && !enc.isDefault()) {
       request.write(data.toString(), enc.toString());
     }
     else {
       request.write(data.toString());
     }
-    return env.wrapJava(this);
+    return this;
   }
 
-  public Value continueHandler(Env env, Callback handler) {
+  public HttpClientRequest continueHandler(Env env, Callback handler) {
     request.continueHandler(new Handler<Void>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
   public void end() {
@@ -80,19 +80,19 @@ public class HttpClientRequest implements WriteStream, ExceptionSupport {
   }
 
   @Override
-  public Value drainHandler(Env env, Callback handler) {
+  public HttpClientRequest drainHandler(Env env, Callback handler) {
     request.drainHandler(new Handler<Void>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
-  public Value setTimeout(Env env, Value timeoutMs) {
+  public HttpClientRequest setTimeout(Env env, Value timeoutMs) {
     request.setTimeout(timeoutMs.toInt());
-    return env.wrapJava(this);
+    return this;
   }
 
-  public Value setChunked(Env env, BooleanValue chunked) {
+  public HttpClientRequest setChunked(Env env, BooleanValue chunked) {
     request.setChunked(chunked.toBoolean());
-    return env.wrapJava(this);
+    return this;
   }
 
   public BooleanValue isChunked(Env env) {
@@ -100,9 +100,9 @@ public class HttpClientRequest implements WriteStream, ExceptionSupport {
   }
 
   @Override
-  public Value setWriteQueueMaxSize(Env env, NumberValue size) {
+  public HttpClientRequest setWriteQueueMaxSize(Env env, NumberValue size) {
     request.setWriteQueueMaxSize(size.toInt());
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
@@ -111,9 +111,9 @@ public class HttpClientRequest implements WriteStream, ExceptionSupport {
   }
 
   @Override
-  public Value exceptionHandler(Env env, Callback handler) {
+  public HttpClientRequest exceptionHandler(Env env, Callback handler) {
     request.exceptionHandler(new Handler<Throwable>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
 }

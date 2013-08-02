@@ -11,12 +11,12 @@ import com.caucho.quercus.env.Value;
 /**
  * A PHP compatible implementation of the Vert.x WriteStream.
  */
-public interface WriteStream {
+public interface WriteStream<T> {
 
   /**
    * Writes data to the stream.
    */
-  public Value write(Env env, Value data, @Optional StringValue enc);
+  public T write(Env env, Value data, @Optional StringValue enc);
 
   /**
    * Adds a drain handler to the stream.
@@ -24,7 +24,7 @@ public interface WriteStream {
    * @param handler A PHP callback.
    * @return The stream implementation.
    */
-  public Value drainHandler(Env env, Callback handler);
+  public T drainHandler(Env env, Callback handler);
 
   /**
    * Sets the max write queue size.
@@ -32,7 +32,7 @@ public interface WriteStream {
    * @param size A PHP number value.
    * @return The stream implementation.
    */
-  public Value setWriteQueueMaxSize(Env env, NumberValue size);
+  public T setWriteQueueMaxSize(Env env, NumberValue size);
 
   /**
    * Returns a boolean value indicating whether the write

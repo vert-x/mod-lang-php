@@ -17,7 +17,7 @@ import com.caucho.quercus.env.Value;
  *
  * @author Jordan Halterman
  */
-public class HttpServerRequest implements ReadStream {
+public class HttpServerRequest implements ReadStream<HttpServerRequest> {
 
   private org.vertx.java.core.http.HttpServerRequest request;
 
@@ -96,32 +96,32 @@ public class HttpServerRequest implements ReadStream {
   }
 
   @Override
-  public Value pause(Env env) {
+  public HttpServerRequest pause(Env env) {
     request.pause();
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value resume(Env env) {
+  public HttpServerRequest resume(Env env) {
     request.resume();
-    return env.wrapJava(this);
+    return this;
   }
 
-  public Value uploadHandler(Env env, Callback handler) {
+  public HttpServerRequest uploadHandler(Env env, Callback handler) {
     request.uploadHandler(new Handler<HttpServerFileUpload>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value dataHandler(Env env, Callback handler) {
+  public HttpServerRequest dataHandler(Env env, Callback handler) {
     request.dataHandler(new Handler<Buffer>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
   @Override
-  public Value endHandler(Env env, Callback handler) {
+  public HttpServerRequest endHandler(Env env, Callback handler) {
     request.endHandler(new Handler<Void>(env, handler));
-    return env.wrapJava(this);
+    return this;
   }
 
 }

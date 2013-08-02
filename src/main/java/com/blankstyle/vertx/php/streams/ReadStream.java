@@ -7,21 +7,21 @@ import com.caucho.quercus.env.Value;
 /**
  * A PHP compatible implementation of the Vert.x ReadStream.
  */
-public interface ReadStream {
+public interface ReadStream<T> {
 
   /**
    * Pauses the stream.
    *
    * @return The stream implementation.
    */
-  public Value pause(Env env);
+  public T pause(Env env);
 
   /**
    * Resumes the stream.
    *
    * @return The stream implementation.
    */
-  public Value resume(Env env);
+  public T resume(Env env);
 
   /**
    * Sets a data handler on the stream.
@@ -29,7 +29,7 @@ public interface ReadStream {
    * @param handler A PHP callback.
    * @return The stream implementation.
    */
-  public Value dataHandler(Env env, Callback handler);
+  public T dataHandler(Env env, Callback handler);
 
   /**
    * Sets an end handler on the stream.
@@ -37,6 +37,6 @@ public interface ReadStream {
    * @param handler A PHP callback.
    * @return The stream implementation.
    */
-  public Value endHandler(Env env, Callback handler);
+  public T endHandler(Env env, Callback handler);
 
 }

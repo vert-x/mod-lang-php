@@ -1,7 +1,5 @@
 package com.blankstyle.vertx.php.http;
 
-import org.vertx.java.core.http.WebSocketBase;
-
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.StringValue;
