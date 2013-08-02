@@ -39,10 +39,14 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
    * begun listening. This is an optional argument.
    * @return The called server instance.
    */
-  public HttpServer listen(final Env env, final NumberValue port, @Optional final Value host, @Optional final Callback handler) {
+  public HttpServer listen(Env env, NumberValue port, @Optional Value host, @Optional Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      System.out.println(String.format("Handler is %s", handler.getType()));
+      env.error("Argument to HttpServer::listen() must be callable.");
+    }
     if (host != null && !host.isDefault()) {
       if (handler != null && !handler.isDefault()) {
-        server.listen(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.http.HttpServer>>(env, handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.http.HttpServer>, AsyncResult<HttpServer>>() {
+        server.listen(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.http.HttpServer>>(env, (Callback) handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.http.HttpServer>, AsyncResult<HttpServer>>() {
           @Override
           public AsyncResult<HttpServer> modify(final AsyncResult<org.vertx.java.core.http.HttpServer> server) {
             return new AsyncResult<HttpServer>() {
@@ -71,7 +75,7 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
       }
     }
     else if (handler != null && !handler.isDefault()) {
-      server.listen(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.http.HttpServer>>(env, handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.http.HttpServer>, AsyncResult<HttpServer>>() {
+      server.listen(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.http.HttpServer>>(env, (Callback) handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.http.HttpServer>, AsyncResult<HttpServer>>() {
         @Override
         public AsyncResult<HttpServer> modify(final AsyncResult<org.vertx.java.core.http.HttpServer> server) {
           return new AsyncResult<HttpServer>() {
@@ -104,17 +108,18 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
   /**
    * Creates or gets the server request handler.
    */
-  public Value requestHandler(final Env env, @Optional final Callback handler) {
-    if (handler != null && !handler.isDefault()) {
-      if (!handler.isCallable(env, true, null)) {
-        env.error("Argument to HttpServer::requestHandler() must be callable.");
-      }
-      server.requestHandler(new Handler<org.vertx.java.core.http.HttpServerRequest>(env, handler, new ArgumentModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+  public Value requestHandler(Env env, @Optional Value handler) {
+    if (handler != null && !handler.isNull() && handler.isCallable(env, false, null)) {
+      server.requestHandler(new Handler<org.vertx.java.core.http.HttpServerRequest>(env, (Callback) handler, new ArgumentModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
         @Override
         public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
           return new HttpServerRequest(request);
         }
       }));
+      return env.wrapJava(this);
+    }
+    else if (handler != null && !handler.isNull()) {
+      env.error("Argument to HttpServer::requestHandler() must be callable.");
       return env.wrapJava(this);
     }
     else {
@@ -123,19 +128,41 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
   }
 
   /**
+   * Creates or gets the server route handler.
+   */
+  public Value routeHandler(final Env env, @Optional final RouteMatcher matcher) {
+    if (matcher != null) {
+      server.requestHandler(new org.vertx.java.core.Handler<org.vertx.java.core.http.HttpServerRequest>() {
+        @Override
+        public void handle(org.vertx.java.core.http.HttpServerRequest request) {
+          matcher.handle(env, request);
+        }
+      });
+      return env.wrapJava(this);
+    }
+    else {
+      return requestHandler(env, null);
+    }
+  }
+
+  /**
    * Creates or gets the server websocket handler.
    */
-  public Value websocketHandler(final Env env, @Optional final Callback handler) {
-    if (handler != null && !handler.isDefault()) {
+  public Value websocketHandler(Env env, @Optional Value handler) {
+    if (handler != null && handler.isCallable(env, false, null)) {
       if (!handler.isCallable(env, true, null)) {
         env.error("Argument to HttpServer::websocketHandler() must be callable.");
       }
-      server.websocketHandler(new Handler<org.vertx.java.core.http.ServerWebSocket>(env, handler, new ArgumentModifier<org.vertx.java.core.http.ServerWebSocket, ServerWebSocket>() {
+      server.websocketHandler(new Handler<org.vertx.java.core.http.ServerWebSocket>(env, (Callback) handler, new ArgumentModifier<org.vertx.java.core.http.ServerWebSocket, ServerWebSocket>() {
         @Override
         public ServerWebSocket modify(org.vertx.java.core.http.ServerWebSocket socket) {
           return new ServerWebSocket(socket);
         }
       }));
+      return env.wrapJava(this);
+    }
+    else if (handler != null) {
+      env.error("Invalid websocket handler.");
       return env.wrapJava(this);
     }
     else {
