@@ -148,4 +148,10 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
     return this;
   }
 
+  @Override
+  public HttpServerResponse drainHandler(org.vertx.java.core.Handler<Void> handler) {
+    response.drainHandler(handler);
+    return this;
+  }
+
 }

@@ -6,8 +6,6 @@ import org.vertx.java.core.buffer.Buffer;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
-import com.caucho.quercus.env.ObjectValue;
-import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x Pump.
@@ -22,46 +20,45 @@ public class Pump {
   /**
    * A read stream.
    */
-  private ObjectValue readStream;
+  private ReadStream<?> readStream;
 
   /**
    * A write stream.
    */
-  private ObjectValue writeStream;
+  private WriteStream<?> writeStream;
 
   private int pumped;
 
   private final Handler<Void> drainHandler = new Handler<Void>() {
     public void handle(Void v) {
-      readStream.callMethod(env, env.createString("resume"));
+      readStream.resume(env);
     }
   };
 
   private final Handler<Buffer> dataHandler = new Handler<Buffer>() {
     public void handle(Buffer buffer) {
-      writeStream.callMethod(env, env.createString("write"), env.wrapJava(buffer));
+      writeStream.write(env, env.wrapJava(buffer), null);
       pumped += buffer.length();
-      if (writeStream.callMethod(env, env.createString("writeQueueFull")).toBoolean()) {
-        readStream.callMethod(env, env.createString("pause"));
-        writeStream.callMethod(env, env.createString("drainHandler"), env.wrapJava(drainHandler));
+      if (writeStream.writeQueueFull(env).toBoolean()) {
+        readStream.pause(env);
+        writeStream.drainHandler(drainHandler);
       }
     }
   };
 
-  public Pump(Env env, ObjectValue readStream, ObjectValue writeStream, @Optional NumberValue writeQueueMaxSize) {
+  public Pump(Env env, ReadStream<?> readStream, WriteStream<?> writeStream, @Optional NumberValue writeQueueMaxSize) {
     this.env = env;
     this.readStream = readStream;
     this.writeStream = writeStream;
     if (writeQueueMaxSize != null) {
-      Value[] args = {writeQueueMaxSize};
-      this.writeStream.callMethod(env, env.createString("setWriteQueueMaxSize"), args);
+      this.writeStream.setWriteQueueMaxSize(env, writeQueueMaxSize);
     }
   }
 
   /**
    * Creates a new pump.
    */
-  public static Pump createPump(Env env, ObjectValue readStream, ObjectValue writeStream, @Optional NumberValue writeQueueMaxSize) {
+  public static Pump createPump(Env env, ReadStream<?> readStream, WriteStream<?> writeStream, @Optional NumberValue writeQueueMaxSize) {
     return new Pump(env, readStream, writeStream, writeQueueMaxSize);
   }
 
@@ -69,8 +66,7 @@ public class Pump {
    * Sets the write queue max size.
    */
   public Pump setWriteQueueMaxSize(Env env, NumberValue maxSize) {
-    Value[] args = {maxSize};
-    writeStream.callMethod(env, env.createString("setWriteQueueMaxSize"), args);
+    writeStream.setWriteQueueMaxSize(env, maxSize);
     return this;
   }
 
@@ -78,8 +74,7 @@ public class Pump {
    * Start the Pump. The Pump can be started and stopped multiple times.
    */
   public Pump start() {
-    Value[] args = {env.wrapJava(dataHandler)};
-    readStream.callMethod(env, env.createString("dataHandler"), args);
+    readStream.dataHandler(dataHandler);
     return this;
   }
 
@@ -87,9 +82,8 @@ public class Pump {
    * Stop the Pump. The Pump can be started and stopped multiple times.
    */
   public Pump stop() {
-    Value[] args = {env.wrapJava(null)};
-    writeStream.callMethod(env, env.createString("drainHandler"), args);
-    readStream.callMethod(env, env.createString("dataHandler"), args);
+    writeStream.drainHandler(env, null);
+    readStream.dataHandler(env, null);
     return this;
   }
 

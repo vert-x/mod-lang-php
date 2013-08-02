@@ -129,4 +129,10 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest> {
     return this;
   }
 
+  @Override
+  public HttpServerRequest dataHandler(org.vertx.java.core.Handler<Buffer> handler) {
+    request.dataHandler(handler);
+    return this;
+  }
+
 }

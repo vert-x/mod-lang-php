@@ -89,4 +89,10 @@ public class HttpClientResponse implements ReadStream<HttpClientResponse>, Excep
     return this;
   }
 
+  @Override
+  public HttpClientResponse dataHandler(org.vertx.java.core.Handler<Buffer> handler) {
+    response.dataHandler(handler);
+    return this;
+  }
+
 }

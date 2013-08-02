@@ -1,5 +1,7 @@
 package com.blankstyle.vertx.php.net;
 
+import org.vertx.java.core.buffer.Buffer;
+
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.ReadStream;
@@ -16,7 +18,7 @@ import com.caucho.quercus.env.StringValue;
  */
 public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>, ExceptionSupport<NetSocket> {
 
-  org.vertx.java.core.net.NetSocket socket;
+  private org.vertx.java.core.net.NetSocket socket;
 
   public NetSocket(org.vertx.java.core.net.NetSocket socket) {
     this.socket = socket;
@@ -41,6 +43,12 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
    */
   public NetSocket dataHandler(Env env, Callback handler) {
     socket.dataHandler(new Handler<org.vertx.java.core.buffer.Buffer>(env, handler));
+    return this;
+  }
+
+  @Override
+  public NetSocket dataHandler(org.vertx.java.core.Handler<Buffer> handler) {
+    socket.dataHandler(handler);
     return this;
   }
 
@@ -73,6 +81,12 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
    */
   public NetSocket drainHandler(Env env, Callback handler) {
     socket.drainHandler(new Handler<Void>(env, handler));
+    return this;
+  }
+
+  @Override
+  public NetSocket drainHandler(org.vertx.java.core.Handler<Void> handler) {
+    socket.drainHandler(handler);
     return this;
   }
 

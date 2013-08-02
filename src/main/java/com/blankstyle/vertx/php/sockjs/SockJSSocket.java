@@ -90,4 +90,16 @@ public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJ
     socket.close();
   }
 
+  @Override
+  public SockJSSocket drainHandler(org.vertx.java.core.Handler<Void> handler) {
+    socket.drainHandler(handler);
+    return this;
+  }
+
+  @Override
+  public SockJSSocket dataHandler(org.vertx.java.core.Handler<Buffer> handler) {
+    socket.dataHandler(handler);
+    return this;
+  }
+
 }
