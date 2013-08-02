@@ -11,6 +11,7 @@ import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.StringValue;
+import com.caucho.quercus.env.Value;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,17 +36,20 @@ public final class Container {
    * Deploys a module.
    */
   @SuppressWarnings("unchecked")
-  public static void deployModule(Env env, StringValue moduleName, @Optional ArrayValue config, @Optional("1") NumberValue instances, @Optional Callback handler) {
+  public static void deployModule(Env env, StringValue moduleName, @Optional ArrayValue config, @Optional("1") NumberValue instances, @Optional Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Handler argument to Container::deployModule() must be callable.");
+    }
     boolean hasConfig = config != null && !config.isDefault();
     boolean hasHandler = handler != null && !handler.isDefault();
     if (hasConfig && hasHandler) {
-      Container.instance.deployModule(moduleName.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(), new Handler<AsyncResult<String>>(env, handler));
+      Container.instance.deployModule(moduleName.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(), new Handler<AsyncResult<String>>(env, (Callback) handler));
     }
     else if (hasConfig) {
       Container.instance.deployModule(moduleName.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
     }
     else if (hasHandler) {
-      Container.instance.deployModule(moduleName.toString(), instances.toInt(), new Handler<AsyncResult<String>>(env, handler));
+      Container.instance.deployModule(moduleName.toString(), instances.toInt(), new Handler<AsyncResult<String>>(env, (Callback) handler));
     }
     else {
       Container.instance.deployModule(moduleName.toString(), instances.toInt());
@@ -55,9 +59,12 @@ public final class Container {
   /**
    * Undeploys a module.
    */
-  public static void undeployModule(Env env, StringValue deploymentID, @Optional Callback handler) {
+  public static void undeployModule(Env env, StringValue deploymentID, @Optional Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Handler argument to Container::undeployModule() must be callable.");
+    }
     if (handler != null && !handler.isDefault()) {
-      Container.instance.undeployModule(deploymentID.toString(), new Handler<AsyncResult<Void>>(env, handler));
+      Container.instance.undeployModule(deploymentID.toString(), new Handler<AsyncResult<Void>>(env, (Callback) handler));
     }
     else {
       Container.instance.undeployModule(deploymentID.toString());
@@ -68,17 +75,20 @@ public final class Container {
    * Deploys a verticle.
    */
   @SuppressWarnings("unchecked")
-  public static void deployVerticle(Env env, StringValue main, @Optional ArrayValue config, @Optional("1") NumberValue instances, @Optional Callback handler) {
+  public static void deployVerticle(Env env, StringValue main, @Optional ArrayValue config, @Optional("1") NumberValue instances, @Optional Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Handler argument to Container::deployVerticle() must be callable.");
+    }
     boolean hasConfig = config != null && !config.isDefault();
     boolean hasHandler = handler != null && !handler.isDefault();
     if (hasConfig && hasHandler) {
-      Container.instance.deployVerticle(main.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(), new Handler<AsyncResult<String>>(env, handler));
+      Container.instance.deployVerticle(main.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(), new Handler<AsyncResult<String>>(env, (Callback) handler));
     }
     else if (hasConfig) {
       Container.instance.deployVerticle(main.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
     }
     else if (hasHandler) {
-      Container.instance.deployVerticle(main.toString(), instances.toInt(), new Handler<AsyncResult<String>>(env, handler));
+      Container.instance.deployVerticle(main.toString(), instances.toInt(), new Handler<AsyncResult<String>>(env, (Callback) handler));
     }
     else {
       Container.instance.deployVerticle(main.toString(), instances.toInt());
@@ -88,9 +98,12 @@ public final class Container {
   /**
    * Undeploys a verticle.
    */
-  public static void undeployVerticle(Env env, StringValue deploymentID, @Optional Callback handler) {
+  public static void undeployVerticle(Env env, StringValue deploymentID, @Optional Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Handler argument to Container::undeployVerticle() must be callable.");
+    }
     if (handler != null && !handler.isDefault()) {
-      Container.instance.undeployVerticle(deploymentID.toString(), new Handler<AsyncResult<Void>>(env, handler));
+      Container.instance.undeployVerticle(deploymentID.toString(), new Handler<AsyncResult<Void>>(env, (Callback) handler));
     }
     else {
       Container.instance.undeployVerticle(deploymentID.toString());

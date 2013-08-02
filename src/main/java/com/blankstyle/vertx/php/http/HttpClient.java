@@ -8,6 +8,7 @@ import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Env;
+import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x HttpClient.
@@ -115,88 +116,121 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
   /**
    * Connects to the server.
    */
-  public HttpClient connect(final Env env, StringValue uri, final Callback handler) {
-    client.connect(uri.toString(), createResponseHandler(env, handler));
+  public HttpClient connect(Env env, StringValue uri, Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to HttpClient::connect() must be callable.");
+    }
+    client.connect(uri.toString(), createResponseHandler(env, (Callback) handler));
     return this;
   }
 
   /**
    * Executes a request.
    */
-  public HttpClient request(final Env env, StringValue method, StringValue uri, final Callback handler) {
-    client.request(method.toString(), uri.toString(), createResponseHandler(env, handler));
+  public HttpClient request(Env env, StringValue method, StringValue uri, Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to HttpClient::request() must be callable.");
+    }
+    client.request(method.toString(), uri.toString(), createResponseHandler(env, (Callback) handler));
     return this;
   }
 
   /**
    * Executes a GET request.
    */
-  public HttpClient get(final Env env, StringValue uri, final Callback handler) {
-    client.get(uri.toString(), createResponseHandler(env, handler));
+  public HttpClient get(Env env, StringValue uri, Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to HttpClient::get() must be callable.");
+    }
+    client.get(uri.toString(), createResponseHandler(env, (Callback) handler));
     return this;
   }
 
   /**
    * Executes a GET request.
    */
-  public HttpClient getNow(final Env env, StringValue uri, final Callback handler) {
-    client.getNow(uri.toString(), createResponseHandler(env, handler));
+  public HttpClient getNow(Env env, StringValue uri, Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to HttpClient::getNow() must be callable.");
+    }
+    client.getNow(uri.toString(), createResponseHandler(env, (Callback) handler));
     return this;
   }
 
   /**
    * Executes a PUT request.
    */
-  public HttpClient put(final Env env, StringValue uri, final Callback handler) {
-    client.put(uri.toString(), createResponseHandler(env, handler));
+  public HttpClient put(Env env, StringValue uri, Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to HttpClient::put() must be callable.");
+    }
+    client.put(uri.toString(), createResponseHandler(env, (Callback) handler));
     return this;
   }
 
   /**
    * Executes a POST request.
    */
-  public HttpClient post(final Env env, StringValue uri, final Callback handler) {
-    client.post(uri.toString(), createResponseHandler(env, handler));
+  public HttpClient post(Env env, StringValue uri, Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to HttpClient::post() must be callable.");
+    }
+    client.post(uri.toString(), createResponseHandler(env, (Callback) handler));
     return this;
   }
 
   /**
    * Executes a DELETE request.
    */
-  public HttpClient delete(final Env env, StringValue uri, final Callback handler) {
-    client.delete(uri.toString(), createResponseHandler(env, handler));
+  public HttpClient delete(Env env, StringValue uri, Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to HttpClient::delete() must be callable.");
+    }
+    client.delete(uri.toString(), createResponseHandler(env, (Callback) handler));
     return this;
   }
 
   /**
    * Executes a HEAD request.
    */
-  public HttpClient head(final Env env, StringValue uri, final Callback handler) {
-    client.head(uri.toString(), createResponseHandler(env, handler));
+  public HttpClient head(Env env, StringValue uri, Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to HttpClient::head() must be callable.");
+    }
+    client.head(uri.toString(), createResponseHandler(env, (Callback) handler));
     return this;
   }
 
   /**
    * Executes a PATCH request.
    */
-  public HttpClient patch(final Env env, StringValue uri, final Callback handler) {
-    client.patch(uri.toString(), createResponseHandler(env, handler));
+  public HttpClient patch(Env env, StringValue uri, Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to HttpClient::patch() must be callable.");
+    }
+    client.patch(uri.toString(), createResponseHandler(env, (Callback) handler));
     return this;
   }
 
   /**
    * Executes a TRACE request.
    */
-  public HttpClient trace(final Env env, StringValue uri, final Callback handler) {
-    client.trace(uri.toString(), createResponseHandler(env, handler));
+  public HttpClient trace(Env env, StringValue uri, Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to HttpClient::trace() must be callable.");
+    }
+    client.trace(uri.toString(), createResponseHandler(env, (Callback) handler));
     return this;
   }
 
   /**
    * Executes an OPTIONS request.
    */
-  public HttpClient options(final Env env, StringValue uri, final Callback handler) {
-    client.options(uri.toString(), createResponseHandler(env, handler));
+  public HttpClient options(Env env, StringValue uri, Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to HttpClient::options() must be callable.");
+    }
+    client.options(uri.toString(), createResponseHandler(env, (Callback) handler));
     return this;
   }
 
@@ -215,8 +249,11 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
   /**
    * Sets the client exception handler.
    */
-  public HttpClient exceptionHandler(final Env env, final Callback handler) {
-    client.exceptionHandler(new Handler<Throwable>(env, handler));
+  public HttpClient exceptionHandler(Env env, Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to HttpClient::exceptionHandler() must be callable.");
+    }
+    client.exceptionHandler(new Handler<Throwable>(env, (Callback) handler));
     return this;
   }
 

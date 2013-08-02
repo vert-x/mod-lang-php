@@ -31,6 +31,9 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    * @return The called server instance.
    */
   public NetServer connectHandler(Env env, Callback handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to NetServer::connectHandler() must be callable.");
+    }
     server.connectHandler(new Handler<org.vertx.java.core.net.NetSocket>(env, handler, new ArgumentModifier<org.vertx.java.core.net.NetSocket, NetSocket>() {
       @Override
       public NetSocket modify(org.vertx.java.core.net.NetSocket socket) {
@@ -51,10 +54,13 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    * begun listening. This is an optional argument.
    * @return The called server instance.
    */
-  public NetServer listen(Env env, NumberValue port, @Optional Value host, @Optional Callback handler) {
+  public NetServer listen(Env env, NumberValue port, @Optional Value host, @Optional Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to NetServer::listen() must be callable.");
+    }
     if (host != null && !host.isDefault()) {
       if (handler != null && !handler.isDefault()) {
-        server.listen(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.net.NetServer>>(env, handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetServer>, AsyncResult<NetServer>>() {
+        server.listen(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.net.NetServer>>(env, (Callback) handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetServer>, AsyncResult<NetServer>>() {
           @Override
           public AsyncResult<NetServer> modify(final AsyncResult<org.vertx.java.core.net.NetServer> server) {
             return new AsyncResult<NetServer>() {
@@ -83,7 +89,7 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
       }
     }
     else if (handler != null && !handler.isDefault()) {
-      server.listen(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.net.NetServer>>(env, handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetServer>, AsyncResult<NetServer>>() {
+      server.listen(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.net.NetServer>>(env, (Callback) handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetServer>, AsyncResult<NetServer>>() {
         @Override
         public AsyncResult<NetServer> modify(final AsyncResult<org.vertx.java.core.net.NetServer> server) {
           return new AsyncResult<NetServer>() {
@@ -126,12 +132,12 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    * @param callback An optional callable PHP item to be invoked when
    * the server is closed.
    */
-  public void close(Env env, @Optional Callback handler) {
-    if (handler == null) {
+  public void close(Env env, @Optional Value handler) {
+    if (handler == null || handler.isNull()) {
       server.close();
     }
     else {
-      server.close(new Handler<AsyncResult<Void>>(env, handler));
+      server.close(new Handler<AsyncResult<Void>>(env, (Callback) handler));
     }
   }
 

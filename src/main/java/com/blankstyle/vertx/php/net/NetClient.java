@@ -11,6 +11,7 @@ import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.StringValue;
+import com.caucho.quercus.env.Value;
 
 public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
 
@@ -25,9 +26,12 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
   /**
    * Connects to a server.
    */
-  public NetClient connect(Env env, NumberValue port, @Optional StringValue host, @Optional Callback handler) {
+  public NetClient connect(Env env, NumberValue port, @Optional StringValue host, @Optional Value handler) {
+    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
+      env.error("Argument to NetClient::connect() must be callable.");
+    }
     if (host != null && !host.isDefault()) {
-      client.connect(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetSocket>, AsyncResult<NetSocket>>() {
+      client.connect(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, (Callback) handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetSocket>, AsyncResult<NetSocket>>() {
         @Override
         public AsyncResult<NetSocket> modify(final AsyncResult<org.vertx.java.core.net.NetSocket> socket) {
           return new AsyncResult<NetSocket>() {
@@ -52,7 +56,7 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
       }));
     }
     else {
-      client.connect(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetSocket>, AsyncResult<NetSocket>>() {
+      client.connect(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, (Callback) handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetSocket>, AsyncResult<NetSocket>>() {
         @Override
         public AsyncResult<NetSocket> modify(final AsyncResult<org.vertx.java.core.net.NetSocket> socket) {
           return new AsyncResult<NetSocket>() {

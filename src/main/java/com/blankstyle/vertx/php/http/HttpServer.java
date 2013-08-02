@@ -41,7 +41,6 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
    */
   public HttpServer listen(Env env, NumberValue port, @Optional Value host, @Optional Value handler) {
     if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      System.out.println(String.format("Handler is %s", handler.getType()));
       env.error("Argument to HttpServer::listen() must be callable.");
     }
     if (host != null && !host.isDefault()) {
