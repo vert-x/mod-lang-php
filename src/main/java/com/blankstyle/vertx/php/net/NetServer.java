@@ -20,8 +20,8 @@ import org.vertx.java.core.AsyncResult;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.ArgumentModifier;
 import com.blankstyle.vertx.php.TCPServer;
+import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
-import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.Value;
@@ -45,11 +45,9 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    * @param callback A callable PHP item.
    * @return The called server instance.
    */
-  public NetServer connectHandler(Env env, Callback handler) {
-    if (handler == null || handler.isNull() || !handler.isCallable(env, false, null)) {
-      env.error("Argument to NetServer::connectHandler() must be callable.");
-    }
-    server.connectHandler(new Handler<org.vertx.java.core.net.NetSocket>(env, handler, new ArgumentModifier<org.vertx.java.core.net.NetSocket, NetSocket>() {
+  public NetServer connectHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetServer::connectHandler() must be callable.");
+    server.connectHandler(new Handler<org.vertx.java.core.net.NetSocket>(env, PhpTypes.toCallable(handler), new ArgumentModifier<org.vertx.java.core.net.NetSocket, NetSocket>() {
       @Override
       public NetSocket modify(org.vertx.java.core.net.NetSocket socket) {
         return new NetSocket(socket);
@@ -70,12 +68,13 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    * @return The called server instance.
    */
   public NetServer listen(Env env, NumberValue port, @Optional Value host, @Optional Value handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      env.error("Argument to NetServer::listen() must be callable.");
+    if (PhpTypes.notNull(handler)) {
+      PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetServer::listen() must be callable.");
     }
-    if (host != null && !host.isDefault()) {
-      if (handler != null && !handler.isNull()) {
-        server.listen(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.net.NetServer>>(env, (Callback) handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetServer>, AsyncResult<NetServer>>() {
+
+    if (PhpTypes.notNull(host)) {
+      if (PhpTypes.isCallable(handler)) {
+        server.listen(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.net.NetServer>>(env, PhpTypes.toCallable(handler), new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetServer>, AsyncResult<NetServer>>() {
           @Override
           public AsyncResult<NetServer> modify(final AsyncResult<org.vertx.java.core.net.NetServer> server) {
             return new AsyncResult<NetServer>() {
@@ -103,8 +102,8 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
         server.listen(port.toInt(), host.toString());
       }
     }
-    else if (handler != null && !handler.isNull()) {
-      server.listen(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.net.NetServer>>(env, (Callback) handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetServer>, AsyncResult<NetServer>>() {
+    else if (PhpTypes.isCallable(handler)) {
+      server.listen(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.net.NetServer>>(env, PhpTypes.toCallable(handler), new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetServer>, AsyncResult<NetServer>>() {
         @Override
         public AsyncResult<NetServer> modify(final AsyncResult<org.vertx.java.core.net.NetServer> server) {
           return new AsyncResult<NetServer>() {
@@ -148,11 +147,12 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    * the server is closed.
    */
   public void close(Env env, @Optional Value handler) {
-    if (handler == null || handler.isNull()) {
-      server.close();
+    if (PhpTypes.notNull(handler)) {
+      PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetServer::close() must be callable.");
+      server.close(new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
     }
     else {
-      server.close(new Handler<AsyncResult<Void>>(env, (Callback) handler));
+      server.close();
     }
   }
 

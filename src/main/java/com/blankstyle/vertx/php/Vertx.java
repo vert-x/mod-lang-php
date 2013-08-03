@@ -25,8 +25,9 @@ import com.blankstyle.vertx.php.http.HttpServer;
 import com.blankstyle.vertx.php.net.NetClient;
 import com.blankstyle.vertx.php.net.NetServer;
 import com.blankstyle.vertx.php.sockjs.SockJSServer;
+import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.BooleanValue;
-import com.caucho.quercus.env.Callback;
+import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.LongValue;
 
@@ -140,23 +141,25 @@ public final class Vertx {
    * after this event has been processed
    * @param callback A callable PHP function, method, or closure.
    */
-  public static void runOnContext(Env env, Callback callback) {
-    currentContext(env).runOnContext(env, callback);
+  public static void runOnContext(Env env, Value handler) {
+    currentContext(env).runOnContext(env, handler);
   }
 
   /**
    * Sets a timed handler.
    */
-  public static LongValue setTimer(Env env, LongValue delay, Callback handler) {
-    Vertx.instance.setTimer(delay.toLong(), new Handler<Long>(env, handler));
+  public static LongValue setTimer(Env env, LongValue delay, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::runOnContext() must be callable.");
+    Vertx.instance.setTimer(delay.toLong(), new Handler<Long>(env, PhpTypes.toCallable(handler)));
     return delay;
   }
 
   /**
    * Sets a periodic handler.
    */
-  public static LongValue setPeriodic(Env env, LongValue delay, Callback handler) {
-    Vertx.instance.setPeriodic(delay.toLong(), new Handler<Long>(env, handler));
+  public static LongValue setPeriodic(Env env, LongValue delay, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::runOnContext() must be callable.");
+    Vertx.instance.setPeriodic(delay.toLong(), new Handler<Long>(env, PhpTypes.toCallable(handler)));
     return delay;
   }
 

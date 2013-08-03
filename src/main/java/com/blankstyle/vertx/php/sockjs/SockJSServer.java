@@ -23,10 +23,11 @@ import org.vertx.java.core.json.JsonObject;
 
 import com.blankstyle.vertx.php.ArgumentModifier;
 import com.blankstyle.vertx.php.Handler;
+import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
-import com.caucho.quercus.env.ArrayValue;
-import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
+import com.caucho.quercus.env.Value;
+import com.caucho.quercus.env.ArrayValue;
 import com.caucho.quercus.env.ObjectValue;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.LongValue;
@@ -63,9 +64,10 @@ public class SockJSServer {
    * Installs an app.
    */
   @SuppressWarnings("unchecked")
-  public SockJSServer installApp(Env env, ArrayValue config, Callback handler) {
+  public SockJSServer installApp(Env env, ArrayValue config, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\SockJS\\SockJSServer::installApp() must be callable.");
     server.installApp(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())),
-                      new Handler<org.vertx.java.core.sockjs.SockJSSocket>(env, handler, new ArgumentModifier<org.vertx.java.core.sockjs.SockJSSocket, SockJSSocket>() {
+                      new Handler<org.vertx.java.core.sockjs.SockJSSocket>(env, PhpTypes.toCallable(handler), new ArgumentModifier<org.vertx.java.core.sockjs.SockJSSocket, SockJSSocket>() {
                         @Override
                         public SockJSSocket modify(org.vertx.java.core.sockjs.SockJSSocket socket) {
                           return new SockJSSocket(socket);

@@ -20,7 +20,6 @@ import org.vertx.java.core.Handler;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.StringValue;
-import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.Value;
@@ -41,7 +40,7 @@ public interface WriteStream<T> {
    * @param handler A PHP callback.
    * @return The stream implementation.
    */
-  public T drainHandler(Env env, Callback handler);
+  public T drainHandler(Env env, Value handler);
 
   /**
    * Sets an internal drain handler on the stream.

@@ -19,9 +19,9 @@ import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.WriteStream;
+import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.BooleanValue;
-import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.NumberValue;
@@ -83,8 +83,9 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
     return this;
   }
 
-  public HttpClientRequest continueHandler(Env env, Callback handler) {
-    request.continueHandler(new Handler<Void>(env, handler));
+  public HttpClientRequest continueHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpClientRequest::continueHandler() must be callable.");
+    request.continueHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -101,8 +102,9 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
   }
 
   @Override
-  public HttpClientRequest drainHandler(Env env, Callback handler) {
-    request.drainHandler(new Handler<Void>(env, handler));
+  public HttpClientRequest drainHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpClientRequest::drainHandler() must be callable.");
+    request.drainHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -132,8 +134,9 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
   }
 
   @Override
-  public HttpClientRequest exceptionHandler(Env env, Callback handler) {
-    request.exceptionHandler(new Handler<Throwable>(env, handler));
+  public HttpClientRequest exceptionHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpClientRequest::exceptionhandler() must be callable.");
+    request.exceptionHandler(new Handler<Throwable>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 

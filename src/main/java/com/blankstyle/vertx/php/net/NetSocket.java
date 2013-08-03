@@ -21,8 +21,8 @@ import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.ReadStream;
 import com.blankstyle.vertx.php.streams.WriteStream;
+import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.BooleanValue;
-import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.Value;
@@ -56,8 +56,9 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
   /**
    * Sets the socket data handler.
    */
-  public NetSocket dataHandler(Env env, Callback handler) {
-    socket.dataHandler(new Handler<org.vertx.java.core.buffer.Buffer>(env, handler));
+  public NetSocket dataHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetSocket::dataHandler() must be callable.");
+    socket.dataHandler(new Handler<org.vertx.java.core.buffer.Buffer>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -86,16 +87,18 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
   /**
    * Sets the socket end handler.
    */
-  public NetSocket endHandler(Env env, Callback handler) {
-    socket.endHandler(new Handler<Void>(env, handler));
+  public NetSocket endHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetSocket::endHandler() must be callable.");
+    socket.endHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
   /**
    * Sets the socket drain handler.
    */
-  public NetSocket drainHandler(Env env, Callback handler) {
-    socket.drainHandler(new Handler<Void>(env, handler));
+  public NetSocket drainHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetSocket::drainHandler() must be callable.");
+    socket.drainHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -138,8 +141,9 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
   /**
    * Sets the socket close handler.
    */
-  public void closeHandler(Env env, Callback handler) {
-    socket.closeHandler(new Handler<Void>(env, handler));
+  public void closeHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetSocket::closeHandler() must be callable.");
+    socket.closeHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
   }
 
   /**
@@ -152,8 +156,9 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
   /**
    * Sets the socket exception handler callback.
    */
-  public NetSocket exceptionHandler(Env env, Callback handler) {
-    socket.exceptionHandler(new Handler<Throwable>(env, handler));
+  public NetSocket exceptionHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetSocket::exceptionHandler() must be callable.");
+    socket.exceptionHandler(new Handler<Throwable>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 

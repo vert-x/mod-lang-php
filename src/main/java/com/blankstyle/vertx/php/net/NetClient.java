@@ -20,8 +20,8 @@ import org.vertx.java.core.AsyncResult;
 import com.blankstyle.vertx.php.ArgumentModifier;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.TCPClient;
+import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
-import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.NumberValue;
@@ -42,11 +42,12 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
    * Connects to a server.
    */
   public NetClient connect(Env env, NumberValue port, @Optional StringValue host, @Optional Value handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      env.error("Argument to NetClient::connect() must be callable.");
+    if (PhpTypes.notNull(handler)) {
+      PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetClient::connect() must be callable.");
     }
-    if (host != null && !host.isDefault()) {
-      client.connect(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, (Callback) handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetSocket>, AsyncResult<NetSocket>>() {
+
+    if (PhpTypes.notNull(host)) {
+      client.connect(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, PhpTypes.toCallable(handler), new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetSocket>, AsyncResult<NetSocket>>() {
         @Override
         public AsyncResult<NetSocket> modify(final AsyncResult<org.vertx.java.core.net.NetSocket> socket) {
           return new AsyncResult<NetSocket>() {
@@ -71,7 +72,7 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
       }));
     }
     else {
-      client.connect(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, (Callback) handler, new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetSocket>, AsyncResult<NetSocket>>() {
+      client.connect(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, PhpTypes.toCallable(handler), new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetSocket>, AsyncResult<NetSocket>>() {
         @Override
         public AsyncResult<NetSocket> modify(final AsyncResult<org.vertx.java.core.net.NetSocket> socket) {
           return new AsyncResult<NetSocket>() {

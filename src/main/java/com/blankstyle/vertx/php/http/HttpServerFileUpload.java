@@ -19,8 +19,9 @@ import org.vertx.java.core.buffer.Buffer;
 
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ReadStream;
-import com.caucho.quercus.env.Callback;
+import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.Env;
+import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.StringValue;
 
@@ -79,14 +80,16 @@ public class HttpServerFileUpload implements ReadStream<HttpServerFileUpload> {
   }
 
   @Override
-  public HttpServerFileUpload dataHandler(Env env, Callback handler) {
-    upload.dataHandler(new Handler<Buffer>(env, handler));
+  public HttpServerFileUpload dataHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServerFileUpload::dataHandler() must be callable.");
+    upload.dataHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
   @Override
-  public HttpServerFileUpload endHandler(Env env, Callback handler) {
-    upload.endHandler(new Handler<Void>(env, handler));
+  public HttpServerFileUpload endHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServerFileUpload::endHandler() must be callable.");
+    upload.endHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 

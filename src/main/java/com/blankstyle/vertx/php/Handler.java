@@ -15,7 +15,7 @@
  */
 package com.blankstyle.vertx.php;
 
-import com.caucho.quercus.env.Callback;
+import com.caucho.quercus.env.Callable;
 import com.caucho.quercus.env.Env;
 
 /**
@@ -31,7 +31,7 @@ public class Handler<T> implements org.vertx.java.core.Handler<T> {
   /**
    * A PHP callback.
    */
-  private Callback handler;
+  private Callable handler;
 
   /**
    * An optional argument modifier. The modifier will be applied to
@@ -39,15 +39,31 @@ public class Handler<T> implements org.vertx.java.core.Handler<T> {
    */
   private ArgumentModifier<T, ?> modifier;
 
-  public Handler(Env env, Callback handler) {
+  public Handler(Env env, Callable handler) {
     this.env = env;
     this.handler = handler;
   }
 
-  public Handler(Env env, Callback handler, ArgumentModifier<T, ?> modifier) {
+  public Handler(Env env, Callable handler, ArgumentModifier<T, ?> modifier) {
     this.env = env;
     this.handler = handler;
     this.modifier = modifier;
+  }
+
+  protected Env getEnvironment() {
+    return env;
+  }
+
+  protected Callable getCallable() {
+    return handler;
+  }
+
+  protected boolean hasModifier() {
+    return modifier != null;
+  }
+
+  protected ArgumentModifier<T, ?> getModifier() {
+    return modifier;
   }
 
   public void handle(T arg) {

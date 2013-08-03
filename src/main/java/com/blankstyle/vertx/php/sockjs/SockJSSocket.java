@@ -20,8 +20,8 @@ import org.vertx.java.core.buffer.Buffer;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ReadStream;
 import com.blankstyle.vertx.php.streams.WriteStream;
+import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.BooleanValue;
-import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.StringValue;
@@ -51,8 +51,9 @@ public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJ
   }
 
   @Override
-  public SockJSSocket drainHandler(Env env, Callback handler) {
-    socket.drainHandler(new Handler<Void>(env, handler));
+  public SockJSSocket drainHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\SockJS\\SockJSSocket::drainHandler() must be callable.");
+    socket.drainHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -93,8 +94,9 @@ public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJ
   }
 
   @Override
-  public SockJSSocket dataHandler(Env env, Callback handler) {
-    socket.dataHandler(new Handler<Buffer>(env, handler));
+  public SockJSSocket dataHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\SockJS\\SockJSSocket::dataHandler() must be callable.");
+    socket.dataHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -105,8 +107,9 @@ public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJ
   }
 
   @Override
-  public SockJSSocket endHandler(Env env, Callback handler) {
-    socket.endHandler(new Handler<Void>(env, handler));
+  public SockJSSocket endHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\SockJS\\SockJSSocket::endHandler() must be callable.");
+    socket.endHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 

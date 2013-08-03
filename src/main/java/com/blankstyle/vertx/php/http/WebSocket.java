@@ -23,8 +23,8 @@ import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.ReadStream;
 import com.blankstyle.vertx.php.streams.WriteStream;
+import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.BooleanValue;
-import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.StringValue;
@@ -96,8 +96,9 @@ public class WebSocket implements ReadStream<WebSocket>, WriteStream<WebSocket>,
   }
 
   @Override
-  public WebSocket drainHandler(Env env, Callback handler) {
-    socket.drainHandler(new Handler<Void>(env, handler));
+  public WebSocket drainHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\WebSocket::drainHandler() must be callable.");
+    socket.drainHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -125,25 +126,29 @@ public class WebSocket implements ReadStream<WebSocket>, WriteStream<WebSocket>,
   }
 
   @Override
-  public WebSocket dataHandler(Env env, Callback handler) {
-    socket.dataHandler(new Handler<Buffer>(env, handler));
+  public WebSocket dataHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\WebSocket::dataHandler() must be callable.");
+    socket.dataHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
   @Override
-  public WebSocket endHandler(Env env, Callback handler) {
-    socket.endHandler(new Handler<Void>(env, handler));
+  public WebSocket endHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\WebSocket::endHandler() must be callable.");
+    socket.endHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
   @Override
-  public WebSocket exceptionHandler(Env env, Callback handler) {
-    socket.exceptionHandler(new Handler<Throwable>(env, handler));
+  public WebSocket exceptionHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\WebSocket::exceptionHandler() must be callable.");
+    socket.exceptionHandler(new Handler<Throwable>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
-  public Value closeHandler(Env env, Callback handler) {
-    socket.closeHandler(new Handler<Void>(env, handler));
+  public Value closeHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\WebSocket::closeHandler() must be callable.");
+    socket.closeHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return env.wrapJava(this);
   }
 

@@ -21,7 +21,7 @@ import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.ReadStream;
-import com.caucho.quercus.env.Callback;
+import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
@@ -85,25 +85,29 @@ public class HttpClientResponse implements ReadStream<HttpClientResponse>, Excep
   }
 
   @Override
-  public HttpClientResponse dataHandler(Env env, Callback handler) {
-    response.dataHandler(new Handler<Buffer>(env, handler));
+  public HttpClientResponse dataHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpClientResponse::dataHandler() must be callable.");
+    response.dataHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
-  public HttpClientResponse bodyHandler(Env env, Callback handler) {
-    response.bodyHandler(new Handler<Buffer>(env, handler));
-    return this;
-  }
-
-  @Override
-  public HttpClientResponse endHandler(Env env, Callback handler) {
-    response.endHandler(new Handler<Void>(env, handler));
+  public HttpClientResponse bodyHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpClientResponse::bodyHandler() must be callable.");
+    response.bodyHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
   @Override
-  public HttpClientResponse exceptionHandler(Env env, Callback handler) {
-    response.exceptionHandler(new Handler<Throwable>(env, handler));
+  public HttpClientResponse endHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpClientResponse::endHandler() must be callable.");
+    response.endHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
+    return this;
+  }
+
+  @Override
+  public HttpClientResponse exceptionHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpClientResponse::exceptionHandler() must be callable.");
+    response.exceptionHandler(new Handler<Throwable>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 

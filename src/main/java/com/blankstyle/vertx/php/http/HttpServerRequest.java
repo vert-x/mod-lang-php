@@ -23,8 +23,8 @@ import com.blankstyle.vertx.php.ArgumentModifier;
 import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ReadStream;
+import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.BooleanValue;
-import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
@@ -125,8 +125,9 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest>, Gettabl
     return this;
   }
 
-  public HttpServerRequest uploadHandler(Env env, Callback handler) {
-    request.uploadHandler(new Handler<org.vertx.java.core.http.HttpServerFileUpload>(env, handler, new ArgumentModifier<org.vertx.java.core.http.HttpServerFileUpload, HttpServerFileUpload>() {
+  public HttpServerRequest uploadHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServerRequest::uploadHandler() must be callable.");
+    request.uploadHandler(new Handler<org.vertx.java.core.http.HttpServerFileUpload>(env, PhpTypes.toCallable(handler), new ArgumentModifier<org.vertx.java.core.http.HttpServerFileUpload, HttpServerFileUpload>() {
       @Override
       public HttpServerFileUpload modify(org.vertx.java.core.http.HttpServerFileUpload upload) {
         return new HttpServerFileUpload(upload);
@@ -136,14 +137,16 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest>, Gettabl
   }
 
   @Override
-  public HttpServerRequest dataHandler(Env env, Callback handler) {
-    request.dataHandler(new Handler<Buffer>(env, handler));
+  public HttpServerRequest dataHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServerRequest::dataHandler() must be callable.");
+    request.dataHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
   @Override
-  public HttpServerRequest endHandler(Env env, Callback handler) {
-    request.endHandler(new Handler<Void>(env, handler));
+  public HttpServerRequest endHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServerRequest::endHandler() must be callable.");
+    request.endHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 

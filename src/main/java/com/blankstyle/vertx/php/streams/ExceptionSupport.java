@@ -15,7 +15,7 @@
  */
 package com.blankstyle.vertx.php.streams;
 
-import com.caucho.quercus.env.Callback;
+import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.Env;
 
 /**
@@ -29,6 +29,6 @@ public interface ExceptionSupport<T> {
    * @param handler A PHP callback.
    * @return The called object.
    */
-  public T exceptionHandler(Env env, Callback handler);
+  public T exceptionHandler(Env env, Value handler);
 
 }

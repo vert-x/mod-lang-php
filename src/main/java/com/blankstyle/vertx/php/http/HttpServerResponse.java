@@ -19,9 +19,9 @@ import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.WriteStream;
+import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.BooleanValue;
-import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.StringValue;
@@ -133,13 +133,15 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
   }
 
   @Override
-  public HttpServerResponse drainHandler(Env env, Callback handler) {
-    response.drainHandler(new Handler<Void>(env, handler));
+  public HttpServerResponse drainHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServerResponse::drainHandler() must be callable.");
+    response.drainHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
-  public HttpServerResponse closeHandler(Env env, Callback handler) {
-    response.closeHandler(new Handler<Void>(env, handler));
+  public HttpServerResponse closeHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServerResponse::closeHandler() must be callable.");
+    response.closeHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -164,8 +166,9 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
   }
 
   @Override
-  public HttpServerResponse exceptionHandler(Env env, Callback handler) {
-    response.exceptionHandler(new Handler<Throwable>(env, handler));
+  public HttpServerResponse exceptionHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServerResponse::exceptionHandler() must be callable.");
+    response.exceptionHandler(new Handler<Throwable>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 

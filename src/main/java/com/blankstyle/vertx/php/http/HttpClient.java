@@ -18,8 +18,8 @@ package com.blankstyle.vertx.php.http;
 import com.blankstyle.vertx.php.TCPClient;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.ArgumentModifier;
+import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.BooleanValue;
-import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Env;
@@ -132,10 +132,8 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Connects to the server.
    */
   public HttpClient connect(Env env, StringValue uri, Value handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      env.error("Argument to HttpClient::connect() must be callable.");
-    }
-    client.connect(uri.toString(), createResponseHandler(env, (Callback) handler));
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::connect() must be callable.");
+    client.connect(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -143,10 +141,8 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a request.
    */
   public HttpClient request(Env env, StringValue method, StringValue uri, Value handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      env.error("Argument to HttpClient::request() must be callable.");
-    }
-    client.request(method.toString(), uri.toString(), createResponseHandler(env, (Callback) handler));
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::request() must be callable.");
+    client.request(method.toString(), uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -154,10 +150,8 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a GET request.
    */
   public HttpClient get(Env env, StringValue uri, Value handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      env.error("Argument to HttpClient::get() must be callable.");
-    }
-    client.get(uri.toString(), createResponseHandler(env, (Callback) handler));
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::get() must be callable.");
+    client.get(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -165,10 +159,8 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a GET request.
    */
   public HttpClient getNow(Env env, StringValue uri, Value handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      env.error("Argument to HttpClient::getNow() must be callable.");
-    }
-    client.getNow(uri.toString(), createResponseHandler(env, (Callback) handler));
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::getNow() must be callable.");
+    client.getNow(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -176,10 +168,8 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a PUT request.
    */
   public HttpClient put(Env env, StringValue uri, Value handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      env.error("Argument to HttpClient::put() must be callable.");
-    }
-    client.put(uri.toString(), createResponseHandler(env, (Callback) handler));
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::put() must be callable.");
+    client.put(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -187,10 +177,8 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a POST request.
    */
   public HttpClient post(Env env, StringValue uri, Value handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      env.error("Argument to HttpClient::post() must be callable.");
-    }
-    client.post(uri.toString(), createResponseHandler(env, (Callback) handler));
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::post() must be callable.");
+    client.post(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -198,10 +186,8 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a DELETE request.
    */
   public HttpClient delete(Env env, StringValue uri, Value handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      env.error("Argument to HttpClient::delete() must be callable.");
-    }
-    client.delete(uri.toString(), createResponseHandler(env, (Callback) handler));
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::delete() must be callable.");
+    client.delete(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -209,10 +195,8 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a HEAD request.
    */
   public HttpClient head(Env env, StringValue uri, Value handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      env.error("Argument to HttpClient::head() must be callable.");
-    }
-    client.head(uri.toString(), createResponseHandler(env, (Callback) handler));
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::head() must be callable.");
+    client.head(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -220,10 +204,8 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a PATCH request.
    */
   public HttpClient patch(Env env, StringValue uri, Value handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      env.error("Argument to HttpClient::patch() must be callable.");
-    }
-    client.patch(uri.toString(), createResponseHandler(env, (Callback) handler));
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::patch() must be callable.");
+    client.patch(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -231,10 +213,8 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes a TRACE request.
    */
   public HttpClient trace(Env env, StringValue uri, Value handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      env.error("Argument to HttpClient::trace() must be callable.");
-    }
-    client.trace(uri.toString(), createResponseHandler(env, (Callback) handler));
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::trace() must be callable.");
+    client.trace(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
@@ -242,18 +222,16 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Executes an OPTIONS request.
    */
   public HttpClient options(Env env, StringValue uri, Value handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      env.error("Argument to HttpClient::options() must be callable.");
-    }
-    client.options(uri.toString(), createResponseHandler(env, (Callback) handler));
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::options() must be callable.");
+    client.options(uri.toString(), createResponseHandler(env, handler));
     return this;
   }
 
   /**
    * Creates a client response handler.
    */
-  private Handler<org.vertx.java.core.http.HttpClientResponse> createResponseHandler(Env env, Callback handler) {
-    return new Handler<org.vertx.java.core.http.HttpClientResponse>(env, handler, new ArgumentModifier<org.vertx.java.core.http.HttpClientResponse, HttpClientResponse>() {
+  private Handler<org.vertx.java.core.http.HttpClientResponse> createResponseHandler(Env env, Value handler) {
+    return new Handler<org.vertx.java.core.http.HttpClientResponse>(env, PhpTypes.toCallable(handler), new ArgumentModifier<org.vertx.java.core.http.HttpClientResponse, HttpClientResponse>() {
       @Override
       public HttpClientResponse modify(org.vertx.java.core.http.HttpClientResponse response) {
         return new HttpClientResponse(response);
@@ -265,10 +243,8 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Sets the client exception handler.
    */
   public HttpClient exceptionHandler(Env env, Value handler) {
-    if (handler != null && !handler.isNull() && !handler.isCallable(env, false, null)) {
-      env.error("Argument to HttpClient::exceptionHandler() must be callable.");
-    }
-    client.exceptionHandler(new Handler<Throwable>(env, (Callback) handler));
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::exceptionHandler() must be callable.");
+    client.exceptionHandler(new Handler<Throwable>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
