@@ -77,7 +77,7 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
     }
 
     if (PhpTypes.notNull(host)) {
-      if (PhpTypes.isCallable(handler)) {
+      if (PhpTypes.isCallable(env, handler)) {
         server.listen(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.net.NetServer>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.net.NetServer, NetServer>() {
           @Override
           public NetServer wrap(org.vertx.java.core.net.NetServer server) {
@@ -89,7 +89,7 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
         server.listen(port.toInt(), host.toString());
       }
     }
-    else if (PhpTypes.isCallable(handler)) {
+    else if (PhpTypes.isCallable(env, handler)) {
       server.listen(port.toInt(), new AsyncResultHandler<org.vertx.java.core.net.NetServer>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.net.NetServer, NetServer>() {
         @Override
         public NetServer wrap(org.vertx.java.core.net.NetServer server) {

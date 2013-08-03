@@ -166,13 +166,6 @@ public class PhpTypes {
   /**
    * Validates that a PHP value is callable.
    */
-  public static boolean isCallable(Value value) {
-    return !PhpTypes.isCallable(Env.getCurrent(), value);
-  }
-
-  /**
-   * Validates that a PHP value is callable.
-   */
   public static boolean isCallable(Env env, Value value) {
     return PhpTypes.notNull(value) && value.isCallable(env, false, null);
   }
@@ -181,7 +174,7 @@ public class PhpTypes {
    * Asserts that a PHP value is callable.
    */
   public static void assertCallable(Env env, Value value) {
-    if (!PhpTypes.isCallable(value)) {
+    if (!PhpTypes.isCallable(env, value)) {
       env.error("Object is not callable.");
     }
   }
@@ -190,7 +183,7 @@ public class PhpTypes {
    * Asserts that a PHP value is callable.
    */
   public static void assertCallable(Env env, Value value, String message, Object... args) {
-    if (!PhpTypes.isCallable(value)) {
+    if (!PhpTypes.isCallable(env, value)) {
       env.error(String.format(message, args));
     }
   }
@@ -199,9 +192,6 @@ public class PhpTypes {
    * Converts a basic PHP value to a callable.
    */
   public static Callable toCallable(Value value) {
-    if (!PhpTypes.isCallable(value)) {
-      throw new IllegalArgumentException();
-    }
     return value.toCallable(Env.getCurrent(), false);
   }
 
@@ -209,9 +199,6 @@ public class PhpTypes {
    * Converts a basic PHP value to a callable.
    */
   public static Callable toCallable(Env env, Value value) {
-    if (!PhpTypes.isCallable(value)) {
-      throw new IllegalArgumentException();
-    }
     return value.toCallable(env, false);
   }
 
@@ -219,9 +206,6 @@ public class PhpTypes {
    * Converts a basic PHP value to a callable.
    */
   public static Callable toCallable(Value value, boolean isOptional) {
-    if (!PhpTypes.isCallable(value)) {
-      throw new IllegalArgumentException();
-    }
     return value.toCallable(Env.getCurrent(), isOptional);
   }
 
@@ -229,9 +213,6 @@ public class PhpTypes {
    * Converts a basic PHP value to a callable.
    */
   public static Callable toCallable(Env env, Value value, boolean isOptional) {
-    if (!PhpTypes.isCallable(value)) {
-      throw new IllegalArgumentException();
-    }
     return value.toCallable(env, isOptional);
   }
 

@@ -62,7 +62,7 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
     }
 
     if (PhpTypes.notNull(host)) {
-      if (PhpTypes.isCallable(handler)) {
+      if (PhpTypes.isCallable(env, handler)) {
         server.listen(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.http.HttpServer>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.http.HttpServer, HttpServer>() {
           @Override
           public HttpServer wrap(org.vertx.java.core.http.HttpServer server) {
@@ -74,7 +74,7 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
         server.listen(port.toInt(), host.toString());
       }
     }
-    else if (PhpTypes.isCallable(handler)) {
+    else if (PhpTypes.isCallable(env, handler)) {
       server.listen(port.toInt(), new AsyncResultHandler<org.vertx.java.core.http.HttpServer>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.http.HttpServer, HttpServer>() {
         @Override
         public HttpServer wrap(org.vertx.java.core.http.HttpServer server) {
@@ -99,7 +99,7 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServer::requestHandler() must be callable.");
     }
 
-    if (PhpTypes.isCallable(handler)) {
+    if (PhpTypes.isCallable(env, handler)) {
       server.requestHandler(new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ArgumentWrapper<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
         @Override
         public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
@@ -139,7 +139,7 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServer::websocketHandler() must be callable.");
     }
 
-    if (PhpTypes.isCallable(handler)) {
+    if (PhpTypes.isCallable(env, handler)) {
       server.websocketHandler(new Handler<org.vertx.java.core.http.ServerWebSocket>(env, PhpTypes.toCallable(handler), new ArgumentWrapper<org.vertx.java.core.http.ServerWebSocket, ServerWebSocket>() {
         @Override
         public ServerWebSocket modify(org.vertx.java.core.http.ServerWebSocket socket) {
