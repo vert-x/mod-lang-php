@@ -23,6 +23,8 @@ import com.caucho.quercus.env.Env;
 
 /**
  * A PHP compatible implementation of the Vert.x ReadStream.
+ *
+ * @author Jordan Halterman
  */
 public interface ReadStream<T> {
 

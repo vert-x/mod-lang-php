@@ -30,6 +30,11 @@ import com.caucho.quercus.env.Env;
 
 /**
  * A PHP verticle factory.
+ *
+ * The PHP implementation is run on the Java-based Quercus
+ * PHP engine.
+ *
+ * @author Jordan Halterman
  */
 public class PHPVerticleFactory implements VerticleFactory {
 
@@ -133,6 +138,11 @@ public class PHPVerticleFactory implements VerticleFactory {
       context.setIni("error_reporting", "0");
 
       // Make vertx-php classes available in the PHP code context.
+      // Note that for now we only make available classes which should
+      // be instantiated outside the context of the internal Vert.x
+      // library. However, once default constructors have been supplied
+      // for the various wrapper classes, we should expose as many classes
+      // as possible for extensibility's sake.
       context.addJavaClass("Vertx", com.blankstyle.vertx.php.Vertx.class);
       context.addJavaClass("Container", com.blankstyle.vertx.php.Container.class);
       context.addJavaClass("Vertx\\Http\\HttpServer", com.blankstyle.vertx.php.http.HttpServer.class);

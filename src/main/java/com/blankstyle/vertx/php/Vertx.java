@@ -33,6 +33,12 @@ import com.caucho.quercus.env.LongValue;
 
 /**
  * A static Vertx instance access class.
+ *
+ * This is a PHP compatible class that acts as the primary
+ * interface for interacting with the Vert.x core API
+ * within PHP.
+ *
+ * @author Jordan Halterman
  */
 public final class Vertx {
 

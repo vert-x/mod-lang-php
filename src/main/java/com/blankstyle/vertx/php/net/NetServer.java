@@ -30,6 +30,8 @@ import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x NetServer.
+ *
+ * @author Jordan Halterman
  */
 public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
 

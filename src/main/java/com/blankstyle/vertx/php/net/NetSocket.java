@@ -30,6 +30,8 @@ import com.caucho.quercus.env.StringValue;
 
 /**
  * A PHP compatible implementation of the Vert.x NetSocket.
+ *
+ * @author Jordan Halterman
  */
 public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>, ExceptionSupport<NetSocket> {
 

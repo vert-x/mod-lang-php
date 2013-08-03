@@ -20,6 +20,8 @@ import com.caucho.quercus.env.Env;
 
 /**
  * A PHP compatible implementation of the Vert.x ExceptionSupport interface.
+ *
+ * @author Jordan Halterman
  */
 public interface ExceptionSupport<T> {
 

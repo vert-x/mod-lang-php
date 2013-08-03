@@ -16,10 +16,15 @@
 package com.blankstyle.vertx.php;
 
 /**
- * An interface for wrapping event arguments.
+ * Wraps event arguments.
+ *
+ * This interface is implemented for wrapping arguments
+ * returned by the Vert.x API to make them PHP compatible.
  *
  * @param <T> The type of argument that is being wrapped.
  * @param <E> The resulting argument type after wrapping.
+ *
+ * @author Jordan Halterman
  */
 public interface ArgumentWrapper<T, E> {
 

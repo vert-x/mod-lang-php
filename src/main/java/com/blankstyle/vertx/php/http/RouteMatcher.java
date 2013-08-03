@@ -24,6 +24,8 @@ import com.caucho.quercus.env.Value;
 
 /**
  * An HTTP route matcher implementation.
+ *
+ * @author Jordan Halterman
  */
 public class RouteMatcher {
 

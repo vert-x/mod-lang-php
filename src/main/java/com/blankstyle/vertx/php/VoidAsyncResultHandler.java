@@ -23,6 +23,9 @@ import com.caucho.quercus.env.Env;
 /**
  * A void AsyncResult handler.
  *
+ * This handler will invoke the PHP callback with a single
+ * argument - an error if one so occurs.
+ *
  * @author Jordan Halterman
  */
 public class VoidAsyncResultHandler extends AsyncResultHandler<Void> {

@@ -21,6 +21,8 @@ import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x Context.
+ *
+ * @author Jordan Halterman
  */
 public final class Context {
 

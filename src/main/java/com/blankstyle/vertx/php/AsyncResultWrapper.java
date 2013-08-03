@@ -18,11 +18,13 @@ package com.blankstyle.vertx.php;
 import org.vertx.java.core.AsyncResult;
 
 /**
- * An argument modifier that wraps asynchronous results.
+ * An implementation of the ArgumentWrapper interface
+ * that wraps asynchronous results.
  *
  * @author Jordan Halterman
  */
 public abstract class AsyncResultWrapper<T, E> implements ArgumentWrapper<AsyncResult<T>, AsyncResult<E>> {
+
   @Override
   public AsyncResult<E> modify(final AsyncResult<T> result) {
     return new AsyncResult<E>() {

@@ -19,7 +19,11 @@ import com.caucho.quercus.env.Callable;
 import com.caucho.quercus.env.Env;
 
 /**
- * A helper class for creating Vertx handlers that invoke PHP callbacks.
+ * An implementation of the Vert.x Handler that invokes PHP
+ * callables. This allows closures and other callables to be
+ * passed to the PHP Vert.x API as common event handlers.
+ *
+ * @author Jordan Halterman
  */
 public class Handler<T> implements org.vertx.java.core.Handler<T> {
 

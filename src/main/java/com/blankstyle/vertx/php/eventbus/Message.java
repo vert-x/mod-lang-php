@@ -31,6 +31,8 @@ import com.caucho.quercus.env.StringValue;
 
 /**
  * A PHP compatible implementation of the Vert.x message.
+ *
+ * @author Jordan Halterman
  */
 public class Message<T> implements Gettable {
 
@@ -47,6 +49,11 @@ public class Message<T> implements Gettable {
 
   /**
    * Returns the body of the message.
+   *
+   * Note that this method can also be accessed using the magic
+   * PHP getter, i.e. $message->body;
+   *
+   * @return The message body.
    */
   public Value body(Env env) {
     return env.wrapJava(message.body());
@@ -54,6 +61,11 @@ public class Message<T> implements Gettable {
 
   /**
    * Replies to the message.
+   *
+   * @param message An optional mixed value message. If no message
+   * is provided in the reply, an empty message will be sent.
+   * @param replyHandler An optional reply handler.
+   * @return The called object.
    */
   @SuppressWarnings("unchecked")
   public void reply(Env env, @Optional Value message, @Optional Value replyHandler) {
@@ -121,6 +133,8 @@ public class Message<T> implements Gettable {
 
   /**
    * The reply address (if any).
+   *
+   * @return The message reply address.
    */
   public StringValue replyAddress(Env env) {
     return env.createString(message.replyAddress());

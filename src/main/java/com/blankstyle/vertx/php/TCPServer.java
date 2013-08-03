@@ -29,6 +29,8 @@ import com.caucho.quercus.env.Value;
 
 /**
  * An abstract TCP server.
+ *
+ * @author Jordan Halterman
  */
 public abstract class TCPServer<T extends ServerTCPSupport<T> & ServerSSLSupport<T>> implements Gettable, Settable {
 

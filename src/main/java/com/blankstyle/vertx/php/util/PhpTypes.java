@@ -15,14 +15,9 @@
  */
 package com.blankstyle.vertx.php.util;
 
-import com.caucho.quercus.env.ArrayValue;
-import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Callable;
-import com.caucho.quercus.env.DoubleValue;
 import com.caucho.quercus.env.Env;
-import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.Value;
-import com.caucho.quercus.env.StringValue;
 
 /**
  * Static class for validating PHP variable values.
@@ -40,106 +35,169 @@ public class PhpTypes {
   private PhpTypes() {
   }
 
+  /**
+   * Validates that a PHP value is null.
+   */
   public static boolean isNull(Value value) {
     return value == null || value.isNull();
   }
 
+  /**
+   * Validates that a PHP value is null.
+   */
   public static boolean isNull(Env env, Value value) {
     return PhpTypes.isNull(value);
   }
 
+  /**
+   * Asserts that a PHP value is null.
+   */
   public static void assertNull(Env env, Value value) {
     if (!PhpTypes.isNull(value)) {
       env.error("Object is not null.");
     }
   }
 
+  /**
+   * Asserts that a PHP value is null.
+   */
   public static void assertNull(Env env, Value value, String message, Object... args) {
     if (!PhpTypes.isNull(value)) {
       env.error(String.format(message, args));
     }
   }
 
+  /**
+   * Validates that a PHP value is not null.
+   */
   public static boolean notNull(Value value) {
     return !PhpTypes.isNull(value);
   }
 
+  /**
+   * Validates that a PHP value is not null.
+   */
   public static boolean notNull(Env env, Value value) {
     return !PhpTypes.isNull(value);
   }
 
+  /**
+   * Asserts that a PHP value is not null.
+   */
   public static void assertNotNull(Env env, Value value) {
     if (!PhpTypes.notNull(value)) {
       env.error("Object is null.");
     }
   }
 
+  /**
+   * Asserts that a PHP value is not null.
+   */
   public static void assertNotNull(Env env, Value value, String message, Object... args) {
     if (!PhpTypes.notNull(value)) {
       env.error(String.format(message, args));
     }
   }
 
+  /**
+   * Validates that a PHP value is set to its default value.
+   */
   public static boolean isDefault(Value value) {
     return value != null && value.isDefault();
   }
 
+  /**
+   * Validates that a PHP value is set to its default value.
+   */
   public static boolean isDefault(Env env, Value value) {
     return PhpTypes.isDefault(value);
   }
 
+  /**
+   * Asserts that a PHP value is set to its default value.
+   */
   public static void assertDefault(Env env, Value value) {
     if (!PhpTypes.isDefault(value)) {
       env.error("Object is not default.");
     }
   }
 
+  /**
+   * Asserts that a PHP value is set to its default value.
+   */
   public static void assertDefault(Env env, Value value, String message, Object... args) {
     if (!PhpTypes.isDefault(value)) {
       env.error(String.format(message, args));
     }
   }
 
+  /**
+   * Validates that a PHP value is not set to its default value.
+   */
   public static boolean notDefault(Value value) {
     return value == null || !value.isDefault();
   }
 
+  /**
+   * Validates that a PHP value is not set to its default value.
+   */
   public static boolean notDefault(Env env, Value value) {
     return PhpTypes.notDefault(value);
   }
 
+  /**
+   * Asserts that a PHP value is not set to its default value.
+   */
   public static void assertNotDefault(Env env, Value value) {
     if (!PhpTypes.notDefault(value)) {
       env.error("Object is default.");
     }
   }
 
+  /**
+   * Asserts that a PHP value is not set to its default value.
+   */
   public static void assertNotDefault(Env env, Value value, String message, Object... args) {
     if (!PhpTypes.notDefault(value)) {
       env.error(String.format(message, args));
     }
   }
 
+  /**
+   * Validates that a PHP value is callable.
+   */
   public static boolean isCallable(Value value) {
     return !PhpTypes.isCallable(Env.getCurrent(), value);
   }
 
+  /**
+   * Validates that a PHP value is callable.
+   */
   public static boolean isCallable(Env env, Value value) {
     return PhpTypes.notNull(value) && value.isCallable(env, false, null);
   }
 
+  /**
+   * Asserts that a PHP value is callable.
+   */
   public static void assertCallable(Env env, Value value) {
     if (!PhpTypes.isCallable(value)) {
       env.error("Object is not callable.");
     }
   }
 
+  /**
+   * Asserts that a PHP value is callable.
+   */
   public static void assertCallable(Env env, Value value, String message, Object... args) {
     if (!PhpTypes.isCallable(value)) {
       env.error(String.format(message, args));
     }
   }
 
+  /**
+   * Converts a basic PHP value to a callable.
+   */
   public static Callable toCallable(Value value) {
     if (!PhpTypes.isCallable(value)) {
       throw new IllegalArgumentException();
@@ -147,6 +205,9 @@ public class PhpTypes {
     return value.toCallable(Env.getCurrent(), false);
   }
 
+  /**
+   * Converts a basic PHP value to a callable.
+   */
   public static Callable toCallable(Env env, Value value) {
     if (!PhpTypes.isCallable(value)) {
       throw new IllegalArgumentException();
@@ -154,6 +215,9 @@ public class PhpTypes {
     return value.toCallable(env, false);
   }
 
+  /**
+   * Converts a basic PHP value to a callable.
+   */
   public static Callable toCallable(Value value, boolean isOptional) {
     if (!PhpTypes.isCallable(value)) {
       throw new IllegalArgumentException();
@@ -161,91 +225,14 @@ public class PhpTypes {
     return value.toCallable(Env.getCurrent(), isOptional);
   }
 
+  /**
+   * Converts a basic PHP value to a callable.
+   */
   public static Callable toCallable(Env env, Value value, boolean isOptional) {
     if (!PhpTypes.isCallable(value)) {
       throw new IllegalArgumentException();
     }
     return value.toCallable(env, isOptional);
-  }
-
-  public static boolean isString(Value value) {
-    return PhpTypes.notNull(value) && value.isString();
-  }
-
-  public static String toString(Value value) {
-    return value.toString();
-  }
-
-  public static StringValue toStringValue(Value value) {
-    return Env.getCurrent().createString(value.toString());
-  }
-
-  public static boolean isBinary(Value value) {
-    return PhpTypes.notNull(value) && value.isBinary();
-  }
-
-  public static StringValue toBinaryValue(Value value) {
-    return value.toBinaryValue();
-  }
-
-  public static boolean isNumeric(Value value) {
-    return PhpTypes.notNull(value) && value.isNumeric();
-  }
-
-  public static int toInt(Value value) {
-    return value.toInt();
-  }
-
-  public static boolean isBoolean(Value value) {
-    return PhpTypes.notNull(value) && value.isBoolean();
-  }
-
-  public static BooleanValue toBooleanValue(Value value) {
-    return BooleanValue.create(value.toBoolean());
-  }
-
-  public static BooleanValue toBooleanValue(boolean value) {
-    return BooleanValue.create(value);
-  }
-
-  public static boolean isDouble(Value value) {
-    return PhpTypes.notNull(value) && value.isDouble();
-  }
-
-  public static double toDouble(Value value) {
-    return value.toDouble();
-  }
-
-  public static DoubleValue toDoubleValue(Value value) {
-    return value.toDoubleValue();
-  }
-
-  public static boolean isLong(Value value) {
-    return PhpTypes.notNull(value) && value.isLong();
-  }
-
-  public static long toLong(Value value) {
-    return value.toLong();
-  }
-
-  public static LongValue toLongValue(Value value) {
-    return value.toLongValue();
-  }
-
-  public static boolean isArray(Value value) {
-    return PhpTypes.notNull(value) && value.isArray();
-  }
-
-  public static ArrayValue toArrayValue(Value value) {
-    return value.toArray();
-  }
-
-  public static ArrayValue toArrayValue(Env env, Value value) {
-    return value.toArrayValue(env);
-  }
-
-  public static boolean isObject(Value value) {
-    return PhpTypes.notNull(value) && value.isObject();
   }
 
 }

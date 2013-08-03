@@ -33,6 +33,8 @@ import com.caucho.quercus.lib.json.JsonModule;
 
 /**
  * A PHP compatible implementation of the Vert.x EventBus.
+ *
+ * @author Jordan Halterman
  */
 public final class EventBus {
 
@@ -75,7 +77,7 @@ public final class EventBus {
    *
    * @param address The address at which the handler was registered.
    * @param callback A PHP callable event handler.
-   * @return
+   * @return The internal handler to which the given callable was mapped.
    */
   private org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> findAddressHandler(Env env, String address, Value callback) {
     if (!EventBus.handlers.containsKey(address)) {
@@ -87,6 +89,13 @@ public final class EventBus {
 
   /**
    * Registers a new event handler.
+   *
+   * @param address The address at which to register the handler.
+   * @param handler The handler to register. This can be any PHP callable.
+   * @param resultHandler An optional handler to be invoke when the handler
+   * registration has been propagated across the cluster. It will be invoked
+   * with a single argument that represents an error if one occurs, else null.
+   * @return The called object.
    */
   public EventBus registerHandler(Env env, StringValue address, Value handler, @Optional Value resultHandler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::registerHandler() must be callable.");
@@ -106,6 +115,10 @@ public final class EventBus {
 
   /**
    * Registers a new local event handler.
+   *
+   * @param address The address at which to register the handler.
+   * @param handler The handler to register. This can be any PHP callable.
+   * @return The called object.
    */
   public EventBus registerLocalHandler(Env env, StringValue address, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::registerLocalHandler() must be callable.");
@@ -115,6 +128,10 @@ public final class EventBus {
 
   /**
    * Unregisters an event handler.
+   *
+   * @param address The address at which to unregister the handler.
+   * @param handler The handler to unregister. This can be any PHP callable.
+   * @return The called object.
    */
   public EventBus unregisterHandler(Env env, StringValue address, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::unregisterHandler() must be callable.");
@@ -124,7 +141,12 @@ public final class EventBus {
   }
 
   /**
-   * Sends a message on the bus.
+   * Sends a point-to-point message on the bus.
+   *
+   * @param address The address to which to send the message.
+   * @param message A mixed value message to send.
+   * @param handler An optional handler to be invoked in response to the message.
+   * @return The called object.
    */
   public EventBus send(Env env, StringValue address, Value message, @Optional Value handler) {
     boolean hasHandler = false;
@@ -178,6 +200,10 @@ public final class EventBus {
 
   /**
    * Publishes a message to the event bus.
+   *
+   * @param address The address to which to send the message.
+   * @param message A mixed value message to send.
+   * @return The called object.
    */
   public EventBus publish(Env env, Value address, Value message) {
     if (message.isBoolean()) {
@@ -197,6 +223,11 @@ public final class EventBus {
 
   /**
    * Closes the event bus.
+   *
+   * @param handler A handler to invoke when the event bus is closed.
+   * This handler will be called with a single argument which represents
+   * an error if one occurs.
+   * @return The called object.
    */
   public void close(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::close() must be callable.");

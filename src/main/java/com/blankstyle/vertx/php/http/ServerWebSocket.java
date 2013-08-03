@@ -19,6 +19,11 @@ import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.StringValue;
 
+/**
+ * A PHP compatible implementation of the Vert.x WebSocket.
+ *
+ * @author Jordan Halterman
+ */
 public class ServerWebSocket extends WebSocket {
 
   private org.vertx.java.core.http.ServerWebSocket socket;

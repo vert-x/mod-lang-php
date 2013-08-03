@@ -29,6 +29,11 @@ import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
 
+/**
+ * A PHP compatible implementation of the Vert.x NetClient.
+ *
+ * @author Jordan Halterman
+ */
 public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
 
   public NetClient(org.vertx.java.core.net.NetClient client) {

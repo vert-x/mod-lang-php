@@ -24,6 +24,8 @@ import com.caucho.quercus.env.NumberValue;
 
 /**
  * A PHP compatible implementation of the Vert.x Pump.
+ *
+ * @author Jordan Halterman
  */
 public class Pump {
 

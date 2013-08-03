@@ -33,6 +33,12 @@ import java.util.Map;
 
 /**
  * A static Container instance access class.
+ *
+ * This is a PHP compatible class that acts as the primary
+ * interface for interacting with the Vert.x Container API
+ * within PHP.
+ *
+ * @author Jordan Halterman
  */
 public final class Container {
 

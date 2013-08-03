@@ -27,6 +27,8 @@ import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x HttpClient.
+ *
+ * @author Jordan Halterman
  */
 public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
 

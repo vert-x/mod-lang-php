@@ -23,6 +23,11 @@ import com.caucho.quercus.env.Env;
 /**
  * An asynchronous result handler.
  *
+ * This implementation of the org.vertx.java.core.Handler interface
+ * executes PHP callbacks with asynchronous results, calling the
+ * callbacks with the result value as the first argument and the
+ * result error (if any) as the second.
+ *
  * @author Jordan Halterman
  */
 public class AsyncResultHandler<T> extends Handler<AsyncResult<T>> {

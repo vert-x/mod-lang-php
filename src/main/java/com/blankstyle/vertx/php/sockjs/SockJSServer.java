@@ -34,6 +34,8 @@ import com.caucho.quercus.env.LongValue;
 
 /**
  * A PHP compatible implementation of the Vert.x SockJSServer.
+ *
+ * @author Jordan Halterman
  */
 public class SockJSServer {
 

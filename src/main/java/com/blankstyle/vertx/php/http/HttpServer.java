@@ -27,7 +27,9 @@ import com.caucho.quercus.env.NumberValue;
 import com.caucho.quercus.env.Value;
 
 /**
- * A PHP compatible implementation of the Vert.x HttpServer/
+ * A PHP compatible implementation of the Vert.x HttpServer.
+ *
+ * @author Jordan Halterman
  */
 public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
 
@@ -50,7 +52,7 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
    * @param host The host on which to listen. This is an optional
    * argument. If the host is not provided then the server will
    * listen on all available interfaces.
-   * @param callback A callback to execute once the server has
+   * @param handler A PHP callable to execute once the server has
    * begun listening. This is an optional argument.
    * @return The called server instance.
    */
@@ -88,6 +90,9 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
 
   /**
    * Creates or gets the server request handler.
+   *
+   * @param handler An optional handler. If no handler is provided
+   * then the current request handler will be returned.
    */
   public Value requestHandler(Env env, @Optional Value handler) {
     if (PhpTypes.notNull(handler)) {
