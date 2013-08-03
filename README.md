@@ -338,6 +338,8 @@ reused after they have been closed.
 NetServer has a further set of properties which are used to configure SSL.
 We'll discuss those later on.
 
+#### Accessing server properties
+
 Note that each of the above properties can also be retrieved by calling the
 respective methods without any arguments. For example, to get the receive buffer
 size, call `receiveBufferSize` with no arguments:
@@ -463,4 +465,207 @@ verticle you could do:
 $writeHandlerID = ... // E.g. retrieve the ID from shared data
 
 Vertx::eventBus()->send($writeHandlerID, $buffer);
+```
+
+### Creating a Net Client
+
+To create a TCP client you call the `createNetClient` method on the static `Vertx`
+class.
+
+```php
+$client = Vertx::createNetClient();
+```
+
+### Making a connection
+
+To actually connect to a server you invoke the connect method:
+
+```php
+$client = Vertx::createNetClient();
+$log = Container::logger();
+$client->connect(1234, 'localhost', function($socket, $error) use ($log) {
+  if (!$error) {
+    $log->info('Connected to the server!');
+  }
+});
+```
+
+The `connect` method takes the port number as the first parameter, followed by
+the hostname or ip address of the server. The third parameter is a connect
+handler. This handler will be called when the connection actually occurs.
+
+The first argument passed into the connect handler is a the `NetSocket`. If an
+exception has occurred, the socket will be null and the second argument will
+be an instance of a Java exception. Otherwise, the second argument will be null.
+
+You can read and write data from the socket in exactly the same way as you do
+on the server side.
+
+You can also close it, set the closed handler, set the exception handler and
+use it as a `ReadStream` or `WriteStream` exactly the same as the server side
+`NetSocket`.
+
+### Configuring reconnection
+
+A NetClient can be configured to automatically retry connecting or reconnecting
+to the server in the event that it cannot connect or has lost its connection.
+This is done by invoking the functions `setReconnectAttempts` and
+`setReconnectInterval`:
+
+```php
+$client = Vertx::createNetClient();
+
+$client->reconnectAttempts(1000);
+$client->reconnectInterval(100);
+```
+
+`reconnectAttempts` determines how many times the client will try to connect to
+the server before giving up. A value of -1 represents an infinite number of
+times. The default value is 0. I.e. no reconnection is attempted.
+
+`reconnectInterval` detemines how long, in milliseconds, the client will wait
+between reconnect attempts. The default value is 1000.
+
+### Net Client properties
+
+Just like NetServer, NetClient also has a set of TCP properties you can set
+which affect its behaviour. They have the same meaning as those on NetServer.
+
+### SSL Servers
+
+Net servers can also be configured to work with Transport Layer Security
+(previously known as SSL).
+
+When a NetServer is working as an SSL Server the API of the NetServer and
+NetSocket is identical compared to when it working with standard sockets.
+Getting the server to use SSL is just a matter of configuring the NetServer
+before `listen` is called.
+
+To enabled SSL the function `ssl(TRUE)` must be called on the Net Server.
+
+The server must also be configured with a key store and an optional trust
+store.
+
+These are both Java keystores which can be managed using the keytool utility
+which ships with the JDK.
+
+The keytool command allows you to create keystores, and import and export
+certificates from them.
+
+The key store should contain the server certificate. This is mandatory - the
+client will not be able to connect to the server over SSL if the server does
+not have a certificate.
+
+The key store is configured on the server using the `keyStorePath` and
+`keyStorePassword` methods.
+
+The trust store is optional and contains the certificates of any clients it
+should trust. This is only used if client authentication is required.
+
+To configure a server to use server certificates only:
+
+```php
+$server = Vertx::createNetServer()
+  ->ssl(TRUE)
+  ->keyStorePath('/path/to/your/keystore/server-keystore.jks')
+  ->keyStorePassword('password');
+```
+
+Making sure that server-keystore.jks contains the server certificate.
+
+To configure a server to also require client certificates:
+
+```php
+$server = Vertx::createNetServer()
+  ->ssl(TRUE)
+  ->keyStorePath('/path/to/your/keystore/server-keystore.jks')
+  ->keyStorePassword('password')
+  ->trustStorePath('/path/to/your/truststore/server-truststore.jks')
+  ->trustStorePassword('password')
+  ->clientAuthRequired(true);
+```
+
+Making sure that `server-truststore.jks` contains the certificates of any
+clients who the server trusts.
+
+If `clientAuthRequired` is set to true and the client cannot provide a
+certificate, or it provides a certificate that the server does not trust
+then the connection attempt will not succeed.
+
+#### Accessing SSL properties
+
+Just as with other server properties, these properties can be accesed
+directly on the object.
+
+```php
+if ($server->ssl) {
+  Container::logger()->info('Server is SSL.');
+}
+```
+
+### SSL Clients
+
+Net Clients can also be easily configured to use SSL. They have the exact
+same API when using SSL as when using standard sockets.
+
+To enable SSL on a NetClient the function `ssl(TRUE)` is called.
+
+If the `trustAll(TRUE)` is invoked on the client, then the client will trust
+all server certificates. The connection will still be encrypted but this
+mode is vulnerable to 'man in the middle' attacks. I.e. you can't be sure
+who you are connecting to. Use this with caution. Default value is false.
+
+If trustAll is false then a client trust store must be configured and should
+contain the certificates of the servers that the client trusts.
+
+The client trust store is just a standard Java key store, the same as the
+key stores on the server side. The client trust store location is set by
+using the function `trustStorePath` on the `NetClient`. If a server presents
+a certificate during connection which is not in the client trust store, the
+connection attempt will not succeed.
+
+If the server requires client authentication then the client must present its
+own certificate to the server when connecting. This certificate should reside
+in the client key store. Again it's just a regular Java key store. The client
+keystore location is set by using the function `keyStorePath` on the `NetClient`.
+
+To configure a client to trust all server certificates (dangerous):
+
+```php
+$client = Vertx::createNetClient()
+  ->ssl(TRUE)
+  ->trustAll(TRUE);
+```
+
+To configure a client to only trust those certificates it has in its trust store:
+
+```php
+$client = Vertx::createNetClient()
+  ->ssl(TRUE)
+  ->trustStorePath('/path/to/your/client/truststore/client-truststore.jks')
+  ->trustStorePassword('password');
+```
+
+To configure a client to only trust those certificates it has in its trust
+store, and also to supply a client certificate:
+
+```php
+$client = Vertx::createNetClient()
+  ->ssl(TRUE)
+  ->trustStorePath('/path/to/your/client/truststore/client-truststore.jks')
+  ->trustStorePassword('password')
+  ->clientAuthRequired(TRUE)
+  ->keyStorePath('/path/to/keystore/holding/client/cert/client-keystore.jks')
+  ->keyStorePassword('password');
+```
+
+#### Accessing SSL properties
+
+Just as with other client properties, these properties can be accesed
+directly on the object.
+
+```php
+if ($client->clientAuthRequired) {
+  Container::logger()->info('Client required authentication.');
+}
 ```
