@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 import org.vertx.java.core.json.JsonObject;
 
-import com.blankstyle.vertx.php.ArgumentModifier;
+import com.blankstyle.vertx.php.ArgumentWrapper;
 import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.util.PhpTypes;
@@ -61,7 +61,7 @@ public class Message<T> implements Gettable {
       if (PhpTypes.notNull(replyHandler)) {
         PhpTypes.assertCallable(env, replyHandler, "Handler argument to Vertx\\EventBus\\Message::reply() must be callable.");
 
-        Handler<org.vertx.java.core.eventbus.Message<T>> handler = new Handler<org.vertx.java.core.eventbus.Message<T>>(env, PhpTypes.toCallable(replyHandler), new ArgumentModifier<org.vertx.java.core.eventbus.Message<T>, Message<T>>() {
+        Handler<org.vertx.java.core.eventbus.Message<T>> handler = new Handler<org.vertx.java.core.eventbus.Message<T>>(env, PhpTypes.toCallable(replyHandler), new ArgumentWrapper<org.vertx.java.core.eventbus.Message<T>, Message<T>>() {
           @Override
           public Message<T> modify(org.vertx.java.core.eventbus.Message<T> message) {
             return new Message<T>(message);
@@ -107,7 +107,7 @@ public class Message<T> implements Gettable {
     else if (PhpTypes.notNull(replyHandler)) {
       PhpTypes.assertCallable(env, replyHandler, "Handler argument to Vertx\\EventBus\\Message::reply() must be callable.");
 
-      this.message.reply(new Handler<org.vertx.java.core.eventbus.Message<T>>(env, PhpTypes.toCallable(replyHandler), new ArgumentModifier<org.vertx.java.core.eventbus.Message<T>, Message<T>>() {
+      this.message.reply(new Handler<org.vertx.java.core.eventbus.Message<T>>(env, PhpTypes.toCallable(replyHandler), new ArgumentWrapper<org.vertx.java.core.eventbus.Message<T>, Message<T>>() {
         @Override
         public Message<T> modify(org.vertx.java.core.eventbus.Message<T> message) {
           return new Message<T>(message);

@@ -21,8 +21,9 @@ import java.util.Map;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.json.JsonObject;
 
-import com.blankstyle.vertx.php.ArgumentModifier;
+import com.blankstyle.vertx.php.ArgumentWrapper;
 import com.blankstyle.vertx.php.Handler;
+import com.blankstyle.vertx.php.VoidAsyncResultHandler;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.StringValue;
@@ -51,7 +52,7 @@ public final class EventBus {
    * @param handler A PHP callable event handler.
    */
   private org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> createAddressHandler(Env env, String address, Value callback) {
-    org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> handler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, PhpTypes.toCallable(callback), new ArgumentModifier<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
+    org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> handler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, PhpTypes.toCallable(callback), new ArgumentWrapper<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
       @Override
       public Message<Object> modify(org.vertx.java.core.eventbus.Message<Object> message) {
         return new Message<Object>(message);
@@ -93,7 +94,7 @@ public final class EventBus {
       // Create Vert.x API compatible handlers. This will wrap PHP callbacks
       // and wrap return values when the handler is invoked.
       org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> eventHandler = createAddressHandler(env, address.toString(), handler);
-      org.vertx.java.core.Handler<org.vertx.java.core.AsyncResult<Void>> resultEventHandler = new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(resultHandler));
+      org.vertx.java.core.Handler<AsyncResult<Void>> resultEventHandler = new VoidAsyncResultHandler(env, PhpTypes.toCallable(resultHandler));
 
       eventBus.registerHandler(address.toString(), eventHandler, resultEventHandler);
     }
@@ -132,7 +133,7 @@ public final class EventBus {
     if (PhpTypes.notNull(handler)) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::send() must be callable.");
       hasHandler = true;
-      sendHandler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, PhpTypes.toCallable(handler), new ArgumentModifier<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
+      sendHandler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, PhpTypes.toCallable(handler), new ArgumentWrapper<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
         @Override
         public Message<Object> modify(org.vertx.java.core.eventbus.Message<Object> arg) {
           return new Message<Object>(arg);
@@ -199,7 +200,7 @@ public final class EventBus {
    */
   public void close(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::close() must be callable.");
-    eventBus.close(new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+    eventBus.close(new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
   }
 
   public String toString() {

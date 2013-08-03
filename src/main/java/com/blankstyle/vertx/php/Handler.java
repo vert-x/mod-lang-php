@@ -37,14 +37,14 @@ public class Handler<T> implements org.vertx.java.core.Handler<T> {
    * An optional argument modifier. The modifier will be applied to
    * arguments when the handler's handle() method is called.
    */
-  private ArgumentModifier<T, ?> modifier;
+  private ArgumentWrapper<T, ?> modifier;
 
   public Handler(Env env, Callable handler) {
     this.env = env;
     this.handler = handler;
   }
 
-  public Handler(Env env, Callable handler, ArgumentModifier<T, ?> modifier) {
+  public Handler(Env env, Callable handler, ArgumentWrapper<T, ?> modifier) {
     this.env = env;
     this.handler = handler;
     this.modifier = modifier;
@@ -62,7 +62,7 @@ public class Handler<T> implements org.vertx.java.core.Handler<T> {
     return modifier != null;
   }
 
-  protected ArgumentModifier<T, ?> getModifier() {
+  protected ArgumentWrapper<T, ?> getModifier() {
     return modifier;
   }
 

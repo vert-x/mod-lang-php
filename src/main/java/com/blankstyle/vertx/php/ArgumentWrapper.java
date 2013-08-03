@@ -21,7 +21,7 @@ package com.blankstyle.vertx.php;
  * @param <T> The type of argument that is being wrapped.
  * @param <E> The resulting argument type after wrapping.
  */
-public interface ArgumentModifier<T, E> {
+public interface ArgumentWrapper<T, E> {
 
   /**
    * Wraps an argument.

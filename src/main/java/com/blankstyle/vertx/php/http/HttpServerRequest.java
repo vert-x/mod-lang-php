@@ -19,7 +19,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 
 import org.vertx.java.core.buffer.Buffer;
 
-import com.blankstyle.vertx.php.ArgumentModifier;
+import com.blankstyle.vertx.php.ArgumentWrapper;
 import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ReadStream;
@@ -127,7 +127,7 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest>, Gettabl
 
   public HttpServerRequest uploadHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServerRequest::uploadHandler() must be callable.");
-    request.uploadHandler(new Handler<org.vertx.java.core.http.HttpServerFileUpload>(env, PhpTypes.toCallable(handler), new ArgumentModifier<org.vertx.java.core.http.HttpServerFileUpload, HttpServerFileUpload>() {
+    request.uploadHandler(new Handler<org.vertx.java.core.http.HttpServerFileUpload>(env, PhpTypes.toCallable(handler), new ArgumentWrapper<org.vertx.java.core.http.HttpServerFileUpload, HttpServerFileUpload>() {
       @Override
       public HttpServerFileUpload modify(org.vertx.java.core.http.HttpServerFileUpload upload) {
         return new HttpServerFileUpload(upload);

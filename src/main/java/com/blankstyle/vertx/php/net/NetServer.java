@@ -17,8 +17,10 @@ package com.blankstyle.vertx.php.net;
 
 import org.vertx.java.core.AsyncResult;
 
+import com.blankstyle.vertx.php.AsyncResultHandler;
+import com.blankstyle.vertx.php.AsyncResultWrapper;
 import com.blankstyle.vertx.php.Handler;
-import com.blankstyle.vertx.php.ArgumentModifier;
+import com.blankstyle.vertx.php.ArgumentWrapper;
 import com.blankstyle.vertx.php.TCPServer;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
@@ -47,7 +49,7 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    */
   public NetServer connectHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetServer::connectHandler() must be callable.");
-    server.connectHandler(new Handler<org.vertx.java.core.net.NetSocket>(env, PhpTypes.toCallable(handler), new ArgumentModifier<org.vertx.java.core.net.NetSocket, NetSocket>() {
+    server.connectHandler(new Handler<org.vertx.java.core.net.NetSocket>(env, PhpTypes.toCallable(handler), new ArgumentWrapper<org.vertx.java.core.net.NetSocket, NetSocket>() {
       @Override
       public NetSocket modify(org.vertx.java.core.net.NetSocket socket) {
         return new NetSocket(socket);
@@ -74,27 +76,10 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
 
     if (PhpTypes.notNull(host)) {
       if (PhpTypes.isCallable(handler)) {
-        server.listen(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.net.NetServer>>(env, PhpTypes.toCallable(handler), new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetServer>, AsyncResult<NetServer>>() {
+        server.listen(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.net.NetServer>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.net.NetServer, NetServer>() {
           @Override
-          public AsyncResult<NetServer> modify(final AsyncResult<org.vertx.java.core.net.NetServer> server) {
-            return new AsyncResult<NetServer>() {
-              @Override
-              public NetServer result() {
-                return new NetServer(server.result());
-              }
-              @Override
-              public Throwable cause() {
-                return server.cause();
-              }
-              @Override
-              public boolean succeeded() {
-                return server.succeeded();
-              }
-              @Override
-              public boolean failed() {
-                return server.failed();
-              }
-            };
+          public NetServer wrap(org.vertx.java.core.net.NetServer server) {
+            return new NetServer(server);
           }
         }));
       }
@@ -103,27 +88,10 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
       }
     }
     else if (PhpTypes.isCallable(handler)) {
-      server.listen(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.net.NetServer>>(env, PhpTypes.toCallable(handler), new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetServer>, AsyncResult<NetServer>>() {
+      server.listen(port.toInt(), new AsyncResultHandler<org.vertx.java.core.net.NetServer>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.net.NetServer, NetServer>() {
         @Override
-        public AsyncResult<NetServer> modify(final AsyncResult<org.vertx.java.core.net.NetServer> server) {
-          return new AsyncResult<NetServer>() {
-            @Override
-            public NetServer result() {
-              return new NetServer(server.result());
-            }
-            @Override
-            public Throwable cause() {
-              return server.cause();
-            }
-            @Override
-            public boolean succeeded() {
-              return server.succeeded();
-            }
-            @Override
-            public boolean failed() {
-              return server.failed();
-            }
-          };
+        public NetServer wrap(org.vertx.java.core.net.NetServer server) {
+          return new NetServer(server);
         }
       }));
     }

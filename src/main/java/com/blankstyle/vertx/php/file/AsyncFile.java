@@ -1,9 +1,11 @@
 package com.blankstyle.vertx.php.file;
 
-import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.buffer.Buffer;
 
+import com.blankstyle.vertx.php.AsyncResultHandler;
 import com.blankstyle.vertx.php.Handler;
+import com.blankstyle.vertx.php.VoidAsyncResultHandler;
+import com.blankstyle.vertx.php.VoidHandler;
 import com.blankstyle.vertx.php.streams.ReadStream;
 import com.blankstyle.vertx.php.streams.WriteStream;
 import com.blankstyle.vertx.php.util.PhpTypes;
@@ -30,7 +32,7 @@ public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<Async
    */
   public AsyncFile read(Env env, Buffer buffer, NumberValue offset, NumberValue position, NumberValue length, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\AsyncFile::read() must be callable.");
-    file.read(buffer, offset.toInt(), position.toInt(), length.toInt(), new Handler<AsyncResult<Buffer>>(env, PhpTypes.toCallable(handler)));
+    file.read(buffer, offset.toInt(), position.toInt(), length.toInt(), new AsyncResultHandler<Buffer>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -39,7 +41,7 @@ public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<Async
    */
   public AsyncFile write(Env env, Buffer buffer, NumberValue position, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\AsyncFile::write() must be callable.");
-    file.write(buffer, position.toInt(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+    file.write(buffer, position.toInt(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -89,7 +91,7 @@ public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<Async
    */
   public AsyncFile endHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\AsyncFile::endHandler() must be callable.");
-    file.endHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
+    file.endHandler(new VoidHandler(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -98,7 +100,7 @@ public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<Async
    */
   public AsyncFile drainHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\AsyncFile::drainHandler() must be callable.");
-    file.drainHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
+    file.drainHandler(new VoidHandler(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -131,7 +133,7 @@ public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<Async
   public AsyncFile flush(Env env, @Optional Value handler) {
     if (PhpTypes.notNull(handler)) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\AsyncFile::flush() must be callable.");
-      file.flush(new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      file.flush(new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     }
     else {
       file.flush();
@@ -145,7 +147,7 @@ public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<Async
   public void close(Env env, @Optional Value handler) {
     if (PhpTypes.notNull(handler)) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\AsyncFile::close() must be callable.");
-      file.flush(new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      file.flush(new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     }
     else {
       file.flush();

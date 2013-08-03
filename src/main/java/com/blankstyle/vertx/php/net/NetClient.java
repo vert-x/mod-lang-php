@@ -17,7 +17,8 @@ package com.blankstyle.vertx.php.net;
 
 import org.vertx.java.core.AsyncResult;
 
-import com.blankstyle.vertx.php.ArgumentModifier;
+import com.blankstyle.vertx.php.AsyncResultHandler;
+import com.blankstyle.vertx.php.AsyncResultWrapper;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.TCPClient;
 import com.blankstyle.vertx.php.util.PhpTypes;
@@ -47,52 +48,18 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
     }
 
     if (PhpTypes.notNull(host)) {
-      client.connect(port.toInt(), host.toString(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, PhpTypes.toCallable(handler), new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetSocket>, AsyncResult<NetSocket>>() {
+      client.connect(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.net.NetSocket>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.net.NetSocket, NetSocket>() {
         @Override
-        public AsyncResult<NetSocket> modify(final AsyncResult<org.vertx.java.core.net.NetSocket> socket) {
-          return new AsyncResult<NetSocket>() {
-            @Override
-            public NetSocket result() {
-              return new NetSocket(socket.result());
-            }
-            @Override
-            public Throwable cause() {
-              return socket.cause();
-            }
-            @Override
-            public boolean succeeded() {
-              return socket.succeeded();
-            }
-            @Override
-            public boolean failed() {
-              return socket.failed();
-            }
-          };
+        public NetSocket wrap(org.vertx.java.core.net.NetSocket socket) {
+          return new NetSocket(socket);
         }
       }));
     }
     else {
-      client.connect(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, PhpTypes.toCallable(handler), new ArgumentModifier<AsyncResult<org.vertx.java.core.net.NetSocket>, AsyncResult<NetSocket>>() {
+      client.connect(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.net.NetSocket, NetSocket>() {
         @Override
-        public AsyncResult<NetSocket> modify(final AsyncResult<org.vertx.java.core.net.NetSocket> socket) {
-          return new AsyncResult<NetSocket>() {
-            @Override
-            public NetSocket result() {
-              return new NetSocket(socket.result());
-            }
-            @Override
-            public Throwable cause() {
-              return socket.cause();
-            }
-            @Override
-            public boolean succeeded() {
-              return socket.succeeded();
-            }
-            @Override
-            public boolean failed() {
-              return socket.failed();
-            }
-          };
+        public NetSocket wrap(org.vertx.java.core.net.NetSocket socket) {
+          return new NetSocket(socket);
         }
       }));
     }

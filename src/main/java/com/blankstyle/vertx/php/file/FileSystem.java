@@ -5,7 +5,10 @@ import org.vertx.java.core.buffer.Buffer;
 import org.vertx.java.core.file.FileProps;
 import org.vertx.java.core.file.FileSystemProps;
 
+import com.blankstyle.vertx.php.AsyncResultHandler;
+import com.blankstyle.vertx.php.AsyncResultWrapper;
 import com.blankstyle.vertx.php.Handler;
+import com.blankstyle.vertx.php.VoidAsyncResultHandler;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.BooleanValue;
@@ -31,10 +34,10 @@ public final class FileSystem {
   public FileSystem chmod(Env env, StringValue path, StringValue perms, @Optional StringValue dirPerms, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::chmod() must be callable.");
     if (PhpTypes.notNull(dirPerms)) {
-      fileSystem.chmod(path.toString(), perms.toString(), dirPerms.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.chmod(path.toString(), perms.toString(), dirPerms.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     }
     else {
-      fileSystem.chmod(path.toString(), perms.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.chmod(path.toString(), perms.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     }
     return this;
   }
@@ -58,10 +61,10 @@ public final class FileSystem {
   public FileSystem copy(Env env, StringValue from, StringValue to, @Optional BooleanValue recursive, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::copy() must be callable.");
     if (PhpTypes.notNull(recursive)) {
-      fileSystem.copy(from.toString(), to.toString(), recursive.toBoolean(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.copy(from.toString(), to.toString(), recursive.toBoolean(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     }
     else {
-      fileSystem.copy(from.toString(), to.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.copy(from.toString(), to.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     }
     return this;
   }
@@ -85,10 +88,10 @@ public final class FileSystem {
   public FileSystem createFile(Env env, StringValue path, @Optional StringValue perms, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::createFile() must be callable.");
     if (PhpTypes.notNull(perms)) {
-      fileSystem.createFile(path.toString(), perms.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.createFile(path.toString(), perms.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     }
     else {
-      fileSystem.createFile(path.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.createFile(path.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     }
     return this;
   }
@@ -112,10 +115,10 @@ public final class FileSystem {
   public FileSystem delete(Env env, StringValue path, @Optional BooleanValue recursive, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::delete() must be callable.");
     if (PhpTypes.notNull(recursive)) {
-      fileSystem.delete(path.toString(), recursive.toBoolean(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.delete(path.toString(), recursive.toBoolean(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     }
     else {
-      fileSystem.delete(path.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.delete(path.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     }
     return this;
   }
@@ -170,7 +173,7 @@ public final class FileSystem {
    */
   public FileSystem link(Env env, StringValue link, StringValue existing, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::link() must be callable.");
-    fileSystem.link(link.toString(), existing.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+    fileSystem.link(link.toString(), existing.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -206,17 +209,17 @@ public final class FileSystem {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::mkdir() must be callable.");
     if (PhpTypes.notNull(perms)) {
       if (PhpTypes.notNull(createParents)) {
-        fileSystem.mkdir(path.toString(), perms.toString(), createParents.toBoolean(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+        fileSystem.mkdir(path.toString(), perms.toString(), createParents.toBoolean(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
       }
       else {
-        fileSystem.mkdir(path.toString(), perms.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+        fileSystem.mkdir(path.toString(), perms.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
       }
     }
     else if (PhpTypes.notNull(createParents)) {
-      fileSystem.mkdir(path.toString(), createParents.toBoolean(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.mkdir(path.toString(), createParents.toBoolean(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     }
     else {
-      fileSystem.mkdir(path.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.mkdir(path.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     }
     return this;
   }
@@ -247,7 +250,7 @@ public final class FileSystem {
    */
   public FileSystem move(Env env, StringValue from, StringValue to, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::move() must be callable.");
-    fileSystem.move(from.toString(), to.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+    fileSystem.move(from.toString(), to.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -265,19 +268,44 @@ public final class FileSystem {
   public FileSystem open(Env env, StringValue path, @Optional StringValue perms, @Optional BooleanValue read, @Optional BooleanValue write, @Optional BooleanValue createNew, @Optional BooleanValue flush, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::open() must be callable.");
     if (PhpTypes.notNull(perms) && PhpTypes.notNull(read) && PhpTypes.notNull(write) && PhpTypes.notNull(createNew) && PhpTypes.notNull(flush)) {
-      fileSystem.open(path.toString(), perms.toString(), read.toBoolean(), write.toBoolean(), createNew.toBoolean(), flush.toBoolean(), new Handler<AsyncResult<org.vertx.java.core.file.AsyncFile>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.open(path.toString(), perms.toString(), read.toBoolean(), write.toBoolean(), createNew.toBoolean(), flush.toBoolean(), new AsyncResultHandler<org.vertx.java.core.file.AsyncFile>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.file.AsyncFile, AsyncFile>() {
+        @Override
+        public AsyncFile wrap(org.vertx.java.core.file.AsyncFile file) {
+          return new AsyncFile(file);
+        }
+      }));
     }
     else if (PhpTypes.notNull(perms) && PhpTypes.notNull(read) && PhpTypes.notNull(write) && PhpTypes.notNull(createNew)) {
-      fileSystem.open(path.toString(), perms.toString(), read.toBoolean(), write.toBoolean(), createNew.toBoolean(), new Handler<AsyncResult<org.vertx.java.core.file.AsyncFile>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.open(path.toString(), perms.toString(), read.toBoolean(), write.toBoolean(), createNew.toBoolean(), new AsyncResultHandler<org.vertx.java.core.file.AsyncFile>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.file.AsyncFile, AsyncFile>() {
+        @Override
+        public AsyncFile wrap(org.vertx.java.core.file.AsyncFile file) {
+          return new AsyncFile(file);
+        }
+      }));
     }
     else if (PhpTypes.notNull(perms) && PhpTypes.notNull(createNew)) {
-      fileSystem.open(path.toString(), perms.toString(), createNew.toBoolean(), new Handler<AsyncResult<org.vertx.java.core.file.AsyncFile>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.open(path.toString(), perms.toString(), createNew.toBoolean(), new AsyncResultHandler<org.vertx.java.core.file.AsyncFile>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.file.AsyncFile, AsyncFile>() {
+        @Override
+        public AsyncFile wrap(org.vertx.java.core.file.AsyncFile file) {
+          return new AsyncFile(file);
+        }
+      }));
     }
     else if (PhpTypes.notNull(perms)) {
-      fileSystem.open(path.toString(), perms.toString(), new Handler<AsyncResult<org.vertx.java.core.file.AsyncFile>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.open(path.toString(), perms.toString(), new AsyncResultHandler<org.vertx.java.core.file.AsyncFile>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.file.AsyncFile, AsyncFile>() {
+        @Override
+        public AsyncFile wrap(org.vertx.java.core.file.AsyncFile file) {
+          return new AsyncFile(file);
+        }
+      }));
     }
     else {
-      fileSystem.open(path.toString(), new Handler<AsyncResult<org.vertx.java.core.file.AsyncFile>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.open(path.toString(), new AsyncResultHandler<org.vertx.java.core.file.AsyncFile>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.file.AsyncFile, AsyncFile>() {
+        @Override
+        public AsyncFile wrap(org.vertx.java.core.file.AsyncFile file) {
+          return new AsyncFile(file);
+        }
+      }));
     }
     return this;
   }
@@ -308,7 +336,7 @@ public final class FileSystem {
    */
   public FileSystem props(Env env, StringValue path, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::props() must be callable.");
-    fileSystem.props(path.toString(), new Handler<AsyncResult<FileProps>>(env, PhpTypes.toCallable(handler)));
+    fileSystem.props(path.toString(), new AsyncResultHandler<FileProps>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -329,7 +357,7 @@ public final class FileSystem {
       fileSystem.readDir(path.toString(), filter.toString(), new Handler<AsyncResult<String[]>>(env, PhpTypes.toCallable(handler)));
     }
     else {
-      fileSystem.readDir(path.toString(), new Handler<AsyncResult<String[]>>(env, PhpTypes.toCallable(handler)));
+      fileSystem.readDir(path.toString(), new AsyncResultHandler<String[]>(env, PhpTypes.toCallable(handler)));
     }
     return this;
   }
@@ -351,7 +379,7 @@ public final class FileSystem {
    */
   public FileSystem readFile(Env env, StringValue path, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::readFile() must be callable.");
-    fileSystem.readFile(path.toString(), new Handler<AsyncResult<Buffer>>(env, PhpTypes.toCallable(handler)));
+    fileSystem.readFile(path.toString(), new AsyncResultHandler<Buffer>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -368,7 +396,7 @@ public final class FileSystem {
    */
   public FileSystem readSymlink(Env env, StringValue link, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::readSymlink() must be callable.");
-    fileSystem.readSymlink(link.toString(), new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
+    fileSystem.readSymlink(link.toString(), new AsyncResultHandler<String>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -384,7 +412,7 @@ public final class FileSystem {
    */
   public FileSystem symlink(Env env, StringValue link, StringValue existing, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::symlink() must be callable.");
-    fileSystem.symlink(link.toString(), existing.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+    fileSystem.symlink(link.toString(), existing.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -401,7 +429,7 @@ public final class FileSystem {
    */
   public FileSystem truncate(Env env, StringValue path, NumberValue len, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::truncate() must be callable.");
-    fileSystem.truncate(path.toString(), len.toLong(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+    fileSystem.truncate(path.toString(), len.toLong(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -418,7 +446,7 @@ public final class FileSystem {
    */
   public FileSystem unlink(Env env, StringValue link, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::unlink() must be callable.");
-    fileSystem.unlink(link.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+    fileSystem.unlink(link.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -435,7 +463,7 @@ public final class FileSystem {
    */
   public FileSystem writeFile(Env env, StringValue path, Buffer data, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::writeFile() must be callable.");
-    fileSystem.writeFile(path.toString(), data, new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+    fileSystem.writeFile(path.toString(), data, new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
