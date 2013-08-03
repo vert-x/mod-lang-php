@@ -26,7 +26,7 @@ package com.blankstyle.vertx.php;
  *
  * @author Jordan Halterman
  */
-public interface ArgumentWrapper<T, E> {
+public interface ResultModifier<T, E> {
 
   /**
    * Wraps an argument.

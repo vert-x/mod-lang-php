@@ -15,8 +15,6 @@
  */
 package com.blankstyle.vertx.php.streams;
 
-import org.vertx.java.core.Handler;
-
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.StringValue;
@@ -43,11 +41,6 @@ public interface WriteStream<T> {
    * @return The stream implementation.
    */
   public T drainHandler(Env env, Value handler);
-
-  /**
-   * Sets an internal drain handler on the stream.
-   */
-  public T drainHandler(Handler<Void> handler);
 
   /**
    * Sets the max write queue size.

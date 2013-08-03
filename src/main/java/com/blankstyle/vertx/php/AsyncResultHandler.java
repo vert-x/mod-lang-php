@@ -36,17 +36,28 @@ public class AsyncResultHandler<T> extends Handler<AsyncResult<T>> {
     super(env, handler);
   }
 
-  public AsyncResultHandler(Env env, Callable handler, ArgumentWrapper<AsyncResult<T>, ?> modifier) {
+  public AsyncResultHandler(Env env, Callable handler, AsyncResultWrapper<T, ?> modifier) {
     super(env, handler, modifier);
   }
 
   public void handle(AsyncResult<T> result) {
     Env env = getEnvironment();
-    if (result.succeeded()) {
-      getCallable().call(env, env.wrapJava(result.result()), env.wrapJava(null));
+    if (hasModifier()) {
+      AsyncResult<?> wrapped = (AsyncResult<?>) getModifier().modify(result);
+      if (wrapped.succeeded()) {
+        getCallable().call(env, env.wrapJava(wrapped.result()), env.wrapJava(null));
+      }
+      else {
+        getCallable().call(env, env.wrapJava(null), env.wrapJava(wrapped.cause()));
+      }
     }
     else {
-      getCallable().call(env, env.wrapJava(null), env.wrapJava(result.cause()));
+      if (result.succeeded()) {
+        getCallable().call(env, env.wrapJava(result.result()), env.wrapJava(null));
+      }
+      else {
+        getCallable().call(env, env.wrapJava(null), env.wrapJava(result.cause()));
+      }
     }
   }
 

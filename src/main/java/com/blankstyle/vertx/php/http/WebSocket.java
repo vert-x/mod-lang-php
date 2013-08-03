@@ -159,18 +159,6 @@ public class WebSocket implements ReadStream<WebSocket>, WriteStream<WebSocket>,
     socket.close();
   }
 
-  @Override
-  public WebSocket drainHandler(org.vertx.java.core.Handler<Void> handler) {
-    socket.drainHandler(handler);
-    return this;
-  }
-
-  @Override
-  public WebSocket dataHandler(org.vertx.java.core.Handler<Buffer> handler) {
-    socket.dataHandler(handler);
-    return this;
-  }
-
   public String toString() {
     return "php:Vertx\\Http\\WebSocket";
   }

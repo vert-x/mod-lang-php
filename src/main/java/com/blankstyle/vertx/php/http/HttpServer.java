@@ -15,7 +15,7 @@
  */
 package com.blankstyle.vertx.php.http;
 
-import com.blankstyle.vertx.php.ArgumentWrapper;
+import com.blankstyle.vertx.php.ResultModifier;
 import com.blankstyle.vertx.php.AsyncResultHandler;
 import com.blankstyle.vertx.php.AsyncResultWrapper;
 import com.blankstyle.vertx.php.Handler;
@@ -100,7 +100,7 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
     }
 
     if (PhpTypes.isCallable(env, handler)) {
-      server.requestHandler(new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ArgumentWrapper<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+      server.requestHandler(new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
         @Override
         public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
           return new HttpServerRequest(request);
@@ -140,7 +140,7 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
     }
 
     if (PhpTypes.isCallable(env, handler)) {
-      server.websocketHandler(new Handler<org.vertx.java.core.http.ServerWebSocket>(env, PhpTypes.toCallable(handler), new ArgumentWrapper<org.vertx.java.core.http.ServerWebSocket, ServerWebSocket>() {
+      server.websocketHandler(new Handler<org.vertx.java.core.http.ServerWebSocket>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.ServerWebSocket, ServerWebSocket>() {
         @Override
         public ServerWebSocket modify(org.vertx.java.core.http.ServerWebSocket socket) {
           return new ServerWebSocket(socket);

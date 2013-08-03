@@ -17,7 +17,7 @@ package com.blankstyle.vertx.php.http;
 
 import com.blankstyle.vertx.php.TCPClient;
 import com.blankstyle.vertx.php.Handler;
-import com.blankstyle.vertx.php.ArgumentWrapper;
+import com.blankstyle.vertx.php.ResultModifier;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.NumberValue;
@@ -233,7 +233,7 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    * Creates a client response handler.
    */
   private Handler<org.vertx.java.core.http.HttpClientResponse> createResponseHandler(Env env, Value handler) {
-    return new Handler<org.vertx.java.core.http.HttpClientResponse>(env, PhpTypes.toCallable(handler), new ArgumentWrapper<org.vertx.java.core.http.HttpClientResponse, HttpClientResponse>() {
+    return new Handler<org.vertx.java.core.http.HttpClientResponse>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpClientResponse, HttpClientResponse>() {
       @Override
       public HttpClientResponse modify(org.vertx.java.core.http.HttpClientResponse response) {
         return new HttpClientResponse(response);

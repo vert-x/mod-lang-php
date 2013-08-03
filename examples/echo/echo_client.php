@@ -3,9 +3,8 @@
 $client = Vertx::createNetClient();
 $logger = Vertx::logger();
 
-$client->connect(1234, NULL, function($result) use ($logger) {
-  if ($result->succeeded()) {
-    $socket = $result->result();
+$client->connect(1234, NULL, function($socket, $error) use ($logger) {
+  if (!$error) {
     $socket->dataHandler(function($buffer) use ($logger) {
       $logger->info("Client receiving ". $buffer);
     });
@@ -17,6 +16,6 @@ $client->connect(1234, NULL, function($result) use ($logger) {
     }
   }
   else {
-    $logger->info("Failed to connect to the server.");
+    $logger->info("Failed to connect to the server. ". $error->getMessage());
   }
 });

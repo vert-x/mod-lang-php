@@ -23,7 +23,7 @@ import org.vertx.java.core.AsyncResult;
  *
  * @author Jordan Halterman
  */
-public abstract class AsyncResultWrapper<T, E> implements ArgumentWrapper<AsyncResult<T>, AsyncResult<E>> {
+public abstract class AsyncResultWrapper<T, E> implements ResultModifier<AsyncResult<T>, AsyncResult<E>> {
 
   @Override
   public AsyncResult<E> modify(final AsyncResult<T> result) {

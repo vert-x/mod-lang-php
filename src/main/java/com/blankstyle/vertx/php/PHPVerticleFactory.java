@@ -81,7 +81,7 @@ public class PHPVerticleFactory implements VerticleFactory {
 
       String className = location.getClassName();
       String funcName = location.getFunctionName();
-      if (funcName != "NULL" && !funcName.startsWith("__quercus_")) {
+      if (funcName != null && funcName != "NULL" && !funcName.startsWith("__quercus_")) {
         if (className != "NULL" && funcName != "NULL" && !funcName.startsWith("__quercus_")) {
           logger.error(String.format("%s in %s on line %d in %s::%s()", t.getMessage(), location.getFileName(), location.getLineNumber(), className, funcName));
         }

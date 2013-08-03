@@ -15,9 +15,6 @@
  */
 package com.blankstyle.vertx.php.streams;
 
-import org.vertx.java.core.Handler;
-import org.vertx.java.core.buffer.Buffer;
-
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.Env;
 
@@ -49,11 +46,6 @@ public interface ReadStream<T> {
    * @return The stream implementation.
    */
   public T dataHandler(Env env, Value handler);
-
-  /**
-   * Sets an internal data handler on the stream.
-   */
-  public T dataHandler(Handler<Buffer> handler);
 
   /**
    * Sets an end handler on the stream.

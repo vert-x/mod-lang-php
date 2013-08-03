@@ -21,7 +21,7 @@ import java.util.Map;
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.json.JsonObject;
 
-import com.blankstyle.vertx.php.ArgumentWrapper;
+import com.blankstyle.vertx.php.ResultModifier;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.VoidAsyncResultHandler;
 import com.blankstyle.vertx.php.util.PhpTypes;
@@ -54,7 +54,7 @@ public final class EventBus {
    * @param handler A PHP callable event handler.
    */
   private org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> createAddressHandler(Env env, String address, Value callback) {
-    org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> handler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, PhpTypes.toCallable(callback), new ArgumentWrapper<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
+    org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> handler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, PhpTypes.toCallable(callback), new ResultModifier<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
       @Override
       public Message<Object> modify(org.vertx.java.core.eventbus.Message<Object> message) {
         return new Message<Object>(message);
@@ -155,7 +155,7 @@ public final class EventBus {
     if (PhpTypes.notNull(handler)) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::send() must be callable.");
       hasHandler = true;
-      sendHandler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, PhpTypes.toCallable(handler), new ArgumentWrapper<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
+      sendHandler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
         @Override
         public Message<Object> modify(org.vertx.java.core.eventbus.Message<Object> arg) {
           return new Message<Object>(arg);

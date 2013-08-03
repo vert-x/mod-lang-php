@@ -21,7 +21,7 @@ import java.util.HashMap;
 import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
 
-import com.blankstyle.vertx.php.ArgumentWrapper;
+import com.blankstyle.vertx.php.ResultModifier;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
@@ -69,7 +69,7 @@ public class SockJSServer {
   public SockJSServer installApp(Env env, ArrayValue config, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\SockJS\\SockJSServer::installApp() must be callable.");
     server.installApp(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())),
-                      new Handler<org.vertx.java.core.sockjs.SockJSSocket>(env, PhpTypes.toCallable(handler), new ArgumentWrapper<org.vertx.java.core.sockjs.SockJSSocket, SockJSSocket>() {
+                      new Handler<org.vertx.java.core.sockjs.SockJSSocket>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.sockjs.SockJSSocket, SockJSSocket>() {
                         @Override
                         public SockJSSocket modify(org.vertx.java.core.sockjs.SockJSSocket socket) {
                           return new SockJSSocket(socket);

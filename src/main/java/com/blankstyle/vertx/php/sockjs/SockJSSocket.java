@@ -58,12 +58,6 @@ public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJ
   }
 
   @Override
-  public SockJSSocket drainHandler(org.vertx.java.core.Handler<Void> handler) {
-    socket.drainHandler(handler);
-    return this;
-  }
-
-  @Override
   public SockJSSocket writeQueueMaxSize(Env env, NumberValue size) {
     socket.setWriteQueueMaxSize(size.toInt());
     return this;
@@ -97,12 +91,6 @@ public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJ
   public SockJSSocket dataHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\SockJS\\SockJSSocket::dataHandler() must be callable.");
     socket.dataHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
-    return this;
-  }
-
-  @Override
-  public SockJSSocket dataHandler(org.vertx.java.core.Handler<Buffer> handler) {
-    socket.dataHandler(handler);
     return this;
   }
 

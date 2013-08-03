@@ -93,12 +93,6 @@ public class HttpServerFileUpload implements ReadStream<HttpServerFileUpload> {
     return this;
   }
 
-  @Override
-  public HttpServerFileUpload dataHandler(org.vertx.java.core.Handler<Buffer> handler) {
-    upload.dataHandler(handler);
-    return this;
-  }
-
   public String toString() {
     return "php:Vertx\\Http\\HttpServerFileUpload";
   }

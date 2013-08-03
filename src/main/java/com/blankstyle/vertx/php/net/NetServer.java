@@ -20,7 +20,7 @@ import org.vertx.java.core.AsyncResult;
 import com.blankstyle.vertx.php.AsyncResultHandler;
 import com.blankstyle.vertx.php.AsyncResultWrapper;
 import com.blankstyle.vertx.php.Handler;
-import com.blankstyle.vertx.php.ArgumentWrapper;
+import com.blankstyle.vertx.php.ResultModifier;
 import com.blankstyle.vertx.php.TCPServer;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
@@ -51,7 +51,7 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
    */
   public NetServer connectHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetServer::connectHandler() must be callable.");
-    server.connectHandler(new Handler<org.vertx.java.core.net.NetSocket>(env, PhpTypes.toCallable(handler), new ArgumentWrapper<org.vertx.java.core.net.NetSocket, NetSocket>() {
+    server.connectHandler(new Handler<org.vertx.java.core.net.NetSocket>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.net.NetSocket, NetSocket>() {
       @Override
       public NetSocket modify(org.vertx.java.core.net.NetSocket socket) {
         return new NetSocket(socket);

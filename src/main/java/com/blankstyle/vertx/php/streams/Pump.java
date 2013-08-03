@@ -19,8 +19,10 @@ import org.vertx.java.core.Handler;
 import org.vertx.java.core.buffer.Buffer;
 
 import com.caucho.quercus.annotation.Optional;
+import com.caucho.quercus.env.Callback;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
+import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x Pump.
@@ -47,19 +49,93 @@ public class Pump {
   private int pumped;
 
   private final Handler<Void> drainHandler = new Handler<Void>() {
+    @Override
     public void handle(Void v) {
       readStream.resume(env);
     }
   };
 
+  private final Value drainHandlerValue = new Callback() {
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public Value call(Env arg0, Value arg1) {
+      drainHandler.handle(null);
+      return env.wrapJava(this);
+    }
+
+    @Override
+    public Value call(Env env, Value[] args) {
+      drainHandler.handle(null);
+      return env.wrapJava(this);
+    }
+
+    @Override
+    public String getCallbackName() {
+      return drainHandler.toString();
+    }
+
+    @Override
+    public boolean isInternal(Env arg0) {
+      return false;
+    }
+
+    @Override
+    public boolean isValid(Env arg0) {
+      return true;
+    }
+
+    @Override
+    public boolean isCallable(Env env, boolean a, Value b) {
+      return true;
+    }
+  };
+
   private final Handler<Buffer> dataHandler = new Handler<Buffer>() {
+    @Override
     public void handle(Buffer buffer) {
-      writeStream.write(env, env.wrapJava(buffer), null);
+      writeStream.write(env, env.wrapJava(buffer.toString()), null);
       pumped += buffer.length();
       if (writeStream.writeQueueFull(env).toBoolean()) {
         readStream.pause(env);
-        writeStream.drainHandler(drainHandler);
+        writeStream.drainHandler(env, drainHandlerValue);
       }
+    }
+  };
+
+  private final Value dataHandlerValue = new Callback() {
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public Value call(Env arg0, Value arg1) {
+      dataHandler.handle(new Buffer(arg1.toString()));
+      return env.wrapJava(this);
+    }
+
+    @Override
+    public Value call(Env env, Value[] args) {
+      dataHandler.handle(new Buffer(args[0].toString()));
+      return env.wrapJava(this);
+    }
+
+    @Override
+    public String getCallbackName() {
+      return dataHandler.toString();
+    }
+
+    @Override
+    public boolean isInternal(Env arg0) {
+      return false;
+    }
+
+    @Override
+    public boolean isValid(Env arg0) {
+      return true;
+    }
+
+    @Override
+    public boolean isCallable(Env env, boolean a, Value b) {
+      return true;
     }
   };
 
@@ -90,15 +166,15 @@ public class Pump {
   /**
    * Start the Pump. The Pump can be started and stopped multiple times.
    */
-  public Pump start() {
-    readStream.dataHandler(dataHandler);
+  public Pump start(Env env) {
+    readStream.dataHandler(env, dataHandlerValue);
     return this;
   }
 
   /**
    * Stop the Pump. The Pump can be started and stopped multiple times.
    */
-  public Pump stop() {
+  public Pump stop(Env env) {
     writeStream.drainHandler(env, null);
     readStream.dataHandler(env, null);
     return this;
@@ -107,7 +183,7 @@ public class Pump {
   /**
    * Return the total number of bytes pumped by this pump.
    */
-  public int bytesPumped() {
+  public int bytesPumped(Env env) {
     return pumped;
   }
 

@@ -140,12 +140,6 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
     return this;
   }
 
-  @Override
-  public HttpClientRequest drainHandler(org.vertx.java.core.Handler<Void> handler) {
-    request.drainHandler(handler);
-    return this;
-  }
-
   public String toString() {
     return "php:Vertx\\Http\\HttpClientRequest";
   }

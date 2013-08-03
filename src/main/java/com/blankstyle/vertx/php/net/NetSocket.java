@@ -15,8 +15,6 @@
  */
 package com.blankstyle.vertx.php.net;
 
-import org.vertx.java.core.buffer.Buffer;
-
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.ReadStream;
@@ -64,12 +62,6 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
     return this;
   }
 
-  @Override
-  public NetSocket dataHandler(org.vertx.java.core.Handler<Buffer> handler) {
-    socket.dataHandler(handler);
-    return this;
-  }
-
   /**
    * Pauses producing on the socket.
    */
@@ -104,12 +96,6 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
     return this;
   }
 
-  @Override
-  public NetSocket drainHandler(org.vertx.java.core.Handler<Void> handler) {
-    socket.drainHandler(handler);
-    return this;
-  }
-
   /**
    * Sets the max write queue size.
    */
@@ -129,7 +115,7 @@ public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>,
    * Writes a value to the socket.
    */
   public NetSocket write(Env env, Value value, StringValue enc) {
-    socket.write(value.toJavaString());
+    socket.write(value.toString());
     return this;
   }
 
