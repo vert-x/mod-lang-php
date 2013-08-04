@@ -48,9 +48,7 @@ between data types in PHP and Java.
 
 1. [Writing Verticles](#writing-verticles)
    * [Verticle clean-up](#verticle-clean-up)
-   * [The container class](#the-container-class)
-   * [The vertx class](#the-vertx-class)
-   * [Getting Configuration in a Verticle](#getting-configuration-from-a-verticle)
+   * [Getting Configuration in a Verticle](#getting-configuration-in-a-verticle)
    * [Logging from a Verticle](#logging-from-a-verticle)
    * [Accessing environment variables from a Verticle](#accessing-environment-variables-from-a-verticle)
    * [Causing the container to exit](#causing-the-container-to-exit)
@@ -62,14 +60,13 @@ between data types in PHP and Java.
    * [Using a Verticle to co-ordinate loading of an application](#using-a-verticle-to-co-ordinate-loading-of-an-application)
    * [Specifying number of instances](#specifying-number-of-instances)
    * [Getting Notified when Deployment is complete](#getting-notified-when-deployment-is-complete)
-   * [Undeploying a Verticle or Module](#undeploying-a-verticle-or-module)
-1. [Scaling your application](#scaling-your-application)
+   * [Undeploying a Verticle](#undeploying-a-verticle)
 1. [The Event Bus](#the-event-bus)
    * [The Theory](#the-theory)
       * [Addressing](#addressing)
       * [Handlers](#handlers)
-      * [Publish / subscribe messaging](#publish-subscribe-messaging)
-      * [Point to point and Request-Response messaging](#point-to-point-and-request-response-messaging)
+      * [Publish / subscribe messaging](#publish--subscribe-messaging)
+      * [Point to point and Request-Response messaging](#point-to-point-messaging)
       * [Transient](#transient)
       * [Types of messages](#types-of-messages)
    * [Event Bus API](#event-bus-api)
@@ -103,11 +100,9 @@ between data types in PHP and Java.
       * [Handling Data](#handling-data)
          * [Reading Data from the Socket](#reading-data-from-the-socket)
          * [Writing Data to a Socket](#writing-data-to-a-socket)
-      * [Socket Remote Address](#socket-remote-address)
       * [Closing a socket](#closing-a-socket)
       * [Close Handler](#close-handler)
       * [Exception handler](#exception-handler)
-      * [Event Bus Write Handler](#event-bus-write-handler)
       * [Read and Write Streams](#read-and-write-streams)
    * [Scaling TCP Servers](#scaling-tcp-servers)
    * [Net Client](#net-client)
@@ -117,28 +112,23 @@ between data types in PHP and Java.
       * [NetClient Properties](#netclient-properties)
    * [SSL Servers](#ssl-servers)
    * [SSL Clients](#ssl-clients)
-1. [Flow Control - Streams and Pumps](#flow-control-streams-and-pumps)
+1. [Flow Control - Streams and Pumps](#flow-control---streams-and-pumps)
    * [ReadStream](#readstream)
    * [WriteStream](#writestream)
    * [Pump](#pump)
 1. [Writing HTTP Servers and Clients](#writing-http-servers-and-clients)
    * [Writing HTTP servers](#writing-http-servers)
       * [Creating an HTTP Server](#creating-an-http-server)
-      * [Start the Server Listening](#start-the-server-listening)
+      * [Start the Server Listening](#start-the-server-listening-1)
       * [Getting Notified of Incoming Requests](#getting-notified-of-incoming-requests)
       * [Handling HTTP Requests](#handling-http-requests)
          * [Request Method](#request-method)
-         * [Request Version](#request-version)
          * [Request URI](#request-uri)
          * [Request Path](#request-path)
          * [Request Query](#request-query)
          * [Request Headers](#request-headers)
          * [Request params](#request-params)
-         * [Remote Address](#remote-address)
-         * [Absolute URI](#absolute-uri)
          * [Reading Data from the Request Body](#reading-data-from-the-request-body)
-         * [Handling Multipart Form Uploads](#handling-multipart-form-uploads)
-         * [Handling Multipart Form Attributes](#handling-multipart-form-attributes)
       * [HTTP Server Responses](#http-server-responses)
       * [Setting Status Code and Message](#setting-status-code-and-message)
          * [Writing HTTP responses](#writing-http-responses)
@@ -153,15 +143,12 @@ between data types in PHP and Java.
       * [Pooling and Keep Alive](#pooling-and-keep-alive)
       * [Closing the client](#closing-the-client)
       * [Making Requests](#making-requests)
-         * [Handling exceptions](#handling-exceptions)
          * [Writing to the request body](#writing-to-the-request-body)
          * [Ending HTTP requests](#ending-http-requests)
          * [Writing Request Headers](#writing-request-headers)
-         * [Request timeouts](#request-timeouts)
          * [HTTP chunked requests](#http-chunked-requests)
       * [HTTP Client Responses](#http-client-responses)
          * [Reading Data from the Response Body](#reading-data-from-the-response-body)
-         * [Reading cookies](#reading-cookies)
       * [100-Continue Handling](#100-continue-handling)
    * [Pumping Requests and Responses](#pumping-requests-and-responses)
    * [HTTPS Servers](#https-servers)
@@ -176,14 +163,13 @@ between data types in PHP and Java.
    * [WebSockets on the server](#websockets-on-the-server)
       * [Reading from and Writing to WebSockets](#reading-from-and-writing-to-websockets)
       * [Rejecting WebSockets](#rejecting-websockets)
-      * [Headers on the websocket](#headers-on-the-websocket)
    * [WebSockets on the HTTP client](#websockets-on-the-http-client)
    * [WebSockets in the browser](#websockets-in-the-browser)
 1. [SockJS](#sockjs)
    * [SockJS Server](#sockjs-server)
    * [Reading and writing data from a SockJS server](#reading-and-writing-data-from-a-sockjs-server)
    * [SockJS client](#sockjs-client)
-1. [SockJS - EventBus Bridge](#sockjs-eventbus-bridge)
+1. [SockJS - EventBus Bridge](#sockjs---eventbus-bridge)
    * [Setting up the Bridge](#setting-up-the-bridge)
    * [Using the Event Bus from client side JavaScript](#using-the-event-bus-from-client-side-javascript)
    * [Securing the Bridge](#securing-the-bridge)
@@ -308,7 +294,15 @@ class by calling `Container::env`.
 ```php
 $env = Container::env();
 ```
-   
+
+## Causing the container to exit
+
+To exit the container, simply call the static `Container::exit` method.
+
+```php
+Container::exit();
+```
+
 # Deploying and Undeploying Verticles Programmatically
 
 You can deploy and undeploy verticles programmatically from inside another
@@ -426,16 +420,18 @@ until some time after the call to `deployVerticle` has returned. If you
 want to be notified when the verticle has completed being deployed, you
 can pass a handler as the final argument to `deployVerticle`:
 
-    Container::deployVerticle('my_verticle.php', NULL, 10, function() use ($log) {
-        $log->info("It's been deployed!");
-    });
+```php
+Container::deployVerticle('my_verticle.php', NULL, 10, function() use ($log) {
+    $log->info("It's been deployed!");
+});
+```
 
 Note that when using PHP's closures, it's important to remember that you
 _must include any external variables in the closure with the `use` keyword_.
 
 ## Deploying Worker Verticles
 
-The `vertx.deployVerticle` method deploys standard (non worker) verticles.
+The `vertx::deployVerticle` method deploys standard (non worker) verticles.
 If you want to deploy worker verticles use the `Container::deployWorkerVerticle`
 static method. This method takes the same parameters as `Container::deployVerticle`
 with the same meanings.
@@ -446,8 +442,8 @@ Any verticles that you deploy programmatically from within a verticle, and
 all of their children are automatically undeployed when the parent verticle
 is undeployed, so in most cases you will not need to undeploy a verticle
 manually, however if you do want to do this, it can be done by calling the
-function `vertx.undeployVerticle` passing in the deployment id that was
-returned from the call to `vertx.deployVerticle`
+static `Container::undeployVerticle` method and passing in the deployment id
+that was returned from the call to `Container::deployVerticle`
 
 ```php
 $deployID = Container::deployVerticle('my_verticle.php');
@@ -1177,24 +1173,24 @@ servers that you created when the verticle is stopped.
 Firstly there are bunch of properties used to tweak the TCP parameters, in most cases
 you won't need to set these:
 
-* `setTCPNoDelay($tcpNoDelay)` If `tcpNoDelay` is true then
+* `noDelay($tcpNoDelay) // or $server->noDelay = $tcpNoDelay` If `tcpNoDelay` is `TRUE` then
 [Nagle's Algorithm](http://en.wikipedia.org/wiki/Nagle's_algorithm) is disabled.
 If false then it is enabled.
 
-* `setSendBufferSize($size)` Sets the TCP send buffer size in bytes.
+* `sendBufferSize($size) // or $server->sendBufferSize = $size` Sets the TCP send buffer size in bytes.
 
-* `setReceiveBufferSize($size)` Sets the TCP receive buffer size in bytes.
+* `receiveBufferSize($size) // or $server->receiveBufferSize = $size` Sets the TCP receive buffer size in bytes.
 
-* `setTCPKeepAlive($keepAlive)` if `keepAlive` is true then
+* `keepAlive($keepAlive) // or $server->keepAlive = $keepAlive` if `keepAlive` is true then
 [TCP keep alive](http://en.wikipedia.org/wiki/Keepalive#TCP_keepalive) is enabled,
 if false it is disabled. 
 
-* `setReuseAddress($reuse)` if `reuse` is true then addresses in TIME_WAIT state can
+* `reuseAddress($reuse) // or $server->reuseAddress = $reuse` if `reuse` is true then addresses in TIME_WAIT state can
 be reused after they have been closed.
 
-* `setSoLinger($linger)`
+* `soLinger($linger) // or $server->soLinger = $linger`
 
-* `setTrafficClass($trafficClass)`
+* `trafficClass($trafficClass) // or $server->trafficClass = $trafficClass`
 
 NetServer has a further set of properties which are used to configure SSL. We'll
 discuss those later on.
@@ -1385,7 +1381,7 @@ verticle instance remains strictly single threaded, and you don't have to do any
 special tricks like writing load-balancers in order to scale your server on your
 multi-core machine.
 
-## NetClient
+## Net Client
 
 A NetClient is used to make TCP connections to servers.
 
@@ -1443,7 +1439,7 @@ $client->connect(4242, 'host-that-doesnt-exist', function($socket) use ($log) {
 
 A NetClient can be configured to automatically retry connecting or reconnecting to
 the server in the event that it cannot connect or has lost its connection. This is
-done by invoking the functions `setReconnectAttempts` and `setReconnectInterval`:
+done by invoking the functions `reconnectAttempts` and `reconnectInterval`:
 
 ```php
 $client = Vertx::createNetClient();
@@ -1452,6 +1448,18 @@ $client->reconnectAttempts(1000);
 
 $client->reconnectInterval(500);
 ```
+
+Or, alternatively the properties can be set directly:
+
+```php
+$client = Vertx::createNetClient();
+
+$client->reconnectAttempts = 1000;
+
+$client->reconnectInterval = 500;
+```
+
+Internally, this still calls the setter methods shown in the first example.
 
 `ReconnectAttempts` determines how many times the client will try to connect to
 the server before giving up. A value of `-1` represents an infinite number of
@@ -1499,8 +1507,8 @@ The key store should contain the server certificate. This is mandatory - the
 client will not be able to connect to the server over SSL if the server does not
 have a certificate.
 
-The key store is configured on the server using the `setKeyStorePath` and
-`setKeyStorePassword` functions.
+The key store is configured on the server using the `keyStorePath` and
+`keyStorePassword` functions.
 
 The trust store is optional and contains the certificates of any clients it should
 trust. This is only used if client authentication is required. 
@@ -1531,7 +1539,7 @@ $server = Vertx::createNetServer()
 Making sure that `server-truststore.jks` contains the certificates of any clients
 who the server trusts.
 
-If `clientAuthRequired` is set to `true` and the client cannot provide a
+If `clientAuthRequired` is set to `TRUE` and the client cannot provide a
 certificate, or it provides a certificate that the server does not trust then
 the connection attempt will not succeed.
 
@@ -1545,7 +1553,7 @@ To enable SSL on a `NetClient` the function `ssl(TRUE)` is called.
 If the `trustAll(TRUE)` is invoked on the client, then the client will trust
 all server certificates. The connection will still be encrypted but this mode is
 vulnerable to 'man in the middle' attacks. I.e. you can't be sure who you are
-connecting to. Use this with caution. Default value is `false`.
+connecting to. Use this with caution. Default value is `FALSE`.
 
 If `trustAll(TRUE)` has not been invoked then a client trust store must be
 configured and should contain the certificates of the servers that the client
@@ -1766,7 +1774,7 @@ Methods:
 * `writeBuffer($buffer)`: write a Buffer to the `WriteStream`. This method will
 never block. Writes are queued internally and asynchronously written to the
 underlying resource.
-* `setWriteQueueMaxSize($size)`: set the number of bytes at which the write
+* `writeQueueMaxSize($size)`: set the number of bytes at which the write
 queue is considered *full*, and the function `writeQueueFull()` returns `true`.
 Note that, even if the write queue is considered full, if `writeBuffer` is
 called the data will still be accepted and queued.
@@ -1778,11 +1786,11 @@ is considered no longer full.
 
 ## Pump
 
-Instances of `Pump` have the following methods:
+Instances of `Vertx\Streams\Pump` have the following methods:
 
 * `start()`: Start the pump.
 * `stop()`: Stops the pump. When the pump starts it is in stopped mode.
-* `setWriteQueueMaxSize()`: This has the same meaning as `setWriteQueueMaxSize`
+* `writeQueueMaxSize()`: This has the same meaning as `writeQueueMaxSize`
 on the `WriteStream`.
 * `getBytesPumped()`: Returns total number of bytes pumped.
 
@@ -1872,23 +1880,23 @@ If the request contains a body, that body may arrive at the server some time
 after the request handler has been called.
 
 It contains functions to get the URI, path, request headers and request
-parameters. It also contains a `response` property which is a reference to
+parameters. It also contains a `$response` property which is a reference to
 an object that represents the server side HTTP response for the object.
 
 #### Request Method
 
-The request object has a property `method` which is a string representing what
-HTTP method was requested. Possible values for `method` are: `GET`, `PUT`,
+The request object has a property `$method` which is a string representing what
+HTTP method was requested. Possible values for `$method` are: `GET`, `PUT`,
 `POST`, `DELETE`, `HEAD`, `OPTIONS`, `CONNECT`, `TRACE`, `PATCH`.
 
 #### Request URI
 
-The request object has a property `uri` which contains the full URI (Uniform
+The request object has a property `$uri` which contains the full URI (Uniform
 Resource Locator) of the request. For example, if the request URI was:
 
     /a/b/c/page.html?param1=abc&param2=xyz    
 
-Then `request.uri` would contain the string `/a/b/c/page.html?param1=abc&param2=xyz`.
+Then `$request->uri` would contain the string `/a/b/c/page.html?param1=abc&param2=xyz`.
 
 Request URIs can be relative or absolute (with a domain) depending on what the
 client sent. In many cases they will be relative.
@@ -1898,21 +1906,21 @@ The request uri contains the value as defined in
 
 #### Request Path
 
-The request object has a property `path` which contains the path of the request.
+The request object has a property `$path` which contains the path of the request.
 For example, if the request URI was:
 
     /a/b/c/page.html?param1=abc&param2=xyz    
 
-Then `request.path` would contain the string `/a/b/c/page.html`
+Then `$request->path` would contain the string `/a/b/c/page.html`
 
 #### Request Query
 
-The request object has a property `query` which contains the query of the request.
+The request object has a property `$query` which contains the query of the request.
 For example, if the request URI was:
 
     /a/b/c/page.html?param1=abc&param2=xyz    
 
-Then `request.query` would contain the string `param1=abc&param2=xyz`    
+Then `$request->query` would contain the string `param1=abc&param2=xyz`    
 
 #### Request Headers
 
@@ -2038,13 +2046,13 @@ $server->requestHandler(function($request) use ($log) {
 
 ### HTTP Server Responses 
 
-As previously mentioned, the HTTP request object contains a property `response`.
+As previously mentioned, the HTTP request object contains a property `$response`.
 This is the HTTP response for the request. You use it to write the response
 back to the client.
 
 ### Setting Status Code and Message
 
-To set the HTTP status code for the response use the `statusCode` property, e.g.
+To set the HTTP status code for the response use the `$statusCode` property, e.g.
 
 ```php
 $server = Vertx::createNetServer();
@@ -2057,15 +2065,15 @@ $server->requestHandler(function($request) use ($log) {
 })->listen(8080, 'localhost');
 ```
 
-You can also use the `statusMessage` property to set the status message. If
+You can also use the `$statusMessage` property to set the status message. If
 you do not set the status message a default message will be used.    
   
-The default value for `statusCode` is `200`.    
+The default value for `$statusCode` is `200`.    
   
 
 #### Writing HTTP responses
 
-To write data to an HTTP response, you invoke the `write` function. This
+To write data to an HTTP response, you invoke the `write` method. This
 function can be invoked multiple times before the response is ended. It can
 be invoked in a few ways:
 
@@ -2104,7 +2112,7 @@ $request->response->write('Hello world!', NULL, function() use ($log) {
 ```
 
 If you are just writing a single string or Buffer to the HTTP response you can
-write it and end the response in a single call to the `end` function.   
+write it and end the response in a single call to the `end` method.   
 
 The first call to `write` results in the response header being being written to
 the response.
@@ -2115,7 +2123,7 @@ late otherwise. If you are using HTTP chunking you do not have to worry.
    
 #### Ending HTTP responses
 
-Once you have finished with the HTTP response you must call the `end` function
+Once you have finished with the HTTP response you must call the `end` method
 on it.
 
 This function can be invoked in several ways:
@@ -2137,7 +2145,7 @@ $request->response->end("That's all folks.");
 #### Closing the underlying connection
 
 You can close the underlying TCP connection of the request by calling the
-`close` function.
+`close` method.
 
 ```php
 $request->response->close();
@@ -2175,7 +2183,7 @@ You put the HTTP response into chunked mode as follows:
 $request->response->chunked = TRUE;
 ```
 
-Default is non-chunked. When in chunked mode, each call to `response.write(...)`
+Default is non-chunked. When in chunked mode, each call to `$response->write(...)`
 will result in a new HTTP chunk being written out.  
 
 When in chunked mode you can also write HTTP response trailers to the response.
@@ -2279,7 +2287,7 @@ $client = Vertx::createHttpClient();
 ```
 
 You set the port and hostname (or ip address) that the client will connect to
-using the `host` and `port` functions:
+using the `host` and `port` methods:
 
 ```php
 $client = Vertx::createHttpClient();
@@ -2319,7 +2327,7 @@ explicitly set these values that's what the client will attempt to connect to.
 By default the `HTTPClient` pools HTTP connections. As you make requests a
 connection is borrowed from the pool and returned when the HTTP response has ended.
 
-If you do not want connections to be pooled you can call `keepAlive` with `false`:
+If you do not want connections to be pooled you can call `keepAlive` with `FALSE`:
 
 ```php
 $client = Vertx::createHttpClient()
@@ -2747,8 +2755,8 @@ $routeMatcher = new RouteMatcher();
 $server->requestHandler($routeMatcher)->listen(8080, 'localhost');
 ```
 
-## Specifying matches.    
-    
+## Specifying matches
+
 You can then add different matches to the route matcher. For example, to send all
 GET requests with path `/animals/dogs` to one handler and all GET requests with
 path `/animals/cats` to another handler you would do:
@@ -3824,7 +3832,7 @@ Vertx::fileSystem()->open('some-file.dat', function($asyncFile, $error) use ($lo
 });
 ```
 
-### Flushing data to underlying storage.
+### Flushing data to underlying storage
 
 If the AsyncFile was not opened with `flush = TRUE`, then you can manually
 flush any writes from the OS cache by calling the `flush` method.
