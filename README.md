@@ -2873,16 +2873,18 @@ clients (typically browsers).
 To use WebSockets on the server you create an HTTP server as normal, but instead
 of setting a `requestHandler` you set a `websocketHandler` on the server.
 
-    var server = vertx.createHttpServer();
+```php
+$server = Vertx::createHttpServer();
 
-    server.websocketHandler(function(websocket) {
-      
-      // A WebSocket has connected!
-      
-    }).listen(8080, 'localhost');
-    
+$server->websocketHandler(function($websocket) use ($log) {
+
+  $log->info('A websocket has connected!');
+
+})->listen(8080, 'localhost');
+```
+
 ### Reading from and Writing to WebSockets    
-    
+
 The `websocket` instance passed into the handler implements both `ReadStream`
 and `WriteStream`, so you can read and write data to it in the normal ways. I.e
 by setting a `dataHandler` and calling the `writeBuffer` method.
@@ -2891,22 +2893,29 @@ See the chapter on `NetSocket` and streams and pumps for more information.
 
 For example, to echo all data received on a WebSocket:
 
-    var server = vertx.createHttpServer();
+```php
+// Include the Pump from the Vertx\Streams namespace.
+use Vertx\Streams\Pump;
 
-    server.websocketHandler(function(websocket) {
-      
-      var p = new Pump(websocket, websocket);
-      p.start();
-      
-    }).listen(8080, 'localhost');
-    
+$server = Vertx::createHttpServer();
+
+$server->websocketHandler(function($websocket) {
+
+  $pump = new Pump($websocket, $websocket);
+  $pump->start();
+
+})->listen(8080, 'localhost');
+```
+
 The `websocket` instance also has method `writeBinaryFrame` for writing binary
 data. This has the same effect as calling `writeBuffer`.
 
 Another method `writeTextFrame` also exists for writing text data. This is
 equivalent to calling 
 
-    websocket.writeBuffer(new vertx.Buffer('some-string'));    
+```php
+$websocket->writeBuffer(new Vertx\Buffer\Buffer('some-string'));
+```
 
 ### Rejecting WebSockets
 
@@ -2915,18 +2924,25 @@ Sometimes you may only want to accept WebSockets which connect at a specific pat
 To check the path, you can query the `path` property of the `websocket`. You can
 then call the `reject` function to reject the websocket.
 
-    var server = vertx.createHttpServer();
+```php
+use Vertx\Streams\Pump;
 
-    server.websocketHandler(function(websocket) {
-      
-      if (websocket.path === '/services/echo') {
-        var p = new vertx.Pump(websocket, websocket);
-        p.start();  
-      } else {
-        websocket.reject();
-      }        
-    }).listen(8080, 'localhost');    
-    
+$server = Vertx::createHttpServer();
+
+$server->websocketHandler(function($websocket) {
+
+  if ($websocket->path == '/services/echo') {
+    $pump = new Pump($websocket, $websocket);
+    $pump.start();
+  }
+  else {
+    $websocket->reject();
+  }
+
+})->listen(8080, 'localhost');
+
+```
+
 ## WebSockets on the HTTP client
 
 To use WebSockets from the HTTP client, you create the HTTP client as normal,
@@ -2939,14 +2955,16 @@ handler on the HTTP client will be called.
 
 Here's an example of WebSocket connection;
 
-    var client = vertx.createHttpClient();
-    
-    client.connectWebsocket('http://localhost:8080/some-uri', function(websocket) {
-      
-      // WebSocket has connected!
-      
-    }); 
-    
+```php
+$client = Vertx::createHttpClient();
+
+$client->connectWebsocket('http://localhost:8080/some-uri', function($websocket) use ($log) {
+
+  $log->info('The websocket has connected!.');
+
+});
+```
+
 Again, the client side WebSocket implements `ReadStream` and `WriteStream`, so
 you can read and write to it in the same way as any other stream object. 
 
@@ -2973,13 +2991,13 @@ Here's some example client side JavaScript which uses a WebSocket.
         };
     
     </script>
-    
+
 For more information see the [WebSocket API documentation](http://dev.w3.org/html5/websockets/) 
 
 ## Routing WebSockets with Pattern Matching
 
-**TODO**   
-    
+**TODO**
+
 # SockJS
 
 WebSockets are a new technology, and many users are still using browsers that
@@ -3017,10 +3035,12 @@ To create a SockJS server you simply create a HTTP server as normal and then
 invoke the `createSockJSServer` function on the `vertx` instance, specifying
 the HTTP server:
 
-    var httpServer = vertx.createHttpServer();
-    
-    var sockJSServer = vertx.createSockJSServer(httpServer);
-    
+```php
+$httpServer = Vertx::createHttpServer();
+
+$sockJSServer = Vertx::createSockJSServer($httpServer);
+```
+
 Each SockJS server can host multiple *applications*.
 
 Each application is defined by some configuration, and provides a handler which
@@ -3028,22 +3048,22 @@ gets called when incoming SockJS connections arrive at the server.
 
 For example, to create a SockJS echo application:
 
-    var httpServer = vertx.createHttpServer();
-    
-    var sockJSServer = vertx.createSockJSServer(httpServer);
-    
-    var config = { prefix: '/echo' };
-    
-    sockJSServer.installApp(config, function(sock) {
-    
-        var p = new vertx.Pump(sock, sock);
-        
-        p.start();
-    });
-    
-    httpServer.listen(8080);
-    
-The configuration is a JSON object that takes the following fields:
+```php
+$httpServer = Vertx::createHttpServer();
+
+$sockJSServer = Vertx::createSockJSServer($httpServer);
+
+$config = array('prefix' => '/echo');
+
+$sockJSServer->installApp($config, function($socket) {
+  $pump = new Vertx\Streams\Pump($socket, $socket);
+  $pump->start();
+});
+
+$httpServer->listen(8080);
+```
+
+The configuration is an associative array that takes the following fields:
 
 * `prefix`: A url prefix for the application. All http requests whose paths
 begins with selected prefix will be handled by the application. This property
@@ -3085,21 +3105,24 @@ standard API for reading and writing to the SockJS socket or using it in pumps.
 
 See the chapter on Streams and Pumps for more information.
 
-    var httpServer = vertx.createHttpServer();
-    
-    var sockJSServer = vertx.createSockJSServer(httpServer);
-    
-    var config = { prefix: '/echo' };
-    
-    sockJSServer.installApp(config, function(sock) {
-    
-        sock.dataHandler(function(buff) {
-            sock.writeBuffer(buff);
-        });
-    });
-    
-    httpServer.listen(8080);
-    
+```php
+$httpServer = Vertx::createHttpServer();
+
+$sockJSServer = Vertx::createSockJSServer($httpServer);
+
+$config = array('prefix' => '/echo');
+
+$sockJSServer->installApp($config, function($socket) {
+
+  $socket->dataHandler(function($buffer) use ($socket) {
+    $socket->writeBuffer($buffer);
+  });
+
+});
+
+$httpServer->listen(8080);
+```
+
 ## SockJS client
 
 For full information on using the SockJS client library please see the
@@ -3152,15 +3175,17 @@ You will also need to secure the bridge (see below).
 The following example creates and starts a SockJS bridge which will bridge
 any events sent to the path `eventbus` on to the server side event bus.
 
-    var httpServer = vertx.createHttpServer();
-    
-    var sockJSServer = vertx.createSockJSServer(httpServer);
+```php
+$httpServer = Vertx::createHttpServer();
 
-    sockJSServer.bridge({prefix : '/eventbus'}, [], [] );
+$sockJSServer = Vertx::createSockJSServer($httpServer);
 
-    server.listen(8080);
-    
-The SockJS bridge currently only works with JSON event bus messages.    
+$sockJSServer->bridge(array('prefix' => '/eventbus'), array(), array());
+
+$httpServer->listen(8080);
+```
+
+The SockJS bridge currently only works with JSON (array) event bus messages.    
 
 ## Using the Event Bus from client side JavaScript
 
@@ -3197,7 +3222,7 @@ You can find `vertxbus.js` in the `client` directory of the vert.x distribution.
 The first thing the example does is to create a instance of the event bus
 
     var eb = new vertx.EventBus('http://localhost:8080/eventbus'); 
-    
+
 The parameter to the constructor is the URI where to connect to the event
 bus. Since we create our bridge with the prefix `eventbus` we will connect there.
 
@@ -3268,60 +3293,33 @@ must match.
 
 Here is an example:
 
-    var httpServer = vertx.createHttpServer();
-    
-    var sockJSServer = vertx.createSockJSServer(httpServer);
+```php
+$httpServer = Vertx::createHttpServer();
 
-    sockJSServer.bridge({prefix : '/eventbus'},
-      [
-        // Let through any messages sent to 'demo.orderMgr'
-        {
-          address : 'demo.orderMgr'
-        },
-        // Allow calls to the address 'demo.persistor' as long as the messages
-        // have an action field with value 'find' and a collection field with value
-        // 'albums'
-        {
-          address : 'demo.persistor',
-          match : {
-            action : 'find',
-            collection : 'albums'
-          }
-        },
-        // Allow through any message with a field `wibble` with value `foo`.
-        {
-          match : {
-            wibble: 'foo'
-          }
-        }
-      ],
-      [
-        // Let through any messages coming from address 'ticker.mystock'
-        {
-          address : 'ticker.mystock'
-        },
-        // Let through any messages from addresses starting with "news." (e.g. news.europe, news.usa, etc)
-        {
-          address_re : 'news\\..+'
-        }
-      ]
-      );
+$sockJSServer = Vertx::createSockJSServer($httpServer);
 
+$sockJSServer->bridge(array('prefix' => '/eventbus'), array(
+  array('address' => 'demo.orderMgr'),
+  array('address' => 'demo.persistor', 'match' => array('action' => 'find', 'collection' => 'albums')),
+  array('match' => array('wibble' => 'foo')),
+), array(
+  array('address' => 'ticket.mystock'),
+  array('address_re' => 'news\\..+'),
+));
 
-    server.listen(8080);
-    
+$server->listen(8080);
+```
+
 To let all messages through you can specify two arrays with a single empty
-JSON object which will match all messages.
+array which will match all messages.
 
-    ...
+```php
+$sockJSServer->bridge(array('prefix' => '/eventbus', array(array()), array(array())));
+```
 
-    sockJSServer.bridge({prefix : '/eventbus'}, [{}], [{}]);
-    
-    ...    
-     
 **Be very careful!**
 
-## Messages that require authorisation
+## Messages that require authorization
 
 The bridge can also refuse to let certain messages through if the user is
 not authorised.
@@ -3334,15 +3332,17 @@ To tell the bridge that certain messages require authorisation before being
 passed, you add the field `requires_auth` with the value of `true` in the
 match. The default value is `false`. For example, the following match:
 
-    {
-      address : 'demo.persistor',
-      match : {
-        action : 'find',
-        collection : 'albums'
-      },
-      requires_auth: true
-    }
-    
+```php
+array(
+  'address' => 'demo.persistor',
+  'match' => array(
+    'action' => 'find',
+    'collection' => 'albums',
+  ),
+  'requires_auth' => TRUE,
+)
+```
+
 This tells the bridge that any messages to save orders in the `orders`
 collection, will only be passed if the user is successful authenticated
 (i.e. logged in ok) first.    
