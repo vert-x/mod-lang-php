@@ -2720,8 +2720,8 @@ a `NetClient` for SSL. Please see SSL client chapter for detailed instructions.
 Scaling an HTTP or HTTPS server over multiple cores is as simple as deploying more
 instances of the verticle. For example:
 
-    vertx deploy http_server.js -instances 20
-    
+    vertx deploy http_server.php -instances 20
+
 The scaling works in the same way as scaling a `NetServer`. Please see the chapter
 on scaling Net Servers for a detailed explanation of how this works.
 
@@ -2737,32 +2737,41 @@ To do this you simply create an instance of `vertx.RouteMatcher` and use it as
 handler in an HTTP server. See the chapter on HTTP servers for more information
 on setting HTTP handlers. Here's an example:
 
-    var server = vertx.createHttpServer();
-    
-    var routeMatcher = new vertx.RouteMatcher();
-        
-    server.requestHandler(routeMatcher).listen(8080, 'localhost');
-    
+```php
+// Include the RouteMatcher class from the Vertx\Http namespace.
+use Vertx\Http\RouteMatcher;
+
+$server = Vertx::createHttpServer();
+
+$routeMatcher = new RouteMatcher();
+
+$server->requestHandler($routeMatcher)->listen(8080, 'localhost');
+```
+
 ## Specifying matches.    
     
 You can then add different matches to the route matcher. For example, to send all
 GET requests with path `/animals/dogs` to one handler and all GET requests with
 path `/animals/cats` to another handler you would do:
 
-    var server = vertx.createHttpServer();
-    
-    var routeMatcher = new vertx.RouteMatcher();
-    
-    routeMatcher.get('/animals/dogs', function(req) {
-        req.response.end('You requested dogs');
-    });
-    
-    routeMatcher.get('/animals/cats', function(req) {
-        req.response.end('You requested cats');    
-    });
-        
-    server.requestHandler(routeMatcher).listen(8080, 'localhost');
-    
+```php
+use Vertx\Http\RouteMatcher;
+
+$server = Vertx::createHttpServer();
+
+$routeMatcher = new RouteMatcher();
+
+$routeMatcher->get('/animals/dogs', function($request) {
+  $request->response->end('You requested dogs.');
+});
+
+$routeMatcher->get('/animals/cats', function($request) {
+  $request->response->end('You requested cats.');
+});
+
+$server->requestHandler($routeMatcher)->listen(8080, 'localhost');
+```
+
 Corresponding methods exist for each HTTP method - `get`, `post`, `put`, `delete`,
 `head`, `options`, `trace`, `connect` and `patch`.
 
@@ -2781,18 +2790,22 @@ A request is sent to at most one handler.
 If you want to extract parameters from the path, you can do this too, by using
 the `:` (colon) character to denote the name of a parameter. For example:
 
-    var server = vertx.createHttpServer();
-    
-    var routeMatcher = new vertx.RouteMatcher();
-    
-    routeMatcher.put('/:blogname/:post', function(req) {        
-        var blogName = req.params().blogname;
-        var post = req.params().post;
-        req.response.end('blogname is ' + blogName + ', post is ' + post);
-    });
-    
-    server.requestHandler(routeMatcher).listen(8080, 'localhost');
-    
+```php
+use Vertx\Http\RouteMatcher;
+
+$server = Vertx::createHttpServer();
+
+$routeMatcher = new RouteMatcher();
+
+$routeMatcher->put('/:blogname/:post', function($request) {
+  $blogName = $request->params->blogname;
+  $post = $request->params->post;
+  $request->response->end('blogname is '. $blogName .', post is '. $post);
+});
+
+$server->requestHandler($routeMatcher)->listen(8080, 'localhost');
+```
+
 Any params extracted by pattern matching are added to the map of request parameters.
 
 In the above example, a PUT request to `/myblog/post1` would result in the variable
@@ -2817,18 +2830,22 @@ There's also an `allWithRegEx` method which applies the match to any HTTP reques
 
 For example:
 
-    var server = vertx.createHttpServer();
-    
-    var routeMatcher = new vertx.RouteMatcher();
+```php
+use Vertx\Http\RouteMatcher;
 
-    routeMatcher.allWithRegEx('\/([^\/]+)\/([^\/]+)', function(req) {        
-        var first = req.params().param0
-        var second = req.params().param1;
-        req.response.end("first is " + first + " and second is " + second);
-    });
+$server = Vertx::createHttpServer();
 
-    server.requestHandler(routeMatcher).listen(8080, 'localhost');
-    
+$routeMatcher = new RouteMatcher();
+
+$routeMatcher->allWithRegEx('\/([^\/]+)\/([^\/]+)', function($request) {
+  $first = $request->params->param0;
+  $second = $request->params->param1;
+  $request->response->end('first is '. $first .' and second is '. $second);
+});
+
+$server->requestHandler($routeMatcher)->listen(8080, 'localhost');
+```
+
 Run the above and point your browser at `http://localhost:8080/animals/cats`.
 
 It will display 'first is animals and second is cats'.         
@@ -2839,7 +2856,11 @@ You can use the `noMatch` function to specify a handler that will be called if
 nothing matches. If you don't specify a no match handler and nothing matches, a
 404 will be returned.
 
-    routeMatcher.noMatch(function(req) { req.response.end("Nothing matched"); });
+```php
+$routeMatcher->noMatch(function($request) {
+  $request->response->end('Nothing matched!');
+});
+```
 
 # WebSockets
 
