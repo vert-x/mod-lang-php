@@ -283,6 +283,7 @@ static `Container` class by calling `Container::logger`:
 ```php
 $log = Container::logger();
 $log->info('I am loggin something!');
+```
 
 The logger has the functions:
 
@@ -325,6 +326,7 @@ To deploy a single instance of a verticle :
 
 ```php
 $id = Container::deployVerticl('my_verticle.php');
+```
 
 ## Deploying a module programmatically
 
@@ -632,6 +634,7 @@ receiving the message. This is the point to point messaging pattern.
 
 ```php
 $eventBus->send('test.address', 'Hello world!');
+```
 
 ### Replying to messages
 
@@ -773,6 +776,7 @@ And then, in a different verticle:
 ```php
 $map = $sharedData->getMap('demo.mymap');
 Container::logger()->info('value of some-key is '. $map->get('some-key'));
+```
 
 ## Shared Sets
 
@@ -963,7 +967,7 @@ $num = $buff->getShort($pos);  // Read signed 16 bits
 
 $num = $buff->getInt($pos);    // Read signed 32 bits
 
-$num = buff->getLong($pos);   // Read signed 64 bits  
+$num = $buff->getLong($pos);   // Read signed 64 bits  
 ```
 
 And with floats, you must specify if you want to read the number as a 32 bit
@@ -1075,26 +1079,29 @@ Creating TCP servers and clients is incredibly easy with vert.x.
 
 ### Creating a Net Server
 
-To create a TCP server you invoke the `createNetServer` function on the `vertx`
-instance
+To create a TCP server you invoke the static `createNetServer` method on the
+`Vertx` class.
 
-    var server = vertx.createNetServer();
-    
+```php
+$server = Vertx::createNetServer();
+```
+
 ### Start the Server Listening    
-    
+
 To tell that server to listen for connections we do:    
 
-    var server = vertx.createNetServer();
+```php
+$server = Vertx::createNetServer();
+$server->listen(1234, 'localhost');
+```
 
-    server.listen(1234, 'myhost');
-    
 The first parameter to `listen` is the port. The second parameter is the hostname
-or ip address. If it is omitted it will default to `0.0.0.0` which means it will
-listen at all available interfaces.
+or ip address. If it is omitted or null it will default to `0.0.0.0` which means
+it will listen at all available interfaces.
 
 
 ### Getting Notified of Incoming Connections
-    
+
 Just having a TCP server listening creates a working server that you can connect
 to (try it with telnet!), however it's not very useful since it doesn't do anything
 with the connections.
@@ -1103,84 +1110,105 @@ To be notified when a connection occurs we need to call the `connectHandler`
 function of the server, passing in a handler. The handler will be called when a
 connection is made:
 
-    var server = vertx.createNetServer();
+```php
+$server = Vertx::createNetServer();
+$log = Container::logger();
 
-    server.connectHandler(function(sock) {
-        log.info('A client has connected!');
-    })  
+$server->connectHandler(function($socket) use ($log) {
+  $log->info('A client has connected!');
+});
 
-    server.listen(1234, 'localhost');
-    
+$server->listen(1234, 'localhost');
+```
+
 That's a bit more interesting. Now it displays 'A client has connected!' every time a
 client connects.   
 
 The return value of the `connectHandler` method is the server itself, so multiple
 invocations can be chained together. That means we can rewrite the above as:
 
-    var server = vertx.createNetServer();
+```php
+$server = Vertx::createNetServer();
+$log = Container::logger();
 
-    server.connectHandler(function(sock) {
-        log.info('A client has connected!');
-    }).listen(1234, 'localhost');
-    
+$server->connectHandler(function($socket) use ($log) {
+  $log->info('A client has connected!');
+})->listen(1234, 'localhost');
+```
+
 or 
 
-    vertx.createNetServer().connectHandler(function(sock) {
-        log.info('A client has connected!');
-    }).listen(1234, 'localhost');
-    
-    
+```php
+$log = Container::logger();
+
+Vertx::createNetServer()->connectHandler(function($socket) use ($log) {
+  $log->info('A client has connected!');
+})->listen(1234, 'localhost');
+```
+
 This is a common pattern throughout the vert.x API.  
- 
 
 ### Closing a Net Server
 
 To close a net server just call the `close` function.
 
-    server.close();
+```php
+$server->close();
+```
 
 The close is actually asynchronous and might not complete until some time after the
 `close` function has returned. If you want to be notified when the actual close has
 completed then you can pass in a handler to the `close` function.
 
 This handler will then be called when the close has fully completed.
- 
-    server.close(function() {
-      log.info('The server is now fully closed.');
-    });
-    
+
+```php
+$server->close(function() use ($log) {
+  $log->info('The server is now fully closed.');
+});
+```
+
 If you want your net server to last the entire lifetime of your verticle, you don't
 need to call `close` explicitly, the Vert.x container will automatically close any
 servers that you created when the verticle is stopped.    
-    
+
 ### NetServer Properties
 
-NetServer has a set of properties you can set which affect its behaviour. Firstly
-there are bunch of properties used to tweak the TCP parameters, in most cases you
-won't need to set these:
+`Vertx\Net\NetServer` has a set of properties you can set which affect its behaviour.
+Firstly there are bunch of properties used to tweak the TCP parameters, in most cases
+you won't need to set these:
 
-* `setTCPNoDelay(tcpNoDelay)` If `tcpNoDelay` is true then
+* `setTCPNoDelay($tcpNoDelay)` If `tcpNoDelay` is true then
 [Nagle's Algorithm](http://en.wikipedia.org/wiki/Nagle's_algorithm) is disabled.
 If false then it is enabled.
 
-* `setSendBufferSize(size)` Sets the TCP send buffer size in bytes.
+* `setSendBufferSize($size)` Sets the TCP send buffer size in bytes.
 
-* `setReceiveBufferSize(size)` Sets the TCP receive buffer size in bytes.
+* `setReceiveBufferSize($size)` Sets the TCP receive buffer size in bytes.
 
-* `setTCPKeepAlive(keepAlive)` if `keepAlive` is true then
+* `setTCPKeepAlive($keepAlive)` if `keepAlive` is true then
 [TCP keep alive](http://en.wikipedia.org/wiki/Keepalive#TCP_keepalive) is enabled,
 if false it is disabled. 
 
-* `setReuseAddress(reuse)` if `reuse` is true then addresses in TIME_WAIT state can
+* `setReuseAddress($reuse)` if `reuse` is true then addresses in TIME_WAIT state can
 be reused after they have been closed.
 
-* `setSoLinger(linger)`
+* `setSoLinger($linger)`
 
-* `setTrafficClass(trafficClass)`
+* `setTrafficClass($trafficClass)`
 
 NetServer has a further set of properties which are used to configure SSL. We'll
 discuss those later on.
 
+#### Accessing NetServer properties
+
+The Vert.x PHP API uses PHP's magic methods to allow various objects' properties
+to be accessed directly. The `NetServer` object's properties can be accessed
+"publicly" via this method.
+
+```php
+$size = $server->sendBufferSize;
+```
 
 ### Handling Data
 
@@ -1198,16 +1226,16 @@ To read data from the socket you need to set the `dataHandler` on the socket. Th
 handler will be called with a `Buffer` every time data is received on the socket.
 You could try the following code and telnet to it to send some data:
 
-    var server = vertx.createNetServer();
+```php
+$server = Vertx::createNetServer();
 
-    server.connectHandler(function(sock) {
-    
-        sock.dataHandler(function(buffer) {
-            log.info('I received ' + buffer.length() + ' bytes of data');
-        });
-      
-    }).listen(1234, 'localhost');
-    
+$server->connectHandler(function($socket) use ($log) {
+  $socket->dataHandler(function($buffer) use ($log) {
+    $log->info('I received '. $buffer->length() .' bytes of data.');
+  });
+})->listen(1234, 'localhost');
+```
+
 #### Writing Data to a Socket
 
 To write data to a socket, you invoke the `write` function. This function can be
@@ -1215,20 +1243,26 @@ invoked in a few ways:
 
 With a single buffer:
 
-    var myBuffer = new vertx.Buffer(...);
-    sock.write(myBuffer);
-    
+```php
+$myBuffer = new Vertx\Buffer\Buffer();
+$socket->write($myBuffer);
+```
+
 A string. In this case the string will encoded using UTF-8 and the result written
 to the wire.
 
-    sock.write('hello');    
-    
+```php
+$socket->write('Hello world!');
+```
+
 A string and an encoding. In this case the string will encoded using the specified
 encoding and the result written to the wire.     
 
-    sock.write('hello', 'UTF-16');
-    
-The `write` function is asynchronous and always returns immediately after the write
+```php
+$socket->write('Hello world!', 'UTF-16');
+```
+
+The `write` method is asynchronous and always returns immediately after the write
 has been queued.
 
 The actual write might occur some time later. If you want to be informed when the
@@ -1236,43 +1270,51 @@ actual write has happened you can pass in a function as a final argument.
 
 This function will then be invoked when the write has completed:
 
-    sock.write('hello', function() {
-        log.info('It has actually been written');
-    });
+```php
+$socket->write('Hello world!', function() use ($log) {
+  $log->info('It has actually been written.');
+});
+```
 
 Let's put it all together.
 
 Here's an example of a simple TCP echo server which simply writes back (echoes)
 everything that it receives on the socket:
 
-    var server = vertx.createNetServer();
+```php
+$log = Container::logger();
 
-    server.connectHandler(function(sock) {
-    
-        sock.dataHandler(function(buffer) {
-            sock.write(buffer);
-        });
-      
-    }).listen(1234, 'localhost');
-    
+$server = Vertx::createNetServer();
+
+$server->connectHandler(function($socket) use ($log) {
+
+  $socket->dataHandler(function($buffer) use ($socket) {
+    $socket->write($buffer);
+  });
+
+})->listen(1234, 'localhost');
+```
+
 ### Closing a socket
 
 You can close a socket by invoking the `close` method. This will close the
 underlying TCP connection.
 
-### Closed Handler
+### Close Handler
 
-If you want to be notified when a socket is closed, you can set the `closedHandler':
+If you want to be notified when a socket is closed, you can set the `closeHandler':
 
+```php
+$server = Vertx::createNetServer();
 
-    var server = vertx.createNetServer();
+$server->connectHandler(function($socket) use ($log) {
 
-    server.connectHandler(function(sock) {
-        
-        sock.closedHandler(function() {        
-            log.info('The socket is now closed');            
-        });
-    });
+  $socket->closeHandler(function() use ($log) {
+    $log->info('The socket is now closed.');
+  });
+
+});
+```
 
 The closed handler will be called irrespective of whether the close was
 initiated by the client or server.
@@ -1282,16 +1324,18 @@ initiated by the client or server.
 You can set an exception handler on the socket that will be called if an
 exception occurs:
 
-    var server = vertx.createNetServer();
+```php
+$server = Vertx::createNetServer();
 
-    server.connectHandler(function(sock) {
-        
-        sock.exceptionHandler(function() {        
-            log.error('Oops. Something went wrong');            
-        });
-    });
+$server->connectHandler(function($socket) use ($log) {
 
-    
+  $socket->exceptionHandler(function() use ($log) {
+    $log->error('Oops. Something went wrong.');
+  });
+
+});
+```
+
 ### Read and Write Streams
 
 NetSocket also can at as a `ReadStream` and a `WriteStream`. This allows flow
@@ -1315,9 +1359,9 @@ on your server! That's not very good, right?
 To remedy this you can simply deploy more instances of the verticle in the
 server, e.g.
 
-    vertx run echo_server.js -instances 20
-    
-The above would run 20 instances of echo_server.js to a locally running vert.x
+    vertx run echo_server.php -instances 20
+
+The above would run 20 instances of `echo_server.php` to a locally running vert.x
 instance.
 
 Once you do this you will find the echo server works functionally identically
@@ -1341,28 +1385,32 @@ Consequently vert.x TCP servers can scale over available cores while each vert.x
 verticle instance remains strictly single threaded, and you don't have to do any
 special tricks like writing load-balancers in order to scale your server on your
 multi-core machine.
-    
+
 ## NetClient
 
 A NetClient is used to make TCP connections to servers.
 
 ### Creating a Net Client
 
-To create a TCP client you invoke the `createNetClient` function on the `vertx`
-instance.
+To create a TCP client you invoke the static `createNetClient` method on the
+`Vertx` class.
 
-    var client = vertx.createNetClient();
+```php
+$client = Vertx::createNetClient();
+```
 
 ### Making a Connection
 
 To actually connect to a server you invoke the `connect` method:
 
-    var client = vertx.createNetClient();
-    
-    client.connect(1234, 'localhost', function(sock) {
-        log.info('We have connected');
-    });
-    
+```php
+$client = Vertx::createNetClient();
+
+$client->connect(1234, 'localhost', function($socket) use ($log) {
+  $log->info('We have connected.');
+});
+```
+
 The `connect` method takes the port number as the first parameter, followed by
 the hostname or ip address of the server. The third parameter is a connect handler.
 This handler will be called when the connection actually occurs.
@@ -1380,16 +1428,17 @@ it as a `ReadStream` or `WriteStream` exactly the same as the server side `NetSo
 You can set an exception handler on the `NetClient`. This will catch any exceptions
 that occur during connection.
 
-    var client = vertx.createNetClient();
-    
-    client.exceptionHandler(function(ex) {
-      log.info('Cannot connect since the host does not exist!');
-    });
-    
-    client.connect(4242, 'host-that-doesnt-exist', function(sock) {
-      log.info('this won't get called');
-    });
+```php
+$client = Vertx::createNetClient();
 
+$client->exceptionHandler(function($error) use ($log) {
+  $log->info('Cannot connect since the host does not exist!');
+});
+
+$client->connect(4242, 'host-that-doesnt-exist', function($socket) use ($log) {
+  $log->info("This won't get called.");
+});
+```
 
 ### Configuring Reconnection
 
@@ -1397,12 +1446,14 @@ A NetClient can be configured to automatically retry connecting or reconnecting 
 the server in the event that it cannot connect or has lost its connection. This is
 done by invoking the functions `setReconnectAttempts` and `setReconnectInterval`:
 
-    var client = vertx.createNetClient();
-    
-    client.setReconnectAttempts(1000);
-    
-    client.setReconnectInterval(500);
-    
+```php
+$client = Vertx::createNetClient();
+
+$client->reconnectAttempts(1000);
+
+$client->reconnectInterval(500);
+```
+
 `ReconnectAttempts` determines how many times the client will try to connect to
 the server before giving up. A value of `-1` represents an infinite number of
 times. The default value is `0`. I.e. no reconnection is attempted.
@@ -1434,7 +1485,7 @@ When a `NetServer` is working as an SSL Server the API of the `NetServer` and
 Getting the server to use SSL is just a matter of configuring the `NetServer`
 before `listen` is called.
 
-To enabled SSL the function `setSSL(true)` must be called on the Net Server.
+To enabled SSL the function `ssl(TRUE)` must be called on the Net Server.
 
 The server must also be configured with a *key store* and an optional *trust store*.
 
@@ -1457,23 +1508,27 @@ trust. This is only used if client authentication is required.
 
 To configure a server to use server certificates only:
 
-    var server = vertx.createNetServer().
-                   .setSSL(true)
-                   .setKeyStorePath('/path/to/your/keystore/server-keystore.jks')
-                   .setKeyStorePassword('password');
-    
+```php
+$server = Vertx::createNetServer()
+  ->ssl(TRUE)
+  ->keyStorePath('/path/to/your/keystore/server-keystore.jks')
+  ->keyStorePassword('password');
+```
+
 Making sure that `server-keystore.jks` contains the server certificate.
 
 To configure a server to also require client certificates:
 
-    var server = vertx.createNetServer()
-                   .setSSL(true)
-                   .setKeyStorePath('/path/to/your/keystore/server-keystore.jks')
-                   .setKeyStorePassword('password')
-                   .setTrustStorePath('/path/to/your/truststore/server-truststore.jks')
-                   .setTrustStorePassword('password')
-                   .setClientAuthRequired(true);
-    
+```php
+$server = Vertx::createNetServer()
+  ->ssl(TRUE)
+  ->keyStorePath('/path/to/your/keystore/server-keystore.jks')
+  ->keyStorePassword('password')
+  ->trustStorePath('/path/to/your/truststore/server-truststore.jks')
+  ->trustStorePassword('password')
+  ->clientAuthRequired(TRUE);
+```
+
 Making sure that `server-truststore.jks` contains the certificates of any clients
 who the server trusts.
 
@@ -1486,53 +1541,58 @@ the connection attempt will not succeed.
 Net Clients can also be easily configured to use SSL. They have the exact same
 API when using SSL as when using standard sockets.
 
-To enable SSL on a `NetClient` the function `setSSL(true)` is called.
+To enable SSL on a `NetClient` the function `ssl(TRUE)` is called.
 
-If the `setTrustAll(true)` is invoked on the client, then the client will trust
+If the `trustAll(TRUE)` is invoked on the client, then the client will trust
 all server certificates. The connection will still be encrypted but this mode is
 vulnerable to 'man in the middle' attacks. I.e. you can't be sure who you are
 connecting to. Use this with caution. Default value is `false`.
 
-If `setTrustAll(true)` has not been invoked then a client trust store must be
+If `trustAll(TRUE)` has not been invoked then a client trust store must be
 configured and should contain the certificates of the servers that the client
 trusts.
 
 The client trust store is just a standard Java key store, the same as the key
 stores on the server side. The client trust store location is set by using the
-function `setTrustStorePath` on the `NetClient`. If a server presents a certificate
+function `trustStorePath` on the `NetClient`. If a server presents a certificate
 during connection which is not in the client trust store, the connection attempt
 will not succeed.
 
 If the server requires client authentication then the client must present its
 own certificate to the server when connecting. This certificate should reside in
 the client key store. Again it#s just a regular Java key store. The client keystore
-location is set by using the function `setKeyStorePath` on the `NetClient`. 
+location is set by using the function `keyStorePath` on the `NetClient`. 
 
 To configure a client to trust all server certificates (dangerous):
 
-    var client = vertx.createNetClient()
-                   .setSSL(true)
-                   .setTrustAll(true);
-    
+```php
+$client = Vertx::createNetClient()
+  ->ssl(TRUE)
+  ->trustAll(TRUE);
+```
+
 To configure a client to only trust those certificates it has in its trust store:
 
-    var client = vertx.createNetClient()
-                   .setSSL(true)
-                   .setTrustStorePath('/path/to/your/client/truststore/client-truststore.jks')
-                   .setTrustStorePassword('password');
-                   
+```php
+$client = Vertx::createNetClient()
+  ->ssl(TRUE)
+  ->trustStorePath('/path/to/your/client/truststore/client-truststore.jks')
+  ->trustStorePassword('password');
+```
+
 To configure a client to only trust those certificates it has in its trust
 store, and also to supply a client certificate:
 
-    var client = vertx.createNetClient()
-                   .setSSL(true)
-                   .setTrustStorePath('/path/to/your/client/truststore/client-truststore.jks')
-                   .setTrustStorePassword('password')
-                   .setClientAuthRequired(true)
-                   .setKeyStorePath('/path/to/keystore/holding/client/cert/client-keystore.jks')
-                   .setKeyStorePassword('password');
-                     
- 
+```php
+$client = Vertx::createNetClient()
+  ->ssl(TRUE)
+  ->trustStorePath('/path/to/your/client/truststore/client-truststore.jks')
+  ->trustStorePassword('password')
+  ->clientAuthRequired(TRUE)
+  ->keyStorePath('/path/to/keystore/holding/client/cert/client-keystore.jks')
+  ->keyStorePassword('password');
+```
+
 
 # Flow Control - Streams and Pumps
 
