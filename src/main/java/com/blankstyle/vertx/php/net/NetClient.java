@@ -72,48 +72,42 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
   }
 
   /**
-   * Returns the connection timeout.
-   */
-  public int getConnectTimeout(Env env) {
-    return client.getConnectTimeout();
-  }
-
-  /**
    * Sets the connect timeout.
    */
-  public NetClient setConnectTimeout(Env env, NumberValue timeout) {
-    client.setConnectTimeout(timeout.toInt());
-    return this;
-  }
-
-  /**
-   * Returns the reconnect attempts.
-   */
-  public int getReconnectAttempts(Env env) {
-    return client.getReconnectAttempts();
+  public Value connectTimeout(Env env, @Optional NumberValue timeout) {
+    if (PhpTypes.notNull(timeout)) {
+      client.setConnectTimeout(timeout.toInt());
+      return env.wrapJava(this);
+    }
+    else {
+      return env.wrapJava(client.getConnectTimeout());
+    }
   }
 
   /**
    * Sets the reconnect attempts.
    */
-  public NetClient setReconnectAttempts(Env env, NumberValue attempts) {
-    client.setReconnectAttempts(attempts.toInt());
-    return this;
-  }
-
-  /**
-   * Returns the reconnect interval.
-   */
-  public long getReconnectInterval(Env env) {
-    return client.getReconnectInterval();
+  public Value reconnectAttempts(Env env, @Optional NumberValue attempts) {
+    if (PhpTypes.notNull(attempts)) {
+      client.setReconnectAttempts(attempts.toInt());
+      return env.wrapJava(this);
+    }
+    else {
+      return env.wrapJava(client.getReconnectAttempts());
+    }
   }
 
   /**
    * Sets the reconnect interval.
    */
-  public NetClient setReconnectInterval(Env env, LongValue interval) {
-    client.setReconnectInterval(interval.toLong());
-    return this;
+  public Value reconnectInterval(Env env, @Optional LongValue interval) {
+    if (PhpTypes.notNull(interval)) {
+      client.setReconnectInterval(interval.toLong());
+      return env.wrapJava(this);
+    }
+    else {
+      return env.wrapJava(client.getReconnectInterval());
+    }
   }
 
   /**
