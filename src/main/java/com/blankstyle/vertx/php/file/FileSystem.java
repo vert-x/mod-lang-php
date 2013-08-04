@@ -26,6 +26,12 @@ public final class FileSystem {
 
   private org.vertx.java.core.file.FileSystem fileSystem;
 
+  public static final int OPEN_READ = 1;
+
+  public static final int OPEN_WRITE = 2;
+
+  public static final int CREATE_NEW = 4;
+
   public FileSystem(org.vertx.java.core.file.FileSystem fileSystem) {
     this.fileSystem = fileSystem;
   }

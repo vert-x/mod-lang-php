@@ -65,14 +65,6 @@ public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<Async
   }
 
   /**
-   * Sets an internal data handler on the stream.
-   */
-  public AsyncFile dataHandler(org.vertx.java.core.Handler<Buffer> handler) {
-    file.dataHandler(handler);
-    return this;
-  }
-
-  /**
    * Pauses producing on the file.
    */
   public AsyncFile pause(Env env) {
@@ -103,14 +95,6 @@ public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<Async
   public AsyncFile drainHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\AsyncFile::drainHandler() must be callable.");
     file.drainHandler(new VoidHandler(env, PhpTypes.toCallable(handler)));
-    return this;
-  }
-
-  /**
-   * Sets an internal drain handler on the stream.
-   */
-  public AsyncFile drainHandler(org.vertx.java.core.Handler<Void> handler) {
-    file.drainHandler(handler);
     return this;
   }
 

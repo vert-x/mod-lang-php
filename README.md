@@ -3380,41 +3380,42 @@ Copies a file.
 
 This function can be called in two different ways:
 
-* `copy(source, destination, handler)`
+* `copy($source, $destination, $handler)`
 
-Non recursive file copy. `source` is the source file name. `destination` is the
+Non recursive file copy. `$source` is the source file name. `$destination` is the
 destination file name.
 
 Here's an example:
 
-    vertx.fileSystem.copy('foo.dat', 'bar.dat', function(err) {
-        if (!err) {
-            log.info('Copy was successful');
-        }
-    });
+```php
+Vertx::fileSystem()->copy('foo.dat', 'bar'.dat', function($error) use ($log) {
+  if (!$error) {
+    $log->info('Copy was successful!');
+  }
+});
+```
 
+* `copy($source, $destination, $recursive, $handler)`
 
-* `copy(source, destination, recursive, handler)`
-
-Recursive copy. `source` is the source file name. `destination` is the destination
-file name. `recursive` is a boolean flag - if `true` and source is a directory, then
+Recursive copy. `$source` is the source file name. `$destination` is the destination
+file name. `$recursive` is a boolean flag - if `true` and source is a directory, then
 a recursive copy of the directory and all its contents will be attempted.
 
 ## move
 
 Moves a file.
 
-`move(source, destination, handler)`
+`move($source, $destination, $handler)`
 
-`source` is the source file name. `destination` is the destination file name.
+`source` is the source file name. `$destination` is the destination file name.
 
 ## truncate
 
 Truncates a file.
 
-`truncate(file, len, handler)`
+`truncate($file, $len, $handler)`
 
-`file` is the file name of the file to truncate. `len` is the length in bytes to
+`$file` is the file name of the file to truncate. `$len` is the length in bytes to
 truncate it to.
 
 ## chmod
@@ -3423,11 +3424,11 @@ Changes permissions on a file or directory.
 
 This function can be called in two different ways:
 
-* `chmod(file, perms, handler)`.
+* `chmod($file, $perms, $handler)`.
 
 Change permissions on a file.
 
-`file` is the file name. `perms` is a Unix style permissions string made up of 9
+`$file` is the file name. `$perms` is a Unix style permissions string made up of 9
 characters. The first three are the owner's permissions. The second three are the
 group's permissions and the third three are others permissions. In each group of
 three if the first character is `r` then it represents a read permission. If the
@@ -3438,20 +3439,20 @@ the letter is replaced with `-`. Some examples:
     rwxr-xr-x
     r--r--r--
   
-* `chmod(file, perms, dirPerms, handler)`.  
+* `chmod($file, $perms, $dirPerms, $handler)`.  
 
-Recursively change permissions on a directory. `file` is the directory name.
-`perms` is a Unix style permissions to apply recursively to any files in the
-directory. `dirPerms` is a Unix style permissions string to apply to the directory
+Recursively change permissions on a directory. `$file` is the directory name.
+`$perms` is a Unix style permissions to apply recursively to any files in the
+directory. `$dirPerms` is a Unix style permissions string to apply to the directory
 and any other child directories recursively.
 
 ## props
 
 Retrieve properties of a file.
 
-`props(file, handler)`
+`props($file, $handler)`
 
-`file` is the file name. The props are returned in the handler. The results is
+`$file` is the file name. The props are returned in the handler. The results is
 an object with the following properties:
 
 * `creationTime`. Time of file creation.
@@ -3465,15 +3466,18 @@ an object with the following properties:
 
 Here's an example:
 
-    vertx.fileSystem.props('some-file.txt', function(err, props) {
-        if (err) {
-            log.info('Failed to retrieve file props: ' + err);
-        } else {
-            log.info('File props are:');
-            log.info('Last accessed: ' + props.lastAccessTime);
-            // etc 
-        }
-    }); 
+```php
+Vertx::fileSystem()->props('some-file.txt', function($props, $error) use ($log) {
+  if ($error) {
+    $log->info('Failed to retrieve file props: '. $error);
+  }
+  else {
+    $log->info('File props are:');
+    $log->info('Last accessed: '. $props->lastAccessTime);
+    // etc
+  }
+});
+```
 
 ## lprops
 
@@ -3486,56 +3490,58 @@ It takes the same arguments and provides the same results as `props`.
 
 Create a hard link.
 
-`link(link, existing, handler)`
+`link($link, $existing, $handler)`
 
-`link` is the name of the link. `existing` is the existing file (i.e. where to
+`$link` is the name of the link. `$existing` is the existing file (i.e. where to
 point the link at).
 
 ## symlink
 
 Create a symbolic link.
 
-`symlink(link, existing, handler)`
+`symlink($link, $existing, $handler)`
 
-`link` is the name of the symlink. `existing` is the existing file (i.e. where
+`$link` is the name of the symlink. `$existing` is the existing file (i.e. where
 to point the symlink at).
 
 ## unlink
 
 Unlink (delete) a link.
 
-`unlink(link, handler)`
+`unlink($link, $handler)`
 
-`link` is the name of the link to unlink.
+`$link` is the name of the link to unlink.
 
 ## readSymLink
 
 Reads a symbolic link. I.e returns the path representing the file that the
-symbolic link specified by `link` points to.
+symbolic link specified by `$link` points to.
 
-`readSymLink(link, handler)`
+`readSymLink($link, $handler)`
 
 `link` is the name of the link to read. An usage example would be:
 
-    vertx.fileSystem.readSymLink('somelink', function(err, res) {
-        if (!err) {
-            log.info('Link points at ' + res);
-        }
-    });
-  
+```php
+Vertx::fileSystem()->readSymLink('somelinke', function($result, $error) use ($log) {
+  if (!$error) {
+    $log->info('Link points at '. $result);
+  }
+});
+```
+
 ## delete
 
 Deletes a file or recursively deletes a directory.
 
 This function can be called in two ways:
 
-* `delete(file, handler)`
+* `delete($file, $handler)`
 
-Deletes a file. `file` is the file name.
+Deletes a file. `$file` is the file name.
 
-* `delete(file, recursive, handler)`
+* `delete($file, $recursive, $handler)`
 
-If `recursive` is `true`, it deletes a directory with name `file`, recursively.
+If `recursive` is `true`, it deletes a directory with name `$file`, recursively.
 Otherwise it just deletes a file.
 
 ## mkdir
@@ -3544,25 +3550,27 @@ Creates a directory.
 
 This function can be called in three ways:
 
-* `mkdir(dirname, handler)`
+* `mkdir($dirname, $handler)`
 
-Makes a new empty directory with name `dirname`, and default permissions `
+Makes a new empty directory with name `$dirname`, and default permissions `
 
-* `mkdir(dirname, createParents, handler)`
+* `mkdir($dirname, $createParents, $handler)`
 
-If `createParents` is `true`, this creates a new directory and creates any of
+If `$createParents` is `true`, this creates a new directory and creates any of
 its parents too. Here's an example
-    
-    vertx.fileSystem.mkdir('a/b/c', true, function(err, res) {
-       if (!err) {
-         log.info('Directory created ok');
-       }
-    });
-  
-* `mkdir(dirname, createParents, perms, handler)`
 
-Like `mkdir(dirname, createParents, handler)`, but also allows permissions for
-the newly created director(ies) to be specified. `perms` is a Unix style
+```php
+Vertx::fileSystem()->mkdir('a/b/c', TRUE, function($result, $error) {
+  if (!$error) {
+    $log->info('Directory created ok.');
+  }
+});
+```
+  
+* `mkdir($dirname, $createParents, $perms, $handler)`
+
+Like `mkdir($dirname, $createParents, $handler)`, but also allows permissions for
+the newly created director(ies) to be specified. `$perms` is a Unix style
 permissions string as explained earlier.
 
 ## readDir
@@ -3571,24 +3579,26 @@ Reads a directory. I.e. lists the contents of the directory.
 
 This function can be called in two ways:
 
-* `readDir(dirName)`
+* `readDir($dirName)`
 
 Lists the contents of a directory
 
-* `readDir(dirName, filter)`
+* `readDir($dirName, $filter)`
 
 List only the contents of a directory which match the filter. Here's an example
 which only lists files with an extension `txt` in a directory.
 
-    vertx.fileSystem.readDir('mydirectory', '.*\.txt', function(err, res) {
-      if (!err) {
-        log.info('Directory contains these .txt files');
-        for (var i = 0; i < res.length; i++) {
-          log.info(res[i]);  
-        }
-      }
-    });
-    
+```php
+Vertx::fileSystem()->readDir('mydirectory', '.*\.txt', function($results, $error) use ($log) {
+  if (!$error) {
+    $log->info('Directory contains these .txt files');
+    foreach ($results as $result) {
+      $log->info($result);
+    }
+  }
+});
+```
+
 The filter is a regular expression.    
   
 ## readFile
@@ -3596,50 +3606,54 @@ The filter is a regular expression.
 Read the entire contents of a file in one go. *Be careful if using this with
 large files since the entire file will be stored in memory at once*.
 
-`readFile(file)`. Where `file` is the file name of the file to read.
+`readFile($file)`. Where `$file` is the file name of the file to read.
 
 The body of the file will be returned as a `Buffer` in the handler.
 
 Here is an example:
 
-    vertx.fileSystem.readFile('myfile.dat', function(err, res) {
-        if (!err) {
-            log.info('File contains: ' + res.length() + ' bytes');
-        }
-    });
+```php
+Vertx::fileSystem()->readFile('myfile.dat', function($result, $error) use ($log) {
+  if (!$error) {
+    $log->info('File contains: '. $result->length() .' bytes');
+  }
+});
+```
 
 ## writeFile
 
 Writes an entire `Buffer` or a string into a new file on disk.
 
-`writeFile(file, data, handler)` Where `file` is the file name. `data` is a
+`writeFile($file, $data, $handler)` Where `$file` is the file name. `$data` is a
 `Buffer` or string.
 
 ## createFile
 
 Creates a new empty file.
 
-`createFile(file, handler)`. Where `file` is the file name.
+`createFile($file, $handler)`. Where `$file` is the file name.
 
 ## exists
 
 Checks if a file exists.
 
-`exists(file, handler)`. Where `file` is the file name.
+`exists($file, $handler)`. Where `$file` is the file name.
 
 The result is returned in the handler.
 
-    vertx.fileSystem.exists('some-file.txt', function(err, res) {
-        if (!err) {
-            log.info('File ' + (res ? 'exists' : 'does not exist'));
-        }
-    });
+```php
+Vertx::fileSystem()->exists('some-file.txt', function($result, $error) use ($log) {
+  if (!$error) {
+    $log->info('File '. $result ? 'exists' : 'does not exist');
+  }
+});
+```
 
 ## fsProps
 
 Get properties for the file system.
 
-`fsProps(file, handler)`. Where `file` is any file on the file system.
+`fsProps($file, $handler)`. Where `$file` is any file on the file system.
 
 The result is returned in the handler. The result object has the following fields:
 
@@ -3649,68 +3663,76 @@ The result is returned in the handler. The result object has the following field
 
 Here is an example:
 
-    vertx.fileSystem.fsProps('mydir', function(err, res) {
-        if (!err) {
-            log.info('total space: ' + res.totalSpace);
-            // etc
-        }
-    });
-
+```php
+Vertx::fileSystem()->fsProps('mydir', function($result, $error) use ($log) {
+  if (!$error) {
+    $log->info('Total space: '. $result->totalSpace);
+  }
+});
+```
 
 ## open
 
-Opens an asynchronous file for reading \ writing.
+Opens an asynchronous file for reading/writing.
 
 This function can be called in four different ways:
 
-* `open(file, handler)`
+* `open($file, $handler)`
 
-Opens a file for reading and writing. `file` is the file name. It creates
+Opens a file for reading and writing. `$file` is the file name. It creates
 it if it does not already exist.
 
-* `open(file, openFlags, handler)`
+* `open($file, $openFlags, $handler)`
 
-Opens a file using the specified open flags. `file` is the file name. `openFlags`
+Opens a file using the specified open flags. `$file` is the file name. `$openFlags`
 is an integer representing whether to open the flag for reading or writing and
 whether to create it if it doesn't already exist.
 
-`openFlags` is constructed from a combination of these three constants.
+`$openFlags` is constructed from a combination of these three constants.
 
-    vertx.fileSystem.OPEN_READ = 1
-    vertx.fileSystem.OPEN_WRITE = 2
-    vertx.fileSystem.CREATE_NEW = 4
-  
+```php
+Vertx\FileSystem::OPEN_READ = 1;
+Vertx\FileSystem::OPEN_WRITE = 2;
+Vertx\FileSystem::CREATE_NEW = 4;
+```
+
 For example:
 
-    // Open for reading only
-    var flags = vertx.FileSystem.OPEN_READ;
-  
-     // Open for reading and writing
-    var flags = vertx.FileSystem.OPEN_READ | vertx.FileSystem.OPEN_WRITE;
-  
+```php
+// Open for reading only.
+$flags = Vertx\FileSystem::OPEN_READ;
+
+// Open for reading and writing.
+$flags = Vertx\FileSystem::OPEN_READ | Vertx\FileSystem.OPEN_WRITE;
+```
+
 When the file is opened, an instance of `AsyncFile` is passed into the result
 handler:
 
-    vertx.fileSystem.open('some-file.dat', vertx.FileSystem.OPEN_READ | vertx.FileSystem.OPEN_WRITE,
-        function(err, asyncFile) {
-            if (err) {
-                log.info('Failed to open file ' + err);
-            } else {
-                log.info('File opened ok');
-                asyncFile.close(); // Close it    
-            }
-        });    
-        
-* `open(file, openFlags, flush, handler)`
+```php
+use Vertx\FileSystem;
 
-This is the same as `open(file, openFlags, handler)` but you can also specify
+Vertx::fileSystem()->open('some-file.dat', FileSystem::OPEN_READ | FileSystem::OPEN_WRITE, function($asyncFile, $error) use ($log) {
+  if ($error) {
+    $log->info('Failed to open file '. $error);
+  }
+  else {
+    $log->info('File opened ok.');
+    $asyncFile->close();
+  }
+});
+```
+
+* `open($file, $openFlags, $flush, $handler)`
+
+This is the same as `open($file, $openFlags, $handler)` but you can also specify
 whether any file write are flushed immediately to disk (sync'd).
 
-Default is `flush = false`, so writes are just written into the OS cache.
+Default is `$flush = FALSE`, so writes are just written into the OS cache.
 
-* `open(file, openFlags, flush, perms, handler)`
+* `open($file, $openFlags, $flush, $perms, $handler)`
 
-This is the same as `open(file, openFlags, flush, handler)` but you can also
+This is the same as `open($file, $openFlags, $flush, $handler)` but you can also
 specify the file permissions to give the file if it is created. Permissions
 is a Unix-style permissions string as explained earlier in the chapter.
 
@@ -3732,67 +3754,79 @@ They also allow you to read and write directly to them.
 
 To use an AsyncFile for random access writing you use the `write` method.
 
-`write(buffer, position, handler)`.
+`write($buffer, $position, $handler)`.
 
 The parameters to the method are: 
 
-* `buffer`: the buffer to write.
-* `position`: an integer position in the file where to write the buffer. If the
+* `$buffer`: the buffer to write.
+* `$position`: an integer position in the file where to write the buffer. If the
 position is greater or equal to the size of the file, the file will be enlarged
 to accomodate the offset.
 
 Here is an example of random access writes:
 
-    vertx.fileSystem.open('some-file.dat', function(err, asyncFile) {
-            if (err) {
-                log.info('Failed to open file ' + err);
-            } else {
-                // File open, write a buffer 5 times into a file              
-                var buff = new vertx.Buffer('foo');
-                for (var i = 0; i < 5; i++) {
-                    asyncFile.write(buff, buff.length() * i, function(err) {
-                        if (err) {
-                            log.info('Failed to write ' + err);
-                        } else {
-                            log.info('Written ok');
-                        }
-                    });    
-                }
-            }
-        });   
+```php
+use Vertx\Buffer\Buffer;
+
+Vertx::fileSystem()->open('some-file.dat', function($asyncFile, $error) use ($log) {
+  if ($error) {
+    $log->info('Failed to open file '. $error);
+  }
+  else {
+    // File open, write a buffer 5 times into a file.
+    $buffer = new Buffer('foo');
+    for ($i = 0; $i < 5; $i++) {
+      $asyncFile->write($buffer, $buffer->length() * $i, function($error) use ($log) {
+        if ($error) {
+          $log->info('Failed to write '. $error);
+        }
+        else {
+          $log->info('Written ok');
+        }
+      });
+    }
+  }
+});
+```
 
 ### Random access reads
 
 To use an AsyncFile for random access reads you use the `read` method.
 
-`read(buffer, offset, position, length, handler)`.
+`read($buffer, $offset, $position, $length, $handler)`.
 
 The parameters to the method are: 
 
-* `buffer`: the buffer into which the data will be read.
-* `offset`: an integer offset into the buffer where the read data will be placed.
-* `position`: the position in the file where to read data from.
-* `length`: the number of bytes of data to read
+* `$buffer`: the buffer into which the data will be read.
+* `$offset`: an integer offset into the buffer where the read data will be placed.
+* `$position`: the position in the file where to read data from.
+* `$length`: the number of bytes of data to read
 
 Here's an example of random access reads:
 
-    vertx.fileSystem.open('some-file.dat', function(err, asyncFile) {
-        if (err) {
-            log.info('Failed to open file ' + err);
-        } else {                   
-            var buff = new vertx.Buffer(1000);
-            for (var i = 0; i < 10; i++) {
-                asyncFile.read(buff, i * 100, i * 100, 100, function(err) {
-                    if (err) {
-                        log.info('Failed to read ' + err);
-                    } else {
-                        log.info('Read ok');
-                    }
-                });    
-            }
+```php
+use Vertx\Buffer\Buffer;
+
+Vertx::fileSystem()->open('some-file.dat', function($asyncFile, $error) use ($log) {
+  if ($error) {
+    $log->info('Failed to open file '. $error);
+  }
+  else {
+    $buffer = new Buffer(1000);
+    for ($i = 0; $i < 10; $i++) {
+      $asyncFile->read($buffer, $i * 100, $i * 100, 100, function($error) use ($log) {
+        if ($error) {
+          $log->info('Failed to read '. $error);
         }
-    });   
-    
+        else {
+          $log->info('Read ok');
+        }
+      });
+    }
+  }
+});
+```
+
 ### Flushing data to underlying storage.
 
 If the AsyncFile was not opened with `flush = true`, then you can manually
@@ -3800,31 +3834,34 @@ flush any writes from the OS cache by calling the `flush` function.
 
 ### Using AsyncFile as `ReadStream` and `WriteStream`
 
-Use the functions `getReadStream` and `getWriteStream` to get read and write
-streams. You can then use them with a pump to pump data to and from other read
-and write streams.
+The PHP implementation of the Vert.x `AsyncFile` does implement both the
+`ReadStream` and `WriteStream` interfaces. Therefore, it can be used in
+pumps and other related APIs.
 
 Here's an example of pumping data from a file on a client to a HTTP request:
 
 ```php
-var client = new vertx.HttpClient().setHost('foo.com');
+use Vertx\Streams\Pump;
 
-vertx.fileSystem.open('some-file.dat', function(err, asyncFile) {
-    if (err) {
-        log.info('Failed to open file ' + err);
-    } else {                   
-        var request = client.put('/uploads', function(resp) {
-            log.info('resp status code ' + resp.statusCode);
-        });
-        var rs = asyncFile.getReadStream();
-        var pump = new vertx.Pump(rs, request);
-        pump.start();
-        rs.endHandler(function() {
-            // File sent, end HTTP requuest
-            request.end();
-        });
-        
-    }
+$client = Vertx::createHttpClient()->host('foo.com');
+
+Vertx::fileSystem()->open('some-file.dat', function($asyncFile, $error) use ($client, $log) {
+  if ($error) {
+    $log->info('Failed to open file '. $error);
+  }
+  else {
+    $request = $client->put('/uploads', function($response) use ($log) {
+      $log->info('Response status code: '. $response->statusCode);
+    });
+
+    $pump = new Pump($asyncFile, $request);
+    $pump->start();
+
+    $asyncFile->endHandler(function() use ($request) {
+      // File sent, end the HTTP request.
+      $request->end();
+    })
+  }
 });
 ```
 
