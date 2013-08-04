@@ -3,6 +3,8 @@
 $client = Vertx::createNetClient();
 $logger = Vertx::logger();
 
+$client->connectTimeout = 'invalid';
+
 $client->connect(1234, NULL, function($socket, $error) use ($logger) {
   if (!$error) {
     $socket->dataHandler(function($buffer) use ($logger) {

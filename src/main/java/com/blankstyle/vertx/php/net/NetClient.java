@@ -72,42 +72,51 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
   }
 
   /**
+   * Gets the connect timeout.
+   */
+  public int connectTimeout(Env env) {
+    return client.getConnectTimeout();
+  }
+
+  /**
    * Sets the connect timeout.
    */
-  public Value connectTimeout(Env env, @Optional NumberValue timeout) {
-    if (PhpTypes.notNull(timeout)) {
-      client.setConnectTimeout(timeout.toInt());
-      return env.wrapJava(this);
-    }
-    else {
-      return env.wrapJava(client.getConnectTimeout());
-    }
+  public NetClient connectTimeout(Env env, NumberValue timeout) {
+    PhpTypes.assertNotNull(env, timeout, "Timeout to Vertx\\Net\\NetClient::connectTimeout() must be an integer.");
+    client.setConnectTimeout(timeout.toInt());
+    return this;
+  }
+
+  /**
+   * Gets the reconnect attempts.
+   */
+  public int reconnectAttempts(Env env) {
+    return client.getReconnectAttempts();
   }
 
   /**
    * Sets the reconnect attempts.
    */
-  public Value reconnectAttempts(Env env, @Optional NumberValue attempts) {
-    if (PhpTypes.notNull(attempts)) {
-      client.setReconnectAttempts(attempts.toInt());
-      return env.wrapJava(this);
-    }
-    else {
-      return env.wrapJava(client.getReconnectAttempts());
-    }
+  public NetClient reconnectAttempts(Env env, NumberValue attempts) {
+    PhpTypes.assertNotNull(env, attempts, "Attempts to Vertx\\Net\\NetClient::reconnectAttempts() must be an integer.");
+    client.setReconnectAttempts(attempts.toInt());
+    return this;
+  }
+
+  /**
+   * Gets the reconnect interval.
+   */
+  public long reconnectInterval(Env env) {
+    return client.getReconnectInterval();
   }
 
   /**
    * Sets the reconnect interval.
    */
-  public Value reconnectInterval(Env env, @Optional LongValue interval) {
-    if (PhpTypes.notNull(interval)) {
-      client.setReconnectInterval(interval.toLong());
-      return env.wrapJava(this);
-    }
-    else {
-      return env.wrapJava(client.getReconnectInterval());
-    }
+  public NetClient reconnectInterval(Env env, LongValue interval) {
+    PhpTypes.assertNotNull(env, interval, "Interval to Vertx\\Net\\NetClient::reconnectInterval() must be a long.");
+    client.setReconnectInterval(interval.toLong());
+    return this;
   }
 
   /**

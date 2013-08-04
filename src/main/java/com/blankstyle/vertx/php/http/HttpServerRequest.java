@@ -22,6 +22,7 @@ import org.vertx.java.core.buffer.Buffer;
 import com.blankstyle.vertx.php.ResultModifier;
 import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
+import com.blankstyle.vertx.php.net.NetSocket;
 import com.blankstyle.vertx.php.streams.ReadStream;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.BooleanValue;
@@ -92,7 +93,7 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest>, Gettabl
   }
 
   public Value netSocket(Env env) {
-    return env.wrapJava(request.netSocket());
+    return env.wrapJava(new NetSocket(request.netSocket()));
   }
 
   public Value formAttributes(Env env) {

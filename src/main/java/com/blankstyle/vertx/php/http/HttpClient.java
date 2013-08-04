@@ -43,29 +43,35 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
   /**
    * Returns the HTTP host.
    */
-  public String getHost(Env env) {
-    return client.getHost();
+  public StringValue host(Env env) {
+    return env.createString(client.getHost());
   }
 
   /**
    * Sets the HTTP host.
    */
-  public HttpClient setHost(Env env, StringValue host) {
-    client.setHost(host.toString());
+  public HttpClient host(Env env, StringValue host) {
+    if (PhpTypes.notNull(host)) {
+      client.setHost(host.toString());
+    }
+    else {
+      client.setHost(null);
+    }
     return this;
   }
 
   /**
    * Returns the HTTP port.
    */
-  public int getPort(Env env) {
+  public int port(Env env) {
     return client.getPort();
   }
 
   /**
    * Sets the HTTP port.
    */
-  public HttpClient setPort(Env env, NumberValue port) {
+  public HttpClient port(Env env, NumberValue port) {
+    PhpTypes.assertNotNull(env, port, "Port to Vertx\\Http\\HttpClient::port() must be an integer.");
     client.setPort(port.toInt());
     return this;
   }
@@ -73,14 +79,15 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
   /**
    * Returns the max connection pool size.
    */
-  public int getMaxPoolSize(Env env) {
+  public int maxPoolSize(Env env) {
     return client.getMaxPoolSize();
   }
 
   /**
    * Sets the max connection pool size.
    */
-  public HttpClient setMaxPoolSize(Env env, NumberValue size) {
+  public HttpClient maxPoolSize(Env env, NumberValue size) {
+    PhpTypes.assertNotNull(env, size, "Size to Vertx\\Http\\HttpClient::maxPoolSize() must be an integer.");
     client.setMaxPoolSize(size.toInt());
     return this;
   }
@@ -88,44 +95,31 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
   /**
    * Returns the connection timeout.
    */
-  public int getConnectionTimeout(Env env) {
+  public int connectTimeout(Env env) {
     return client.getConnectTimeout();
   }
 
   /**
    * Sets the connection timeout.
    */
-  public HttpClient setConnectionTimeout(Env env, NumberValue timeout) {
+  public HttpClient connectTimeout(Env env, NumberValue timeout) {
+    PhpTypes.assertNotNull(env, timeout, "Timeout to Vertx\\Http\\HttpClient::connectTimeout() must be an integer.");
     client.setConnectTimeout(timeout.toInt());
-    return this;
-  }
-
-  /**
-   * Indicates whether HTTP keepalive is on.
-   */
-  public boolean isKeepAlive(Env env) {
-    return client.isKeepAlive();
-  }
-
-  /**
-   * Sets the client keepalive.
-   */
-  public HttpClient setKeepAlive(Env env, BooleanValue keepAlive) {
-    client.setKeepAlive(keepAlive.toBoolean());
     return this;
   }
 
   /**
    * Indicates whether verify host is on.
    */
-  public boolean isVerifyHost(Env env) {
+  public boolean verifyHost(Env env) {
     return client.isVerifyHost();
   }
 
   /**
    * Sets verify host.
    */
-  public HttpClient setVerifyHost(Env env, BooleanValue verifyHost) {
+  public HttpClient verifyHost(Env env, BooleanValue verifyHost) {
+    PhpTypes.assertNotNull(env, verifyHost, "Value to Vertx\\Http\\HttpClient::verifyHost() must be a boolean.");
     client.setVerifyHost(verifyHost.toBoolean());
     return this;
   }

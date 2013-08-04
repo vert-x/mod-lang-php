@@ -2272,24 +2272,43 @@ $server->requestHandler(function($request) {
 
 ### Creating an HTTP Client
 
-To create an HTTP client you invoke the `createHttpClient` function on the
-`vertx` instance.
+To create an HTTP client you invoke the static `createHttpClient` method on the
+`Vertx` class.
 
-    var client = vertx.createHttpClient();
-    
+```php
+$client = Vertx::createHttpClient();
+```
+
 You set the port and hostname (or ip address) that the client will connect to
-using the `setHost` and `setPort` functions:
+using the `host` and `port` functions:
 
-    var client = vertx.createHttpClient();
-    client.setPort(8181)
-    client.setHost('foo.com');
-    
-This, of course, can be chained:
+```php
+$client = Vertx::createHttpClient();
 
-    var client = vertx.createHttpClient()
-                   .setPort(8181)
-                   .setHost('foo.com');
-                   
+$client->host('foo.com');
+$client->port(8181);
+```
+
+As with other areas, the PHP API exposes the magic `__get` and `__set` methods on
+many objects, so setting the client host and port can also be done like so:
+
+```php
+$client->port = 8181;
+$client->host = 'foo.com';
+```
+
+This type of attribute access applies to most any setter/getter in the PHP API.
+Note that values are still validated when setting. Internally, the same setter
+method is called as if you had used the method directly.
+
+Alternative, of course, can be chained:
+
+```php
+$client = Vertx::createHttpClient()
+  ->host('foo.com')
+  ->port(8181);
+```
+
 A single `HTTPClient` always connects to the same host and port. If you want
 to connect to different servers, create more instances.
 
@@ -2301,23 +2320,36 @@ explicitly set these values that's what the client will attempt to connect to.
 By default the `HTTPClient` pools HTTP connections. As you make requests a
 connection is borrowed from the pool and returned when the HTTP response has ended.
 
-If you do not want connections to be pooled you can call `setKeepAlive` with `false`:
+If you do not want connections to be pooled you can call `keepAlive` with `false`:
 
-    var client = vertx.createHttpClient()
-                   .setPort(8181)
-                   .setHost('foo.com').
-                   .setKeepAlive(false);
+```php
+$client = Vertx::createHttpClient()
+  ->port(8181)
+  ->host('foo.com')
+  ->keepAlive(FALSE);
+```
 
 In this case a new connection will be created for each HTTP request and closed
 once the response has ended.
 
 You can set the maximum number of connections that the client will pool as follows:
 
-    var client = vertx.createHttpClient()
-                   .setPort(8181)
-                   .setHost('foo.com').
-                   .setMaxPoolSize(10);
-                   
+```php
+$client = Vertx::createHttpClient()
+  ->port(8181)
+  ->host('foo.com')
+  ->maxPoolSize(10);
+```
+
+Of course, you can also use magic setters.
+
+```php
+$client = Vertx::createHttpClient();
+$client->port = 8181;
+$client->host = 'foo.com';
+$client->maxPoolSize = 10;
+```
+
 The default value is `1`.         
 
 ### Closing the client
@@ -2325,8 +2357,10 @@ The default value is `1`.
 Vert.x will automatically close any clients when the verticle is stopped, but if
 you want to close it explicitly you can:
 
-    client.close            
-                         
+```php
+$client->close();
+```
+
 ### Making Requests
 
 To make a request using the client you invoke one the methods named after the HTTP
@@ -2334,14 +2368,16 @@ method that you want to invoke.
 
 For example, to make a `POST` request:
 
-    var client = vertx.createHttpClient();
-    
-    var request = client.post('http://localhost:8080/some-path/', function(resp) {
-        log.info('Got a response, status code: ' + resp.statusCode);
-    });
-    
-    request.end();
-    
+```php
+$client = Vertx::createHttpClient();
+
+$request = $client->post('http://localhost:8080/some-path/', function($response) use ($log) {
+  $log->info('Got a response, status code: '. $response->statusCode);
+});
+
+$request->end();
+```
+
 To make a PUT request use the `put` method, to make a GET request use the `get`
 method, etc.
 
@@ -2349,15 +2385,18 @@ Legal request methods are: `get`, `put`, `post`, `delete`, `head`, `options`,
 `connect`, `trace` and `patch`.
 
 The general modus operandi is you invoke the appropriate method passing in the
-request URI as the first parameter, the second parameter is an event handler which will get called when the corresponding response arrives. The response handler is passed the client response object as an argument.
+request URI as the first parameter, the second parameter is an event handler which will get
+called when the corresponding response arrives. The response handler is passed the client
+response object as an argument.
 
 The value specified in the request URI corresponds to the Request-URI as specified
-in [Section 5.1.2 of the HTTP specification](http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html). In most cases it will be a relative URI.
+in [Section 5.1.2 of the HTTP specification](http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html).
+In most cases it will be a relative URI.
 
 *Please note that the domain/port that the client connects to is determined by
-`setPort` and `setHost`, and is not parsed from the uri.*
+`port` and `host`, and is not parsed from the uri.*
 
-The return value from the appropriate request method is an `HTTPClientRequest`
+The return value from the appropriate request method is a `Vertx\Http\HttpClientRequest`
 object. You can use this to add headers to the request, and to write to the request
 body. The request object implements `WriteStream`.
 
@@ -2366,23 +2405,29 @@ Once you have finished with the request you must call the `end` function.
 If you don't know the name of the request method in advance there is a general
 `request` method which takes the HTTP method as a parameter:
 
-    var client = vertx.createHttpClient().setHost('foo.com');
-    
-    var request = client.request('POST', '/some-path', function(resp) {
-        log.info('Got a response, status code: ' + resp.statusCode);
-    });
-    
-    request.end();
-    
+```php
+$client = Vertx::createHttpClient()->host('foo.com');
+
+$request = $client->request('POST', '/some-path', function($response) use ($log) {
+  $log->info('Got a response, status code: '. $response->statusCode);
+});
+
+$request->end();
+```
+
 There is also a method called `getNow` which does the same as `get`, but
 automatically ends the request. This is useful for simple GETs which don't have
 a request body:
 
-    var client = vertx.createHttpClient().setHost('foo.com');
-    
-    client.getNow('/some-path', function(resp) {
-        log.info('Got a response, status code: ' + resp.statusCode);
-    });
+```php
+$client = Vertx::createHttpClient()->host('foo.com');
+
+$client->getNow('/some-path', function($response) use ($log) {
+  $log->info('Got a response, status code: '. $response->statusCode);
+});
+
+$request->end();
+```
 
 With `getNow` there is no return value.
 
@@ -2397,19 +2442,26 @@ be invoked in a few ways:
 
 With a single buffer:
 
-    var myBuffer = ...
-    request.write(myBuffer);
-    
+```php
+$myBuffer = new Vertx\Buffer\Buffer();
+
+$request->write($myBuffer);
+```
+
 A string. In this case the string will encoded using UTF-8 and the result
 written to the wire.
 
-    request.write('hello');    
-    
+```php
+$request->write('Hello world!');
+```
+
 A string and an encoding. In this case the string will encoded using the
 specified encoding and the result written to the wire.     
 
-    request.write('hello', 'UTF-16');
-    
+```php
+$request->write('Hello world!', 'UTF-16');
+```
+
 The `write` function is asynchronous and always returns immediately after the
 write has been queued. The actual write might complete some time later.
 
@@ -2417,10 +2469,12 @@ If you want to be informed when the actual write has completed you can pass in
 a function as a final argument. This function will be invoked when the write has
 completed:
 
-    request.response.write('hello', function() {
-        log.info('It has actually been written');
-    });  
-    
+```php
+$request->response->write('Hello world!', function() use ($log) {
+  $log->info('It has actually been written.');
+});
+```
+
 If you are just writing a single string or Buffer to the HTTP request you can
 write it and end the request in a single call to the `end` function.   
 
@@ -2441,44 +2495,38 @@ This function can be invoked in several ways:
 
 With no arguments, the request is simply ended. 
 
-    request.end();
-    
+```php
+$request->end();
+```
+
 The function can also be called with a string or Buffer in the same way `write`
 is called. In this case it's just the same as calling write with a string or
 Buffer followed by calling `end` with no arguments.
 
 #### Writing Request Headers
 
-To write headers to the request you can just add them to the headers hash:
+To write headers to the request you can use the `putHeader` method:
 
-    var client = vertx.createHttpClient().setHost('foo.com');
-    
-    var request = client.post('/some-path', function(resp) {
-        log.info('Got a response, status code: ' + resp.statusCode);
-    });
-    
-    request.headers()['Some-Header'] = 'Some-Value';
-    request.end();
-    
-Or you can use the `putHeader` method if you prefer a more fluent API:        
+```php
+$client = Vertx::createHttpClient()->host('foo.com');
 
-    client.post('/some-uri', function(resp) {
-        log.info('Got a response, status code: ' + resp.statusCode);
-    }).putHeader('Some-Header', 'Some-Value')
-      .putHeader('Some-Other-Header', 'Some-Other-Value')
-      .end();
+$request = $client->post('/some-path', function($response) use ($log) {
+  $log->info('Got a response, status code: '. $response->statusCode);
+})->putHeader('Some-Header', 'Some-Value')->end();
+```
 
 If you want to put more than one header at the same time, you can instead use
 the `putAllHeaders` function.
-  
-    client.post('/some-uri', function(resp) {
-        log.info('Got a response, status code: ' + resp.statusCode);
-    }).putAllHeaders({'Some-Header': 'Some-Value',
-                   'Some-Other-Header': 'Some-Other-Value',
-                   'Yet-Another-Header': 'Yet-Another-Value'})
-      .end(); 
-       
-      
+
+```php
+$client->post('/some-uri', function($response) use ($log) {
+  $log->info('Got a response, status code: '. $response->statusCode);
+})->putAllHeaders(array(
+  'Some-Header' => 'Some-Value',
+  'Some-Other-Header' => 'Some-Other-Value',
+  'Yet-Another-Header' => 'Yet-Another-Value',
+))->end();
+```
 
 #### HTTP chunked requests
 
@@ -2489,9 +2537,17 @@ size is not known in advance.
 
 You put the HTTP request into chunked mode as follows:
 
-    request.setChunked(true);
-    
-Default is non-chunked. When in chunked mode, each call to `request.write(...)`
+```php
+$request->chunked = TRUE;
+```
+
+or
+
+```php
+$request->chunked(TRUE);
+```
+
+Default is non-chunked. When in chunked mode, each call to `$request->write(...)`
 will result in a new HTTP chunk being written out.  
 
 ### HTTP Client Responses
@@ -2505,12 +2561,14 @@ The response object implements `ReadStream`, so it can be pumped to a
 To query the status code of the response use the `statusCode` property. The
 `statusMessage` property contains the status message. For example:
 
-    var client = vertx.createHttpClient().setHost('foo.com');
-    
-    client.getNow('/some-path', function(resp) {
-      log.info('server returned status code: ' + resp.statusCode);   
-      log.info('server returned status message: ' + resp.statusMessage);   
-    });
+```php
+$client = Vertx::createHttpClient()->host('foo.com');
+
+$client->getNow('/some-path', function($response) use ($log) {
+  $log->info('Server returned status code: '. $response->statusCode);
+  $log->info('Server returned status message: '. $response->statusMessage);
+});
+```
 
 #### Reading Data from the Response Body
 
@@ -2524,14 +2582,15 @@ headers have arrived, not when the entire response body has arrived.
 To receive the response body, you set a `dataHandler` on the response object
 which gets called as parts of the HTTP response arrive. Here's an example:
 
+```php
+$client = Vertx::createHttpClient()->host('foo.com');
 
-    var client = vertx.createHttpClient().setHost('foo.com');
-    
-    client.getNow('/some-path', function(resp) {
-      resp.dataHandler(function(buffer) {
-        log.info('I received ' + buffer.length() + ' bytes');
-      });    
-    });
+$client->getNow('/some-path', function($response) use ($log) {
+  $response->dataHandler(function($buffer) use ($log) {
+    $log->info('I received '. $buffer->length() .' bytes.');
+  });
+});
+```
 
 The response object implements the `ReadStream` interface so you can pump the
 response body to a `WriteStream`. See the chapter on streams and pump for a
@@ -2542,25 +2601,26 @@ The `dataHandler` can be called multiple times for a single HTTP response.
 As with a server request, if you wanted to read the entire response body before
 doing something with it you could do something like the following:
 
-    var client = vertx.createHttpClient().setHost('foo.com');
-    
-    client.getNow('/some-path', function(resp) {
-      
-      // Create a buffer to hold the entire response body
-      var body = new vertx.Buffer();  
-    
-      resp.dataHandler(function(buffer) {
-        // Add chunk to the buffer
-        body.appendBuffer(buffer);
-      });
-      
-      resp.endHandler(function() {
-        // The entire response body has been received
-        log.info('The total body received was ' + body.length() + ' bytes');
-      });
-      
-    });
-    
+```php
+use Vertx\Buffer\Buffer;
+
+$client = Vertx::createHttpClient()->host('foo.com');
+
+$client->getNow('/some-path', function($response) use ($log) {
+
+  $body = new Buffer();
+
+  $response->dataHandler(function($buffer) {
+    $body->appendBuffer($buffer);
+  });
+
+  $response->endHandler(function() use ($log) {
+    $log->info('The total body received was '. $buffer->length() .' bytes.');
+  });
+
+});
+```
+
 Like any `ReadStream` the end handler is invoked when the end of stream is
 reached - in this case at the end of the response.
 
@@ -2578,16 +2638,18 @@ will be stored in memory.*
 
 Here's an example using `bodyHandler`:
 
-    var client = vertx.createHttpClient().setHost('foo.com');
-    
-    client.getNow('/some-uri', function(resp) {
-      
-      resp.bodyHandler(function(body) {
-        log.info('The total body received was ' + body.length() + ' bytes');
-      });
-      
-    }); 
-    
+```php
+$client = Vertx::createHttpClient()->host('foo.com');
+
+$client->getNow('/some-path', function($response) use ($log) {
+
+  $response->bodyHandler(function($body) use ($log) {
+    $log->info('The total body received was '. $body->length() .' bytes.');
+  });
+
+});
+```
+
 ## Pumping Requests and Responses
 
 The HTTP client and server requests and responses all implement either
@@ -2617,23 +2679,23 @@ the request.
 
 An example will illustrate this:
 
-    var client = vertx.createHttpClient().setHost('foo.com');
-    
-    var request = client.put('/some-path', function(resp) {
-      
-      log.info('Got a response ' + resp.statusCode);
-      
-    });     
-    
-    request.putHeader('Expect', '100-Continue');
-    
-    request.continueHandler(function() {
-        // OK to send rest of body
-        
-        request.write('Some data').end();
-    });
-    
-    request.sendHead();
+```php
+$client = Vertx::createHttpClient()->host('foo.com');
+
+$request = $client->put('/some-path', function($response) use ($log) {
+  $log->info('Got a response '. $response->statusCode);
+});
+
+$request->putHeader('Expect', '100-Continue');
+
+$request->continueHandler(function() use ($request) {
+
+  $request->write('Some data').end();
+
+});
+
+$request->sendHead();
+```
 
 ## HTTPS Servers
 

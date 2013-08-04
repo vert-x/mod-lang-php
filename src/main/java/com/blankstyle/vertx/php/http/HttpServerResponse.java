@@ -51,8 +51,8 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
   }
 
   @Override
-  public Value __setField(Env env, StringValue name, Value value) {
-    return env.wrapJava(this).callMethod(env, name, value);
+  public void __setField(Env env, StringValue name, Value value) {
+    env.wrapJava(this).callMethod(env, name, value);
   }
 
   /**
@@ -151,18 +151,25 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
     return this;
   }
 
-  public Value chunked(Env env, @Optional BooleanValue chunked) {
-    if (PhpTypes.notNull(chunked)) {
-      response.setChunked(chunked.toBoolean());
-      return env.wrapJava(this);
-    }
-    else {
-      return env.wrapJava(response.isChunked());
-    }
+  /**
+   * Gets the chunked value.
+   */
+  public BooleanValue chunked(Env env) {
+    return BooleanValue.create(response.isChunked());
+  }
+
+  /**
+   * Sets the chunked value.
+   */
+  public HttpServerResponse chunked(Env env, BooleanValue chunked) {
+    PhpTypes.assertNotNull(env, chunked, "Value to Vertx\\Http\\HttpServerResponse::chunked() must be a boolean.");
+    response.setChunked(chunked.toBoolean());
+    return this;
   }
 
   @Override
   public HttpServerResponse writeQueueMaxSize(Env env, NumberValue size) {
+    PhpTypes.assertNotNull(env, size, "Size to Vertx\\Http\\HttpServerResponse::writeQueueMaxSize() must be an integer.");
     response.setWriteQueueMaxSize(size.toInt());
     return this;
   }

@@ -15,12 +15,10 @@
  */
 package com.blankstyle.vertx.php;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import org.vertx.java.core.ClientSSLSupport;
 import org.vertx.java.core.TCPSupport;
 
+import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
@@ -44,52 +42,14 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
    * Gets a field value.
    */
   public Value __getField(Env env, StringValue name) {
-    try {
-      Method method = this.getClass().getMethod(name.toString());
-      return env.wrapJava(method.invoke(this));
-    }
-    catch (SecurityException e) {
-      env.error(e);
-    }
-    catch (NoSuchMethodException e) {
-      env.error(e);
-    }
-    catch (IllegalArgumentException e) {
-      env.error(e);
-    }
-    catch (IllegalAccessException e) {
-      env.error(e);
-    }
-    catch (InvocationTargetException e) {
-      env.error(e);
-    }
-    return env.wrapJava(null);
+    return env.wrapJava(this).callMethod(env, name);
   }
 
   /**
    * Sets a field value.
    */
-  public Value __setField(Env env, StringValue name, Value value) {
-    try {
-      Method method = this.getClass().getMethod(name.toString());
-      return env.wrapJava(method.invoke(this, value));
-    }
-    catch (SecurityException e) {
-      env.error(e);
-    }
-    catch (NoSuchMethodException e) {
-      env.error(e);
-    }
-    catch (IllegalArgumentException e) {
-      env.error(e);
-    }
-    catch (IllegalAccessException e) {
-      env.error(e);
-    }
-    catch (InvocationTargetException e) {
-      env.error(e);
-    }
-    return env.wrapJava(null);
+  public void __setField(Env env, StringValue name, Value value) {
+    env.wrapJava(this).callMethod(env, name, value);
   }
 
   /**
@@ -103,6 +63,7 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
    * Sets the certificate trust all setting.
    */
   public TCPClient<T> trustAll(Env env, BooleanValue trustAll) {
+    PhpTypes.assertNotNull(env, trustAll, "Value to %s::trustAll() must be a boolean.", this.toString());
     client.setTrustAll(trustAll.toBoolean());
     return this;
   }
@@ -118,6 +79,7 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
    * Sets the SSL status of the connection.
    */
   public TCPClient<T> ssl(Env env, BooleanValue ssl) {
+    PhpTypes.assertNotNull(env, ssl, "Value to %s::ssl() must be a boolean.", this.toString());
     client.setSSL(ssl.toBoolean());
     return this;
   }
@@ -133,6 +95,7 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
    * Sets the key store password.
    */
   public TCPClient<T> keyStorePassword(Env env, StringValue pwd) {
+    PhpTypes.assertNotNull(env, pwd, "Password to %s::keyStorePassword() must be a string.", this.toString());
     client.setKeyStorePassword(pwd.toString());
     return this;
   }
@@ -148,6 +111,7 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
    * Sets the key store path.
    */
   public TCPClient<T> keyStorePath(Env env, StringValue path) {
+    PhpTypes.assertNotNull(env, path, "Path to %s::keyStorePath() must be a string.", this.toString());
     client.setKeyStorePath(path.toString());
     return this;
   }
@@ -163,6 +127,7 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
    * Sets the trust store password.
    */
   public TCPClient<T> trustStorePassword(Env env, StringValue pwd) {
+    PhpTypes.assertNotNull(env, pwd, "Password to %s::trustStorePassword() must be a string.", this.toString());
     client.setTrustStorePassword(pwd.toString());
     return this;
   }
@@ -178,6 +143,7 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
    * Set the TCP send buffer size for connections created by this instance to size in bytes.
    */
   public TCPClient<T> sendBufferSize(Env env, NumberValue size) {
+    PhpTypes.assertNotNull(env, size, "Size to %s::sendBufferSize() must be a number.", this.toString());
     client.setSendBufferSize(size.toInt());
     return this;
   }
@@ -193,6 +159,7 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
    * Set the TCP receive buffer size for connections created by this instance to size in bytes.
    */
   public TCPClient<T> receiveBufferSize(Env env, NumberValue size) {
+    PhpTypes.assertNotNull(env, size, "Size to %s::receiveBufferSize() must be a number.", this.toString());
     client.setReceiveBufferSize(size.toInt());
     return this;
   }
@@ -208,6 +175,7 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
    * Set the TCP reuseAddress setting for connections created by this instance to reuse.
    */
   public TCPClient<T> reuseAddress(Env env, BooleanValue reuse) {
+    PhpTypes.assertNotNull(env, reuse, "Value to %s::reuseAddress() must be a boolean.", this.toString());
     client.setReuseAddress(reuse.toBoolean());
     return this;
   }
@@ -223,6 +191,7 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
    * Set the TCP soLinger setting for connections created by this instance to linger.
    */
   public TCPClient<T> soLinger(Env env, NumberValue linger) {
+    PhpTypes.assertNotNull(env, linger, "Value to %s::soLinger() must be a number.", this.toString());
     client.setReceiveBufferSize(linger.toInt());
     return this;
   }
@@ -238,6 +207,7 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
    * Set the TCP keepAlive setting for connections created by this instance to keepAlive.
    */
   public TCPClient<T> keepAlive(Env env, BooleanValue keepAlive) {
+    PhpTypes.assertNotNull(env, keepAlive, "Value to %s::keepAlive() must be a boolean.", this.toString());
     client.setTCPKeepAlive(keepAlive.toBoolean());
     return this;
   }
@@ -253,6 +223,7 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
    * If tcpNoDelay is set to true then Nagle's algorithm will turned off for the TCP connections created by this instance.
    */
   public TCPClient<T> noDelay(Env env, BooleanValue tcpNoDelay) {
+    PhpTypes.assertNotNull(env, tcpNoDelay, "Value to %s::noDelay() must be a boolean.", this.toString());
     client.setTCPNoDelay(tcpNoDelay.toBoolean());
     return this;
   }
@@ -268,7 +239,8 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
    * Set the TCP trafficClass setting for connections created by this instance to trafficClass.
    */
   public TCPClient<T> trafficClass(Env env, NumberValue trafficClass) {
-    client.setReceiveBufferSize(trafficClass.toInt());
+    PhpTypes.assertNotNull(env, trafficClass, "Value to %s::trafficClass() must be a number.", this.toString());
+    client.setTrafficClass(trafficClass.toInt());
     return this;
   }
 
@@ -283,6 +255,7 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
    * Set if vertx should use pooled buffers for performance reasons.
    */
   public TCPClient<T> usePooledBuffers(Env env, BooleanValue pooledBuffers) {
+    PhpTypes.assertNotNull(env, pooledBuffers, "Value to %s::usePooledBuffers() must be a boolean.", this.toString());
     client.setUsePooledBuffers(pooledBuffers.toBoolean());
     return this;
   }

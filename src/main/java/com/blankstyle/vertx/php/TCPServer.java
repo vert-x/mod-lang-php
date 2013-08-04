@@ -15,9 +15,6 @@
  */
 package com.blankstyle.vertx.php;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import org.vertx.java.core.ServerSSLSupport;
 import org.vertx.java.core.ServerTCPSupport;
 
@@ -44,52 +41,14 @@ public abstract class TCPServer<T extends ServerTCPSupport<T> & ServerSSLSupport
    * Gets a field value.
    */
   public Value __getField(Env env, StringValue name) {
-    try {
-      Method method = this.getClass().getMethod(name.toString());
-      return env.wrapJava(method.invoke(this));
-    }
-    catch (SecurityException e) {
-      env.error(e);
-    }
-    catch (NoSuchMethodException e) {
-      env.error(e);
-    }
-    catch (IllegalArgumentException e) {
-      env.error(e);
-    }
-    catch (IllegalAccessException e) {
-      env.error(e);
-    }
-    catch (InvocationTargetException e) {
-      env.error(e);
-    }
-    return env.wrapJava(null);
+    return env.wrapJava(this).callMethod(env, name);
   }
 
   /**
    * Sets a field value.
    */
-  public Value __setField(Env env, StringValue name, Value value) {
-    try {
-      Method method = this.getClass().getMethod(name.toString());
-      return env.wrapJava(method.invoke(this, value));
-    }
-    catch (SecurityException e) {
-      env.error(e);
-    }
-    catch (NoSuchMethodException e) {
-      env.error(e);
-    }
-    catch (IllegalArgumentException e) {
-      env.error(e);
-    }
-    catch (IllegalAccessException e) {
-      env.error(e);
-    }
-    catch (InvocationTargetException e) {
-      env.error(e);
-    }
-    return env.wrapJava(null);
+  public void __setField(Env env, StringValue name, Value value) {
+    env.wrapJava(this).callMethod(env, name, value);
   }
 
   /**

@@ -29,6 +29,6 @@ public interface Settable {
   /**
    * Sets a field value.
    */
-  public Value __setField(Env env, StringValue name, Value value);
+  public void __setField(Env env, StringValue name, Value value);
 
 }

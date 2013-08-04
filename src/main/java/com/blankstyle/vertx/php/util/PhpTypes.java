@@ -15,6 +15,7 @@
  */
 package com.blankstyle.vertx.php.util;
 
+import com.caucho.quercus.Location;
 import com.caucho.quercus.env.Callable;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
@@ -54,7 +55,7 @@ public class PhpTypes {
    */
   public static void assertNull(Env env, Value value) {
     if (!PhpTypes.isNull(value)) {
-      env.error("Object is not null.");
+      env.error(PhpTypes.buildErrorMessage(env, "Object is not null.", new Object[]{}));
     }
   }
 
@@ -63,7 +64,7 @@ public class PhpTypes {
    */
   public static void assertNull(Env env, Value value, String message, Object... args) {
     if (!PhpTypes.isNull(value)) {
-      env.error(String.format(message, args));
+      env.error(PhpTypes.buildErrorMessage(env, message, args));
     }
   }
 
@@ -86,7 +87,7 @@ public class PhpTypes {
    */
   public static void assertNotNull(Env env, Value value) {
     if (!PhpTypes.notNull(value)) {
-      env.error("Object is null.");
+      env.error(PhpTypes.buildErrorMessage(env, "Object is null.", new Object[]{}));
     }
   }
 
@@ -95,7 +96,7 @@ public class PhpTypes {
    */
   public static void assertNotNull(Env env, Value value, String message, Object... args) {
     if (!PhpTypes.notNull(value)) {
-      env.error(String.format(message, args));
+      env.error(PhpTypes.buildErrorMessage(env, message, args));
     }
   }
 
@@ -118,7 +119,7 @@ public class PhpTypes {
    */
   public static void assertDefault(Env env, Value value) {
     if (!PhpTypes.isDefault(value)) {
-      env.error("Object is not default.");
+      env.error(PhpTypes.buildErrorMessage(env, "Object is not default.", new Object[]{}));
     }
   }
 
@@ -127,7 +128,7 @@ public class PhpTypes {
    */
   public static void assertDefault(Env env, Value value, String message, Object... args) {
     if (!PhpTypes.isDefault(value)) {
-      env.error(String.format(message, args));
+      env.error(PhpTypes.buildErrorMessage(env, message, args));
     }
   }
 
@@ -150,7 +151,7 @@ public class PhpTypes {
    */
   public static void assertNotDefault(Env env, Value value) {
     if (!PhpTypes.notDefault(value)) {
-      env.error("Object is default.");
+      env.error(PhpTypes.buildErrorMessage(env, "Object is default.", new Object[]{}));
     }
   }
 
@@ -159,7 +160,7 @@ public class PhpTypes {
    */
   public static void assertNotDefault(Env env, Value value, String message, Object... args) {
     if (!PhpTypes.notDefault(value)) {
-      env.error(String.format(message, args));
+      env.error(PhpTypes.buildErrorMessage(env, message, args));
     }
   }
 
@@ -175,7 +176,7 @@ public class PhpTypes {
    */
   public static void assertCallable(Env env, Value value) {
     if (!PhpTypes.isCallable(env, value)) {
-      env.error("Object is not callable.");
+      env.error(PhpTypes.buildErrorMessage(env, "Object is not callable.", new Object[]{}));
     }
   }
 
@@ -184,7 +185,7 @@ public class PhpTypes {
    */
   public static void assertCallable(Env env, Value value, String message, Object... args) {
     if (!PhpTypes.isCallable(env, value)) {
-      env.error(String.format(message, args));
+      env.error(PhpTypes.buildErrorMessage(env, message, args));
     }
   }
 
@@ -214,6 +215,66 @@ public class PhpTypes {
    */
   public static Callable toCallable(Env env, Value value, boolean isOptional) {
     return value.toCallable(env, isOptional);
+  }
+
+  /**
+   * Asserts that a value is a boolean.
+   */
+  public static void assertBoolean(Env env, Value value) {
+    if (!value.isBoolean()) {
+      env.error(PhpTypes.buildErrorMessage(env, "Invalid boolean value.", new Object[]{}));
+    }
+  }
+
+  /**
+   * Asserts that a value is a boolean.
+   */
+  public static void assertBoolean(Env env, Value value, String message, Object... args) {
+    if (!value.isBoolean()) {
+      env.error(PhpTypes.buildErrorMessage(env, message, args));
+    }
+  }
+
+  /**
+   * Asserts that a value is an integer.
+   */
+  public static void assertInteger(Env env, Value value) {
+    if (!value.isNumeric()) {
+      env.error(PhpTypes.buildErrorMessage(env, "Invalid integer value.", new Object[]{}));
+    }
+  }
+
+  /**
+   * Assets that a value is an integer.
+   */
+  public static void assertInteger(Env env, Value value, String message, Object... args) {
+    if (!value.isNumeric()) {
+      env.error(PhpTypes.buildErrorMessage(env, message, args));
+    }
+  }
+
+  /**
+   * Builds a PHP error message.
+   */
+  public static String buildErrorMessage(Env env, String message, Object... args) {
+    if (message.endsWith(".")) {
+      message = message.substring(0, message.length() - 1);
+    }
+
+    Location location = env.getLocation();
+    StringBuilder builder = new StringBuilder();
+    builder.append(String.format(message, args));
+
+    String fileName = location.getUserPath();
+    if (fileName == null) {
+      fileName = location.getFileName();
+    }
+    if (fileName != null) {
+      builder.append(" in ").append(fileName);
+    }
+
+    builder.append(" on line ").append(location.getLineNumber()).append(".");
+    return builder.toString();
   }
 
 }
