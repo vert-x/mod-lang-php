@@ -1624,19 +1624,20 @@ including HTTP requests and response, async files, WebSockets, etc.
 A naive way to do this would be to directly take the data that's been read and
 immediately write it to the NetSocket, for example:
 
-    var server = vertx.createNetServer();
+```php
+$server = Vertx::createNetServer();
 
-    server.connectHandler(function(sock) {
-    
-        sock.dataHandler(function(buffer) {
-      
-            // Write data straight back on the socket
-                  
-            sock.write(buffer); 
-        });
-                
-    }).listen(1234, 'localhost');
-    
+$server->connectHandler(function($socket) {
+
+  $socket->dataHandler(function($buffer) use ($socket) {
+
+    $socket->write($buffer);
+
+  });
+
+})->listen(1234, 'localhost');
+```
+
 There's a problem with the above example: If data is read from the socket faster
 than it can be written back to the socket, it will build up in the write queue of
 the AsyncFile, eventually running out of RAM. This might happen, for example if
@@ -1646,78 +1647,92 @@ putting back-pressure on the connection.
 Since `NetSocket` implements `WriteStream`, we can check if the `WriteStream` is
 full before writing to it:
 
-    var server = vertx.createNetServer();
+```php
+$server = Vertx::createNetServer();
 
-    server.connectHandler(function(sock) {
-    
-        sock.dataHandler(function(buffer) {
-      
-            if (!sock.writeQueueFull()) {      
-                sock.write(buffer); 
-            }
-        });
-                
-    }).listen(1234, 'localhost');
-    
+$server->connectHandler(function($socket) {
+
+  $socket->dataHandler(function($buffer) use ($socket) {
+
+    if (!$socket->writeQueueFull()) {
+      $socket->write($buffer);
+    }
+
+  });
+
+})->listen(1234, 'localhost');
+```
+
 This example won't run out of RAM but we'll end up losing data if the write queue
 gets full. What we really want to do is pause the `NetSocket` when the write
 queue is full. Let's do that:
 
-    var server = vertx.createNetServer();
+```php
+$server = Vertx::createNetServer();
 
-    server.connectHandler(function(sock) {
-    
-        sock.dataHandler(function(buffer) {
-      
-            if (!sock.writeQueueFull()) {      
-                sock.write(buffer); 
-            } else {
-                sock.pause();
-            }
-        });
-                
-    }).listen(1234, 'localhost');
+$server->connectHandler(function($socket) {
+
+  $socket->dataHandler(function($buffer) use ($socket) {
+
+    if (!$socket->writeQueueFull()) {
+      $socket->write($buffer);
+    }
+    else {
+      $socket->pause();
+    }
+
+  });
+
+})->listen(1234, 'localhost');
+```
 
 We're almost there, but not quite. The `NetSocket` now gets paused when the file
 is full, but we also need to *unpause* it when the write queue has processed its
 backlog:
 
-    var server = vertx.createNetServer();
+```php
+$server = Vertx::createNetServer();
 
-    server.connectHandler(function(sock) {
-    
-        sock.dataHandler(function(buffer) {
-      
-            if (!sock.writeQueueFull()) {      
-                sock.write(buffer); 
-            } else {
-                sock.pause();
-                
-                sock.drainHandler(function() {
-                    sock.resume();
-                });
-            }
-        });
-                
-    }).listen(1234, 'localhost');
+$server->connectHandler(function($socket) {
+
+  $socket->dataHandler(function($buffer) use ($socket) {
+
+    if (!$socket->writeQueueFull()) {
+      $socket->write($buffer);
+    }
+    else {
+      $socket->pause();
+
+      $socket->drainHandler(function() {
+        $socket->resume();
+      });
+    }
+
+  });
+
+})->listen(1234, 'localhost');
+```
 
 And there we have it. The `drainHandler` event handler will get called when the
 write queue is ready to accept more data, this resumes the `NetSocket` which
 allows it to read more data.
 
 It's very common to want to do this when writing vert.x applications, so we
-provide a helper class called `Pump` which does all this hard work for you.
-You just feed it the `ReadStream` and the `WriteStream` and it tell it to start:
+provide a helper class called `Vertx\Streams\Pump` which does all this hard work
+for you. You just feed it the `ReadStream` and the `WriteStream` and it tell it
+to start:
 
-    var server = vertx.createNetServer();
+```php
+$server = Vertx::createNetServer();
 
-    server.connectHandler(function(sock) {
-    
-        var pump = new vertx.Pump(sock, sock);
-        pump.start();
-                
-    }).listen(1234, 'localhost');
-    
+$server->connectHandler(function($socket) {
+
+  $pump = new Vertx\Streams\Pump($socket, $socket);
+  $pump->start();
+
+})->listen(1234, 'localhost');
+```
+
 Which does exactly the same thing as the more verbose example.
 
 Let's look at the methods on `ReadStream` and `WriteStream` in more detail:
@@ -1727,17 +1742,17 @@ Let's look at the methods on `ReadStream` and `WriteStream` in more detail:
 `ReadStream` is implemented by `AsyncFile`, `HttpClientResponse`,
 `HttpServerRequest`, `WebSocket`, `NetSocket` and `SockJSSocket`.
 
-Functions:
+Methods:
 
-* `dataHandler(handler)`: set a handler which will receive data from the
+* `dataHandler($handler)`: set a handler which will receive data from the
 `ReadStream`. As data arrives the handler will be passed a Buffer.
 * `pause()`: pause the handler. When paused no data will be received in the
 `dataHandler`.
 * `resume()`: resume the handler. The handler will be called if any data
 arrives.
-* `exceptionHandler(handler)`: Will be called if an exception occurs on the
+* `exceptionHandler($handler)`: Will be called if an exception occurs on the
 `ReadStream`.
-* `endHandler(handler)`: Will be called when end of stream is reached. This
+* `endHandler($handler)`: Will be called when end of stream is reached. This
 might be when EOF is reached if the `ReadStream` represents a file, or when
 end of request is reached if it's an HTTP request, or when the connection is
 closed if it's a TCP socket.
@@ -1747,19 +1762,19 @@ closed if it's a TCP socket.
 `WriteStream` is implemented by `AsyncFile`, `HttpClientRequest`,
 `HttpServerResponse`, `WebSocket`, `NetSocket` and `SockJSSocket`
 
-Functions:
+Methods:
 
-* `writeBuffer(buffer)`: write a Buffer to the `WriteStream`. This method will
+* `writeBuffer($buffer)`: write a Buffer to the `WriteStream`. This method will
 never block. Writes are queued internally and asynchronously written to the
 underlying resource.
-* `setWriteQueueMaxSize(size)`: set the number of bytes at which the write
+* `setWriteQueueMaxSize($size)`: set the number of bytes at which the write
 queue is considered *full*, and the function `writeQueueFull()` returns `true`.
 Note that, even if the write queue is considered full, if `writeBuffer` is
 called the data will still be accepted and queued.
 * `writeQueueFull()`: returns `true` if the write queue is considered full.
-* `exceptionHandler(handler)`: Will be called if an exception occurs on the
+* `exceptionHandler($handler)`: Will be called if an exception occurs on the
 `WriteStream`.
-* `drainHandler(handler)`: The handler will be called if the `WriteStream`
+* `drainHandler($handler)`: The handler will be called if the `WriteStream`
 is considered no longer full.
 
 ## Pump
