@@ -47,7 +47,6 @@ between data types in PHP and Java.
 # PHP API Manual
 
 1. [Writing Verticles](#writing-verticles)
-   * [Asynchronous start](#asynchronous-start)
    * [Verticle clean-up](#verticle-clean-up)
    * [The container class](#the-container-class)
    * [The vertx class](#the-vertx-class)
@@ -231,7 +230,7 @@ Let's look in more detail about how to write a verticle.
 As an example we'll write a simple TCP echo server. The server just accepts
 connections and any data received by it is echoed back on the connection.
 
-Copy the following into a text editor and save it as `server.js`
+Copy the following into a text editor and save it as `server.php`
 
 ```php
 use Vertx\Streams\Pump;
@@ -246,7 +245,7 @@ $server->connectHandler(function($socket) {
     
 Now, go to the directory where you saved the file and type
 
-    vertx run server.js
+    vertx run server.php
     
 The server will now be running. Connect to it using telnet:
 
@@ -2733,7 +2732,7 @@ them as parameters in the request.
 
 This is particularly useful when developing REST-style web applications.
 
-To do this you simply create an instance of `vertx.RouteMatcher` and use it as
+To do this you simply create an instance of `Vertx\Http\RouteMatcher` and use it as
 handler in an HTTP server. See the chapter on HTTP servers for more information
 on setting HTTP handlers. Here's an example:
 
@@ -2809,7 +2808,7 @@ $server->requestHandler($routeMatcher)->listen(8080, 'localhost');
 Any params extracted by pattern matching are added to the map of request parameters.
 
 In the above example, a PUT request to `/myblog/post1` would result in the variable
-`blogName` getting the value `myblog` and the variable `post` getting the value `post1`.
+`$blogName` getting the value `myblog` and the variable `$post` getting the value `post1`.
 
 Valid parameter names must start with a letter of the alphabet and be followed by any
 letters of the alphabet or digits.
@@ -3032,7 +3031,7 @@ that push data to and from rich client-side JavaScript applications, without
 having to worry about the details of the transport.
 
 To create a SockJS server you simply create a HTTP server as normal and then
-invoke the `createSockJSServer` function on the `vertx` instance, specifying
+invoke the static `createSockJSServer` method on the `Vertx` class, specifying
 the HTTP server:
 
 ```php
@@ -3167,7 +3166,7 @@ This library internally uses SockJS to send and receive data to a SockJS
 vert.x server called the SockJS bridge. It's the bridge's responsibility
 to bridge data between SockJS sockets and the event bus on the server side.
 
-Creating a Sock JS bridge is simple. You just call the `bridge` function
+Creating a Sock JS bridge is simple. You just call the `bridge` method
 on the SockJS server.
 
 You will also need to secure the bridge (see below).
@@ -3361,9 +3360,9 @@ time (five minutes by default)
 Vert.x lets you manipulate files on the file system. File system operations are
 asynchronous and take a handler function as the last argument. This function
 will be called when the operation is complete, or an error has occurred.
-The first argument passed into the callback is an exception, if an error occurred.
-This will be `null` if the operation completed successfully. If the operation
-returns a result that will be passed in the second argument to the handler.
+The first argument passed into the callback is the result. If the called method
+does not return a result value, the result will not be present. The second argument
+will be a Java exception. If no exception was thrown then this will be `NULL`.
 
 ## Synchronous forms
 
@@ -3371,14 +3370,14 @@ For convenience, we also provide synchronous forms of most operations. It's
 highly recommended the asynchronous forms are always used for real applications.
 
 The synchronous form does not take a handler as an argument and returns its
-results directly. The name of the synchronous function is the same as the name
+results directly. The name of the synchronous method is the same as the name
 as the asynchronous form with `Sync` appended.
 
 ## copy
 
 Copies a file.
 
-This function can be called in two different ways:
+This method can be called in two different ways:
 
 * `copy($source, $destination, $handler)`
 
@@ -3388,7 +3387,7 @@ destination file name.
 Here's an example:
 
 ```php
-Vertx::fileSystem()->copy('foo.dat', 'bar'.dat', function($error) use ($log) {
+Vertx::fileSystem()->copy('foo.dat', 'bar.dat', function($error) use ($log) {
   if (!$error) {
     $log->info('Copy was successful!');
   }
@@ -3398,7 +3397,7 @@ Vertx::fileSystem()->copy('foo.dat', 'bar'.dat', function($error) use ($log) {
 * `copy($source, $destination, $recursive, $handler)`
 
 Recursive copy. `$source` is the source file name. `$destination` is the destination
-file name. `$recursive` is a boolean flag - if `true` and source is a directory, then
+file name. `$recursive` is a boolean flag - if `TRUE` and source is a directory, then
 a recursive copy of the directory and all its contents will be attempted.
 
 ## move
@@ -3407,7 +3406,7 @@ Moves a file.
 
 `move($source, $destination, $handler)`
 
-`source` is the source file name. `$destination` is the destination file name.
+`$source` is the source file name. `$destination` is the destination file name.
 
 ## truncate
 
@@ -3422,7 +3421,7 @@ truncate it to.
 
 Changes permissions on a file or directory.
 
-This function can be called in two different ways:
+This method can be called in two different ways:
 
 * `chmod($file, $perms, $handler)`.
 
@@ -3458,11 +3457,11 @@ an object with the following properties:
 * `creationTime`. Time of file creation.
 * `lastAccessTime`. Time of last file access.
 * `lastModifiedTime`. Time file was last modified.
-* `isDirectory`. This will have the value `true` if the file is a directory.
-* `isRegularFile`. This will have the value `true` if the file is a regular file
+* `isDirectory`. This will have the value `TRUE` if the file is a directory.
+* `isRegularFile`. This will have the value `TRUE` if the file is a regular file
 (not symlink or directory).
-* `isSymbolicLink`. This will have the value `true` if the file is a symbolic link.
-* `isOther`. This will have the value `true` if the file is another type.
+* `isSymbolicLink`. This will have the value `TRUE` if the file is a symbolic link.
+* `isOther`. This will have the value `TRUE` if the file is another type.
 
 Here's an example:
 
@@ -3533,7 +3532,7 @@ Vertx::fileSystem()->readSymLink('somelinke', function($result, $error) use ($lo
 
 Deletes a file or recursively deletes a directory.
 
-This function can be called in two ways:
+This method can be called in two ways:
 
 * `delete($file, $handler)`
 
@@ -3541,14 +3540,14 @@ Deletes a file. `$file` is the file name.
 
 * `delete($file, $recursive, $handler)`
 
-If `recursive` is `true`, it deletes a directory with name `$file`, recursively.
+If `$recursive` is `TRUE`, it deletes a directory with name `$file`, recursively.
 Otherwise it just deletes a file.
 
 ## mkdir
 
 Creates a directory.
 
-This function can be called in three ways:
+This method can be called in three ways:
 
 * `mkdir($dirname, $handler)`
 
@@ -3577,7 +3576,7 @@ permissions string as explained earlier.
 
 Reads a directory. I.e. lists the contents of the directory.
 
-This function can be called in two ways:
+This method can be called in two ways:
 
 * `readDir($dirName)`
 
@@ -3675,7 +3674,7 @@ Vertx::fileSystem()->fsProps('mydir', function($result, $error) use ($log) {
 
 Opens an asynchronous file for reading/writing.
 
-This function can be called in four different ways:
+This method can be called in four different ways:
 
 * `open($file, $handler)`
 
@@ -3703,7 +3702,7 @@ For example:
 $flags = Vertx\FileSystem::OPEN_READ;
 
 // Open for reading and writing.
-$flags = Vertx\FileSystem::OPEN_READ | Vertx\FileSystem.OPEN_WRITE;
+$flags = Vertx\FileSystem::OPEN_READ | Vertx\FileSystem::OPEN_WRITE;
 ```
 
 When the file is opened, an instance of `AsyncFile` is passed into the result
@@ -3743,10 +3742,8 @@ Instances of `AsyncFile` are returned from calls to `open` and you use them to
 read from and write to files asynchronously. They allow asynchronous random
 file access.
 
-AsyncFile can provide instances of `ReadStream` and `WriteStream` via the
-`getReadStream` and `getWriteStream` functions, so you can pump files to and
-from other stream objects such as net sockets, HTTP requests and responses, and
-WebSockets.
+AsyncFile implements the `ReadStream` and `WriteStream` interfaces, allowing
+them to be used in related APIs.
 
 They also allow you to read and write directly to them.
 
@@ -3829,8 +3826,8 @@ Vertx::fileSystem()->open('some-file.dat', function($asyncFile, $error) use ($lo
 
 ### Flushing data to underlying storage.
 
-If the AsyncFile was not opened with `flush = true`, then you can manually
-flush any writes from the OS cache by calling the `flush` function.
+If the AsyncFile was not opened with `flush = TRUE`, then you can manually
+flush any writes from the OS cache by calling the `flush` method.
 
 ### Using AsyncFile as `ReadStream` and `WriteStream`
 
@@ -3867,7 +3864,7 @@ Vertx::fileSystem()->open('some-file.dat', function($asyncFile, $error) use ($cl
 
 ### Closing an AsyncFile
 
-To close an AsyncFile call the `close` function. Closing is asynchronous and
+To close an AsyncFile call the `close` method. Closing is asynchronous and
 if you want to be notified when the close has been completed you can specify
 a handler function as an argument to `close`.
 
@@ -3875,7 +3872,7 @@ a handler function as an argument to `close`.
 $fileSystem->close(function() {
   Container::logger()->info('File system was closed!');
 });
-``
+```
 
 This work is adapted from the [Vert.x website](http://vertx.io/) and is licensed
 under the [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/).
