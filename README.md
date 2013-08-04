@@ -1798,37 +1798,42 @@ HTTP servers.
 
 ### Creating an HTTP Server
 
-To create an HTTP server you invoke the `createHttpServer` function on the
-`vertx` instance.
+To create an HTTP server you invoke the static `createHttpServer` method on the
+`Vertx` class.
 
-    var server = vertx.createHttpServer();
-    
+```php
+$server = Vertx::createHttpServer();
+```
+
 ### Start the Server Listening    
     
 To tell that server to listen for incoming requests you use the `listen` method:
 
-    var server = vertx.createHttpServer();
+```php
+$server = Vertx::createHttpServer();
 
-    server.listen(8080, 'myhost');
-    
+$server->listen(8080, 'localhost');
+```
+
 The first parameter to `listen` is the port. The second parameter is the hostname
 or ip address. If the hostname is omitted it will default to `0.0.0.0` which means
 it will listen at all available interfaces.
 
-
 ### Getting Notified of Incoming Requests
-    
+
 To be notified when a request arrives you need to set a request handler. This is
 done by calling the `requestHandler` function of the server, passing in the handler:
 
-    var server = vertx.createHttpServer();
+```php
+$server = Vertx::createHttpServer();
 
-    server.requestHandler(function(request) {
-      log.info('An HTTP request has been received');
-    })  
+$server->requestHandler(function($request) use ($log) {
+  $log->info('An HTTP request has been received.');
+});
 
-    server.listen(8080, 'localhost');
-    
+$server->listen(8080, 'localhost');
+```
+
 This displays 'An HTTP request has been received!' every time an HTTP request
 arrives on the server. You can try it by running the verticle and pointing your
 browser at `http://localhost:8080`.
@@ -1837,19 +1842,23 @@ Similarly to `NetServer`, the return value of the `requestHandler` method is
 the server itself, so multiple invocations can be chained together. That means
 we can rewrite the above with:
 
-    var server = vertx.createHttpServer();
+```php
+$server = Vertx::createHttpServer();
 
-    server.requestHandler(function(request) {
-      log.info('An HTTP request has been received');
-    }).listen(8080, 'localhost');
-    
+$server->requestHandler(function($request) use ($log) {
+  $log->info('An HTTP request has been received.');
+})->listen(8080, 'localhost');
+```
+
 Or:
 
-    vertx.createHttpServer().requestHandler(function(request) {
-      log.info('An HTTP request has been received');
-    }).listen(8080, 'localhost');
-    
-       
+
+```php
+Vertx::createHttpServer()->requestHandler(function($request) use ($log) {
+  $log->info('An HTTP request has been received.');
+})->listen(8080, 'localhost');
+```
+
 ### Handling HTTP Requests
 
 So far we have seen how to create an 'HttpServer' and be notified of requests.
@@ -1879,7 +1888,7 @@ The request object has a property `uri` which contains the full URI (Uniform
 Resource Locator) of the request. For example, if the request URI was:
 
     /a/b/c/page.html?param1=abc&param2=xyz    
-    
+
 Then `request.uri` would contain the string `/a/b/c/page.html?param1=abc&param2=xyz`.
 
 Request URIs can be relative or absolute (with a domain) depending on what the
@@ -1894,18 +1903,18 @@ The request object has a property `path` which contains the path of the request.
 For example, if the request URI was:
 
     /a/b/c/page.html?param1=abc&param2=xyz    
-    
+
 Then `request.path` would contain the string `/a/b/c/page.html`
-   
+
 #### Request Query
 
 The request object has a property `query` which contains the query of the request.
 For example, if the request URI was:
 
     /a/b/c/page.html?param1=abc&param2=xyz    
-    
+
 Then `request.query` would contain the string `param1=abc&param2=xyz`    
-        
+
 #### Request Headers
 
 The request headers are available as the `headers()` function of the request
@@ -1917,19 +1926,19 @@ returned to you.
 Here's an example that echoes the headers to the output of the response. Run
 it and point your browser at `http://localhost:8080` to see the headers.
 
-    var server = vertx.createHttpServer();
+```php
+$server = Vertx::createHttpServer();
 
-    server.requestHandler(function(request) {
-    
-      var str = '';
-      for (var k in request.headers()) {
-        str = str.concat(k, ': ', headers[k], '\n');
-      }
-      
-      request.response.end(str);
-      
-    }).listen(8080, 'localhost');
-    
+$server->requestHandler(function($request) {
+
+  $str = '';
+  foreach ($request->headers as $key => $value) {
+    $str .= $key .': '. $value . "\n";
+  }
+
+})->listen(8080, 'localhost');
+```
+
 #### Request params
 
 Similarly to the headers, the request parameters are available as the
@@ -1940,11 +1949,11 @@ Request parameters are sent on the request URI, after the path. For
 example if the URI was:
 
     /page.html?param1=abc&param2=xyz
-    
-Then the params hash would be the following JS object:
 
-    { param1: 'abc', param2: 'xyz' }
-    
+Then the params array would be the following:
+
+    array('param1' => 'abc', 'param2' => 'xyz')
+
 #### Reading Data from the Request Body
 
 Sometimes an HTTP request contains a request body that we want to read. As
@@ -1957,16 +1966,18 @@ To receive the body, you set the `dataHandler` on the request object. This
 will then get called every time a chunk of the request body arrives. Here's
 an example:
 
-    var server = vertx.createHttpServer();
+```php
+$server = Vertx::createHttpServer();
 
-    server.requestHandler(function(request) {
-    
-      request.dataHandler(function(buffer) {
-        log.info('I received ' + buffer.length() + ' bytes');
-      });
-      
-    }).listen(8080, 'localhost'); 
-    
+$server->requestHandler(function($request) use ($log) {
+
+  $request->dataHandler(function($buffer) use ($log) {
+    $log->info('I received '. $buffer->length() .' bytes.');
+  });
+
+})->listen(8080, 'localhost');
+```
+
 The `dataHandler` may be called more than once depending on the size of the
 body.    
 
@@ -1979,25 +1990,24 @@ detailed explanation.
 In many cases, you know the body is not large and you just want to receive
 it in one go. To do this you could do something like the following:
 
-    var server = vertx.createHttpServer();
+```php
+$server = Vertx::createHttpServer();
 
-    server.requestHandler(function(request) {
-    
-      // Create a buffer to hold the body
-      var body = new vertx.Buffer();  
-    
-      request.dataHandler(function(buffer) {
-        // Append the chunk to the buffer
-        body.appendBuffer(buffer);
-      });
-      
-      request.endHandler(function() {
-        // The entire body has now been received
-        log.info('The total body received was ' + body.length() + ' bytes');
-      });
-      
-    }).listen(8080, 'localhost');   
-    
+$server->requestHandler(function($request) use ($log) {
+
+  $body = new Vertx\Buffer\Buffer();
+
+  $request->dataHandler(function($buffer) {
+    $body->appendBuffer($buffer);
+  });
+
+  $request->endHandler(function() use ($log) {
+    $log->info('The total body received was '. $body->length() .' bytes.');
+  });
+
+})->listen(8080, 'localhost');
+```
+
 Like any `ReadStream` the end handler is invoked when the end of stream is
 reached - in this case at the end of the request.
 
@@ -2015,18 +2025,18 @@ will be stored in memory.*
 
 Here's an example using `bodyHandler`:
 
-    var server = vertx.createHttpServer();
+```php
+$server = Vertx::createNetServer();
 
-    server.requestHandler(function(request) {
-    
-      request.bodyHandler(function(body) {
-        log.info('The total body received was ' + body.length() + ' bytes');
-      });
-      
-    }).listen(8080, 'localhost');  
-    
-Simples, innit?    
-    
+$server->requestHandler(function($request) use ($log) {
+
+  $request->bodyHandler(function($body) use ($log) {
+    $log->info('The total body received was '. $body->length() .' bytes.');
+  });
+
+})->listen(8080, 'localhost');
+```
+
 ### HTTP Server Responses 
 
 As previously mentioned, the HTTP request object contains a property `response`.
@@ -2037,16 +2047,17 @@ back to the client.
 
 To set the HTTP status code for the response use the `statusCode` property, e.g.
 
-    var server = vertx.createHttpServer();
+```php
+$server = Vertx::createNetServer();
 
-    server.requestHandler(function(request) {
-    
-        request.response.statusCode = 404;
-        
-        request.response.end();
-      
-    }).listen(8080, 'localhost');  
-    
+$server->requestHandler(function($request) use ($log) {
+
+  $request->response->statusCode = 404;
+  $request->response->end();
+
+})->listen(8080, 'localhost');
+```
+
 You can also use the `statusMessage` property to set the status message. If
 you do not set the status message a default message will be used.    
   
@@ -2061,30 +2072,38 @@ be invoked in a few ways:
 
 With a single buffer:
 
-    var myBuffer = ...
-    request.response.write(myBuffer);
-    
+```php
+$myBuffer = new Vertx\Buffer\Buffer();
+$request->response->write($myBuffer);
+```
+
 A string. In this case the string will encoded using UTF-8 and the result
 written to the wire.
 
-    request.response.write('hello');    
-    
+```php
+$request->response->write('Hello world!');
+```
+
 A string and an encoding. In this case the string will encoded using the
 specified encoding and the result written to the wire.     
 
-    request.response.write('hello', 'UTF-16');
-    
-The `write` function is asynchronous and always returns immediately after the
+```php
+$request->response->write('Hello world!', 'UTF-16');
+```
+
+The `write` method is asynchronous and always returns immediately after the
 write has been queued.
 
 The actual write might complete some time later. If you want to be informed
-when the actual write has completed you can pass in a function as a final
+when the actual write has completed you can pass in a function as the third
 argument. This function will then be invoked when the write has completed:
 
-    request.response.write('hello', function() {
-        log.info('It has actually been written');
-    });  
-    
+```php
+$request->response->write('Hello world!', NULL, function() use ($log) {
+  $log->info('It has actually been written.');
+});
+```
+
 If you are just writing a single string or Buffer to the HTTP response you can
 write it and end the response in a single call to the `end` function.   
 
@@ -2104,38 +2123,43 @@ This function can be invoked in several ways:
 
 With no arguments, the response is simply ended. 
 
-    request.response.end();
-    
+```php
+$request->response->end();
+```
+
 The function can also be called with a string or Buffer in the same way `write`
 is called. In this case it's just the same as calling write with a string or
 Buffer followed by calling `end` with no arguments. For example:
 
-    request.response.end("That's all folks");
+```php
+$request->response->end("That's all folks.");
+```
 
 #### Closing the underlying connection
 
 You can close the underlying TCP connection of the request by calling the
 `close` function.
 
-    request.response.close();
+```php
+$request->response->close();
+```
 
 #### Response headers
 
-You can write headers to the response by simply adding them to the headers
-hash on the response object:
-
-    request.response.headers()['Some-Header'] = 'foo';
-
-Individual HTTP response headers can also be written using the `putHeader`
-function. This allows a more fluent API since they can be chained.
+Individual HTTP response headers can be written using the `putHeader`
+method. This allows a more fluent API since they can be chained.
 For example:
 
-    request.response.putHeader('Some-Header', 'foo').putHeader('Other-Header', 'bar');
-    
+```php
+$request->response->putHeader('Some-Header', 'foo')->putHeader('Other-Header', 'bar');
+```
+
 You can also put multiple headers in one go:
 
-    request.response.putAllHeaders({'Some-Header': 'foo', 'Other-Header': 'bar'});    
-    
+```php
+$request->response->putAllHeaders(array('Some-Header' => 'foo', 'Other-Header' => 'bar'));
+```
+
 Response headers must all be added before any parts of the response body
 are written.
 
@@ -2148,28 +2172,29 @@ in advance.
 
 You put the HTTP response into chunked mode as follows:
 
-    req.response.setChunked(true);
-    
+```php
+$request->response->chunked = TRUE;
+```
+
 Default is non-chunked. When in chunked mode, each call to `response.write(...)`
 will result in a new HTTP chunk being written out.  
 
 When in chunked mode you can also write HTTP response trailers to the response.
 These are actually written in the final chunk of the response.
 
-As with headers, you can write trailers to the response by simply adding them
-to the trailers hash on the response object:
+As with headers, individual HTTP response headers can also be written using the
+`putTrailer` method. This allows a more fluent API since they can be chained.
+For example:
 
-    request.response.trailers()['Some-Trailer'] = 'quux';
+```php
+$request->response->putTrailer('Some-Trailer', 'foo')->putTrailer('Other-Trailer', 'bar');
+```
 
-Individual HTTP response headers can also be written using the `putTrailer`
-function. This allows a more fluent API since they can be chained. For example:
-
-    request.response.putTrailer('Some-Trailer', 'foo').putTrailer('Other-Trailer', 'bar');
-    
 You can also put multiple trailers in one go:
 
-    request.response.putAllTrailers({'Some-Trailer': 'foo', 'Other-Trailer': 'bar'});    
-    
+```php
+$request->response->putAllTrailers(array('Some-Trailer' => 'foo', 'Other-Trailer' => 'bar'));
+```
 
 ### Serving files directly from disk
 
@@ -2189,18 +2214,24 @@ directly to the response.
 To do this use the `sendFile` function on the HTTP response. Here's a simple
 HTTP web server that serves static files from the local `web` directory:
 
-    var server = vertx.createHttpServer();
+```php
+$server = Vertx::createHttpServer();
 
-    server.requestHandler(function(req) {
-      var file = '';
-      if (req.path == '/') {
-        file = 'index.html';
-      } else if (req.path.indexOf('..') == -1) {
-        file = req.path;
-      }
-      req.response.sendFile('web/' + file);   
-    }).listen(8080, 'localhost');
-    
+$server->requestHandler(function($request) {
+
+  $file = '';
+  if ($request->path == '/') {
+    $file = 'index.html';
+  }
+  else if (substr($request->path, -2) == '..') {
+    $file = $request->path;
+  }
+
+  $request->response->sendFile('web/'. $file);
+
+})->listen(8080, 'localhost');
+```
+
 *Note: If you use `sendFile` while using HTTPS it will copy through userspace,
 since if the kernel is copying data directly from disk to socket it doesn't
 give us an opportunity to apply any encryption.*
@@ -2218,19 +2249,25 @@ Here's an example which echoes HttpRequest headers and body back in the HttpResp
 It uses a pump for the body, so it will work even if the HTTP request body is
 much larger than can fit in memory at any one time:
 
-    var server = vertx.createHttpServer();
+```php
+use Vertx\Streams\Pump;
 
-    server.requestHandler(function(req) {
-      
-      req.response.putAllHeaders(req.headers());
-      
-      var p = new Pump(req, req.response);
-      p.start();
-      
-      req.endHandler(function() { req.response.end(); });
-      
-    }).listen(8080, 'localhost');
-    
+$server = Vertx::createHttpServer();
+
+$server->requestHandler(function($request) {
+
+  $request->response->putAllHeaders($request->headers);
+
+  $pump = new Pump($request, $request->response);
+  $pump->start();
+
+  $request->endHandler(function() use ($request) {
+    $request->response->end();
+  });
+
+})->listen(8080, 'localhost');
+```
+
 ## Writing HTTP Clients
 
 ### Creating an HTTP Client

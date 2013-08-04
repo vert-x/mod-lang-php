@@ -17,6 +17,7 @@ package com.blankstyle.vertx.php.http;
 
 import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
+import com.blankstyle.vertx.php.Settable;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.WriteStream;
 import com.blankstyle.vertx.php.util.PhpTypes;
@@ -32,7 +33,7 @@ import com.caucho.quercus.env.Value;
  *
  * @author Jordan Halterman
  */
-public class HttpServerResponse implements WriteStream<HttpServerResponse>, ExceptionSupport<HttpServerResponse>, Gettable {
+public class HttpServerResponse implements WriteStream<HttpServerResponse>, ExceptionSupport<HttpServerResponse>, Gettable, Settable {
 
   private org.vertx.java.core.http.HttpServerResponse response;
 
@@ -47,6 +48,11 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
   @Override
   public Value __getField(Env env, StringValue name) {
     return env.wrapJava(this).callMethod(env, name);
+  }
+
+  @Override
+  public Value __setField(Env env, StringValue name, Value value) {
+    return env.wrapJava(this).callMethod(env, name, value);
   }
 
   /**
@@ -145,13 +151,14 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
     return this;
   }
 
-  public HttpServerResponse setChunked(Env env, BooleanValue chunked) {
-    response.setChunked(chunked.toBoolean());
-    return this;
-  }
-
-  public BooleanValue isChunked(Env env) {
-    return BooleanValue.create(response.isChunked());
+  public Value chunked(Env env, @Optional BooleanValue chunked) {
+    if (PhpTypes.notNull(chunked)) {
+      response.setChunked(chunked.toBoolean());
+      return env.wrapJava(this);
+    }
+    else {
+      return env.wrapJava(response.isChunked());
+    }
   }
 
   @Override
