@@ -10,7 +10,7 @@ import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x RecordParser.
- *
+ * 
  * @author Jordan Halterman
  */
 public class RecordParser {
@@ -30,8 +30,10 @@ public class RecordParser {
    */
   public static RecordParser newDelimited(Env env, Value delim, Value handler) {
     PhpTypes.assertNotNull(env, delim);
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\ParseTools\\RecordParser::newDelimited() must be callable.");
-    return new RecordParser(org.vertx.java.core.parsetools.RecordParser.newDelimited(delim.toString(), new Handler<Buffer>(env, PhpTypes.toCallable(handler))));
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\ParseTools\\RecordParser::newDelimited() must be callable.");
+    return new RecordParser(org.vertx.java.core.parsetools.RecordParser.newDelimited(delim.toString(),
+        new Handler<Buffer>(env, PhpTypes.toCallable(handler))));
   }
 
   /**
@@ -39,8 +41,10 @@ public class RecordParser {
    */
   public static RecordParser newFixed(Env env, NumberValue size, Value handler) {
     PhpTypes.assertNotNull(env, size);
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\ParseTools\\RecordParser::newFixed() must be callable.");
-    return new RecordParser(org.vertx.java.core.parsetools.RecordParser.newFixed(size.toInt(), new Handler<Buffer>(env, PhpTypes.toCallable(handler))));
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\ParseTools\\RecordParser::newFixed() must be callable.");
+    return new RecordParser(org.vertx.java.core.parsetools.RecordParser.newFixed(size.toInt(), new Handler<Buffer>(env,
+        PhpTypes.toCallable(handler))));
   }
 
   /**
@@ -70,7 +74,8 @@ public class RecordParser {
    * Sets the parser output handler.
    */
   public void setOutput(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\ParseTools\\RecordParser::setOutput() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\ParseTools\\RecordParser::setOutput() must be callable.");
     parser.setOutput(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
   }
 

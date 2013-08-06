@@ -27,7 +27,7 @@ import com.caucho.quercus.env.StringValue;
 
 /**
  * A PHP compatible implementation of the Vert.x HttpServerFileUpload.
- *
+ * 
  * @author Jordan Halterman
  */
 public class HttpServerFileUpload implements ReadStream<HttpServerFileUpload> {
@@ -81,14 +81,16 @@ public class HttpServerFileUpload implements ReadStream<HttpServerFileUpload> {
 
   @Override
   public HttpServerFileUpload dataHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServerFileUpload::dataHandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\Http\\HttpServerFileUpload::dataHandler() must be callable.");
     upload.dataHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
   @Override
   public HttpServerFileUpload endHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServerFileUpload::endHandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\Http\\HttpServerFileUpload::endHandler() must be callable.");
     upload.endHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }

@@ -34,7 +34,7 @@ import com.caucho.quercus.env.LongValue;
 
 /**
  * A PHP compatible implementation of the Vert.x SockJSServer.
- *
+ * 
  * @author Jordan Halterman
  */
 public class SockJSServer {
@@ -49,15 +49,23 @@ public class SockJSServer {
    * Bridges the SockJS app to the event bus.
    */
   @SuppressWarnings("unchecked")
-  public SockJSServer bridge(Env env, ArrayValue config, ArrayValue inboundPermitted, ArrayValue outboundPermitted, @Optional LongValue authTimeout, @Optional StringValue authAddress) {
+  public SockJSServer bridge(Env env, ArrayValue config, ArrayValue inboundPermitted, ArrayValue outboundPermitted,
+      @Optional LongValue authTimeout, @Optional StringValue authAddress) {
     if (authTimeout != null && !authTimeout.isDefault() && authAddress != null && !authAddress.isDefault()) {
-      server.bridge(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), new JsonArray(inboundPermitted.toArray().toJavaList(env, new ArrayList<Object>().getClass())), new JsonArray(outboundPermitted.toJavaList(env, new ArrayList<Object>().getClass())), authTimeout.toLong(), authAddress.toString());
+      server.bridge(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), new JsonArray(
+          inboundPermitted.toArray().toJavaList(env, new ArrayList<Object>().getClass())), new JsonArray(
+          outboundPermitted.toJavaList(env, new ArrayList<Object>().getClass())), authTimeout.toLong(), authAddress
+          .toString());
     }
     else if (authTimeout != null && !authTimeout.isDefault()) {
-      server.bridge(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), new JsonArray(inboundPermitted.toArray().toJavaList(env, new ArrayList<Object>().getClass())), new JsonArray(outboundPermitted.toJavaList(env, new ArrayList<Object>().getClass())), authTimeout.toLong());
+      server.bridge(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), new JsonArray(
+          inboundPermitted.toArray().toJavaList(env, new ArrayList<Object>().getClass())), new JsonArray(
+          outboundPermitted.toJavaList(env, new ArrayList<Object>().getClass())), authTimeout.toLong());
     }
     else {
-      server.bridge(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), new JsonArray(inboundPermitted.toArray().toJavaList(env, new ArrayList<Object>().getClass())), new JsonArray(outboundPermitted.toJavaList(env, new ArrayList<Object>().getClass())));
+      server.bridge(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), new JsonArray(
+          inboundPermitted.toArray().toJavaList(env, new ArrayList<Object>().getClass())), new JsonArray(
+          outboundPermitted.toJavaList(env, new ArrayList<Object>().getClass())));
     }
     return this;
   }
@@ -67,14 +75,16 @@ public class SockJSServer {
    */
   @SuppressWarnings("unchecked")
   public SockJSServer installApp(Env env, ArrayValue config, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\SockJS\\SockJSServer::installApp() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\SockJS\\SockJSServer::installApp() must be callable.");
     server.installApp(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())),
-                      new Handler<org.vertx.java.core.sockjs.SockJSSocket>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.sockjs.SockJSSocket, SockJSSocket>() {
-                        @Override
-                        public SockJSSocket modify(org.vertx.java.core.sockjs.SockJSSocket socket) {
-                          return new SockJSSocket(socket);
-                        }
-                      }));
+        new Handler<org.vertx.java.core.sockjs.SockJSSocket>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.sockjs.SockJSSocket, SockJSSocket>() {
+              @Override
+              public SockJSSocket modify(org.vertx.java.core.sockjs.SockJSSocket socket) {
+                return new SockJSSocket(socket);
+              }
+            }));
     return this;
   }
 

@@ -29,7 +29,7 @@ import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x HttpClientRequest.
- *
+ * 
  * @author Jordan Halterman
  */
 public class HttpClientRequest implements WriteStream<HttpClientRequest>, ExceptionSupport<HttpClientRequest>, Gettable {
@@ -84,7 +84,8 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
   }
 
   public HttpClientRequest continueHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpClientRequest::continueHandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\Http\\HttpClientRequest::continueHandler() must be callable.");
     request.continueHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
@@ -103,7 +104,8 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
 
   @Override
   public HttpClientRequest drainHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpClientRequest::drainHandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\Http\\HttpClientRequest::drainHandler() must be callable.");
     request.drainHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
@@ -135,7 +137,8 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
 
   @Override
   public HttpClientRequest exceptionHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpClientRequest::exceptionhandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\Http\\HttpClientRequest::exceptionhandler() must be callable.");
     request.exceptionHandler(new Handler<Throwable>(env, PhpTypes.toCallable(handler)));
     return this;
   }

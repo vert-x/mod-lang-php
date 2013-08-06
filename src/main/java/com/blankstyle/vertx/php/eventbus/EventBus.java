@@ -33,7 +33,7 @@ import com.caucho.quercus.lib.json.JsonModule;
 
 /**
  * A PHP compatible implementation of the Vert.x EventBus.
- *
+ * 
  * @author Jordan Halterman
  */
 public final class EventBus {
@@ -47,26 +47,32 @@ public final class EventBus {
   }
 
   /**
-   * Registers an address handler in the internal handler map. This
-   * allows us to unregister handlers by the object rather than an ID.
-   *
-   * @param address The address at which the handler is being registered.
-   * @param handler A PHP callable event handler.
+   * Registers an address handler in the internal handler map. This allows us to
+   * unregister handlers by the object rather than an ID.
+   * 
+   * @param address
+   *          The address at which the handler is being registered.
+   * @param handler
+   *          A PHP callable event handler.
    */
-  private org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> createAddressHandler(Env env, String address, Value callback) {
-    org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> handler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, PhpTypes.toCallable(callback), new ResultModifier<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
-      @Override
-      public Message<Object> modify(org.vertx.java.core.eventbus.Message<Object> message) {
-        return new Message<Object>(message);
-      }
-    });
+  private org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> createAddressHandler(Env env,
+      String address, Value callback) {
+    org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> handler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(
+        env, PhpTypes.toCallable(callback),
+        new ResultModifier<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
+          @Override
+          public Message<Object> modify(org.vertx.java.core.eventbus.Message<Object> message) {
+            return new Message<Object>(message);
+          }
+        });
 
     if (!EventBus.handlers.containsKey(address)) {
       Map<Value, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>> hashMap = new HashMap<Value, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>>();
       EventBus.handlers.put(address, hashMap);
     }
     else {
-      Map<Value, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>> hashMap = EventBus.handlers.get(address);
+      Map<Value, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>> hashMap = EventBus.handlers
+          .get(address);
       hashMap.put(callback, handler);
     }
     return handler;
@@ -74,27 +80,34 @@ public final class EventBus {
 
   /**
    * Looks up an existing internal address handler.
-   *
-   * @param address The address at which the handler was registered.
-   * @param callback A PHP callable event handler.
+   * 
+   * @param address
+   *          The address at which the handler was registered.
+   * @param callback
+   *          A PHP callable event handler.
    * @return The internal handler to which the given callable was mapped.
    */
-  private org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> findAddressHandler(Env env, String address, Value callback) {
+  private org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> findAddressHandler(Env env,
+      String address, Value callback) {
     if (!EventBus.handlers.containsKey(address)) {
       return null;
     }
-    Map<Value, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>> hashMap = EventBus.handlers.get(address);
+    Map<Value, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>> hashMap = EventBus.handlers
+        .get(address);
     return hashMap.containsKey(callback) ? hashMap.get(callback) : null;
   }
 
   /**
    * Registers a new event handler.
-   *
-   * @param address The address at which to register the handler.
-   * @param handler The handler to register. This can be any PHP callable.
-   * @param resultHandler An optional handler to be invoke when the handler
-   * registration has been propagated across the cluster. It will be invoked
-   * with a single argument that represents an error if one occurs, else null.
+   * 
+   * @param address
+   *          The address at which to register the handler.
+   * @param handler
+   *          The handler to register. This can be any PHP callable.
+   * @param resultHandler
+   *          An optional handler to be invoke when the handler registration has
+   *          been propagated across the cluster. It will be invoked with a
+   *          single argument that represents an error if one occurs, else null.
    * @return The called object.
    */
   public EventBus registerHandler(Env env, StringValue address, Value handler, @Optional Value resultHandler) {
@@ -102,8 +115,10 @@ public final class EventBus {
     if (PhpTypes.isCallable(env, resultHandler)) {
       // Create Vert.x API compatible handlers. This will wrap PHP callbacks
       // and wrap return values when the handler is invoked.
-      org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> eventHandler = createAddressHandler(env, address.toString(), handler);
-      org.vertx.java.core.Handler<AsyncResult<Void>> resultEventHandler = new VoidAsyncResultHandler(env, PhpTypes.toCallable(resultHandler));
+      org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> eventHandler = createAddressHandler(
+          env, address.toString(), handler);
+      org.vertx.java.core.Handler<AsyncResult<Void>> resultEventHandler = new VoidAsyncResultHandler(env,
+          PhpTypes.toCallable(resultHandler));
 
       eventBus.registerHandler(address.toString(), eventHandler, resultEventHandler);
     }
@@ -115,37 +130,46 @@ public final class EventBus {
 
   /**
    * Registers a new local event handler.
-   *
-   * @param address The address at which to register the handler.
-   * @param handler The handler to register. This can be any PHP callable.
+   * 
+   * @param address
+   *          The address at which to register the handler.
+   * @param handler
+   *          The handler to register. This can be any PHP callable.
    * @return The called object.
    */
   public EventBus registerLocalHandler(Env env, StringValue address, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::registerLocalHandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\EventBus::registerLocalHandler() must be callable.");
     eventBus.registerLocalHandler(address.toString(), createAddressHandler(env, address.toString(), handler));
     return this;
   }
 
   /**
    * Unregisters an event handler.
-   *
-   * @param address The address at which to unregister the handler.
-   * @param handler The handler to unregister. This can be any PHP callable.
+   * 
+   * @param address
+   *          The address at which to unregister the handler.
+   * @param handler
+   *          The handler to unregister. This can be any PHP callable.
    * @return The called object.
    */
   public EventBus unregisterHandler(Env env, StringValue address, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::unregisterHandler() must be callable.");
-    org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> eventHandler = findAddressHandler(env, address.toString(), handler);
+    org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> eventHandler = findAddressHandler(env,
+        address.toString(), handler);
     eventBus.unregisterHandler(address.toString(), eventHandler);
     return this;
   }
 
   /**
    * Sends a point-to-point message on the bus.
-   *
-   * @param address The address to which to send the message.
-   * @param message A mixed value message to send.
-   * @param handler An optional handler to be invoked in response to the message.
+   * 
+   * @param address
+   *          The address to which to send the message.
+   * @param message
+   *          A mixed value message to send.
+   * @param handler
+   *          An optional handler to be invoked in response to the message.
    * @return The called object.
    */
   public EventBus send(Env env, StringValue address, Value message, @Optional Value handler) {
@@ -155,12 +179,13 @@ public final class EventBus {
     if (PhpTypes.notNull(handler)) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::send() must be callable.");
       hasHandler = true;
-      sendHandler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
-        @Override
-        public Message<Object> modify(org.vertx.java.core.eventbus.Message<Object> arg) {
-          return new Message<Object>(arg);
-        }
-      });
+      sendHandler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, PhpTypes.toCallable(handler),
+          new ResultModifier<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
+            @Override
+            public Message<Object> modify(org.vertx.java.core.eventbus.Message<Object> arg) {
+              return new Message<Object>(arg);
+            }
+          });
     }
 
     if (message.isBoolean()) {
@@ -189,7 +214,8 @@ public final class EventBus {
     }
     else if (message.isArray()) {
       if (hasHandler) {
-        eventBus.send(address.toString(), new JsonObject(JsonModule.json_encode(env, message, 0).toString()), sendHandler);
+        eventBus.send(address.toString(), new JsonObject(JsonModule.json_encode(env, message, 0).toString()),
+            sendHandler);
       }
       else {
         eventBus.send(address.toString(), new JsonObject(JsonModule.json_encode(env, message, 0).toString()));
@@ -200,9 +226,11 @@ public final class EventBus {
 
   /**
    * Publishes a message to the event bus.
-   *
-   * @param address The address to which to send the message.
-   * @param message A mixed value message to send.
+   * 
+   * @param address
+   *          The address to which to send the message.
+   * @param message
+   *          A mixed value message to send.
    * @return The called object.
    */
   public EventBus publish(Env env, Value address, Value message) {
@@ -223,10 +251,11 @@ public final class EventBus {
 
   /**
    * Closes the event bus.
-   *
-   * @param handler A handler to invoke when the event bus is closed.
-   * This handler will be called with a single argument which represents
-   * an error if one occurs.
+   * 
+   * @param handler
+   *          A handler to invoke when the event bus is closed. This handler
+   *          will be called with a single argument which represents an error if
+   *          one occurs.
    * @return The called object.
    */
   public void close(Env env, Value handler) {

@@ -31,7 +31,7 @@ import com.caucho.quercus.env.StringValue;
 
 /**
  * A PHP compatible implementation of the Vert.x message.
- *
+ * 
  * @author Jordan Halterman
  */
 public class Message<T> implements Gettable {
@@ -49,10 +49,10 @@ public class Message<T> implements Gettable {
 
   /**
    * Returns the body of the message.
-   *
-   * Note that this method can also be accessed using the magic
-   * PHP getter, i.e. $message->body;
-   *
+   * 
+   * Note that this method can also be accessed using the magic PHP getter, i.e.
+   * $message->body;
+   * 
    * @return The message body.
    */
   public Value body(Env env) {
@@ -61,24 +61,29 @@ public class Message<T> implements Gettable {
 
   /**
    * Replies to the message.
-   *
-   * @param message An optional mixed value message. If no message
-   * is provided in the reply, an empty message will be sent.
-   * @param replyHandler An optional reply handler.
+   * 
+   * @param message
+   *          An optional mixed value message. If no message is provided in the
+   *          reply, an empty message will be sent.
+   * @param replyHandler
+   *          An optional reply handler.
    * @return The called object.
    */
   @SuppressWarnings("unchecked")
   public void reply(Env env, @Optional Value message, @Optional Value replyHandler) {
     if (PhpTypes.notNull(message)) {
       if (PhpTypes.notNull(replyHandler)) {
-        PhpTypes.assertCallable(env, replyHandler, "Handler argument to Vertx\\EventBus\\Message::reply() must be callable.");
+        PhpTypes.assertCallable(env, replyHandler,
+            "Handler argument to Vertx\\EventBus\\Message::reply() must be callable.");
 
-        Handler<org.vertx.java.core.eventbus.Message<T>> handler = new Handler<org.vertx.java.core.eventbus.Message<T>>(env, PhpTypes.toCallable(replyHandler), new ResultModifier<org.vertx.java.core.eventbus.Message<T>, Message<T>>() {
-          @Override
-          public Message<T> modify(org.vertx.java.core.eventbus.Message<T> message) {
-            return new Message<T>(message);
-          }
-        });
+        Handler<org.vertx.java.core.eventbus.Message<T>> handler = new Handler<org.vertx.java.core.eventbus.Message<T>>(
+            env, PhpTypes.toCallable(replyHandler),
+            new ResultModifier<org.vertx.java.core.eventbus.Message<T>, Message<T>>() {
+              @Override
+              public Message<T> modify(org.vertx.java.core.eventbus.Message<T> message) {
+                return new Message<T>(message);
+              }
+            });
 
         if (message.isBoolean()) {
           this.message.reply(message.toBoolean(), handler);
@@ -117,14 +122,16 @@ public class Message<T> implements Gettable {
       }
     }
     else if (PhpTypes.notNull(replyHandler)) {
-      PhpTypes.assertCallable(env, replyHandler, "Handler argument to Vertx\\EventBus\\Message::reply() must be callable.");
+      PhpTypes.assertCallable(env, replyHandler,
+          "Handler argument to Vertx\\EventBus\\Message::reply() must be callable.");
 
-      this.message.reply(new Handler<org.vertx.java.core.eventbus.Message<T>>(env, PhpTypes.toCallable(replyHandler), new ResultModifier<org.vertx.java.core.eventbus.Message<T>, Message<T>>() {
-        @Override
-        public Message<T> modify(org.vertx.java.core.eventbus.Message<T> message) {
-          return new Message<T>(message);
-        }
-      }));
+      this.message.reply(new Handler<org.vertx.java.core.eventbus.Message<T>>(env, PhpTypes.toCallable(replyHandler),
+          new ResultModifier<org.vertx.java.core.eventbus.Message<T>, Message<T>>() {
+            @Override
+            public Message<T> modify(org.vertx.java.core.eventbus.Message<T> message) {
+              return new Message<T>(message);
+            }
+          }));
     }
     else {
       this.message.reply();
@@ -133,7 +140,7 @@ public class Message<T> implements Gettable {
 
   /**
    * The reply address (if any).
-   *
+   * 
    * @return The message reply address.
    */
   public StringValue replyAddress(Env env) {

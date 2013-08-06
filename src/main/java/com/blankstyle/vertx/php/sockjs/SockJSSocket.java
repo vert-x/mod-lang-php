@@ -29,7 +29,7 @@ import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x SockJSSocket.
- *
+ * 
  * @author Jordan Halterman
  */
 public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJSSocket> {

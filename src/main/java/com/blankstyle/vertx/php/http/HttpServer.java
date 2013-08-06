@@ -28,7 +28,7 @@ import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x HttpServer.
- *
+ * 
  * @author Jordan Halterman
  */
 public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
@@ -47,13 +47,16 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
 
   /**
    * Instructs the server to start listening on a host and port.
-   *
-   * @param port The port on which to listen.
-   * @param host The host on which to listen. This is an optional
-   * argument. If the host is not provided then the server will
-   * listen on all available interfaces.
-   * @param handler A PHP callable to execute once the server has
-   * begun listening. This is an optional argument.
+   * 
+   * @param port
+   *          The port on which to listen.
+   * @param host
+   *          The host on which to listen. This is an optional argument. If the
+   *          host is not provided then the server will listen on all available
+   *          interfaces.
+   * @param handler
+   *          A PHP callable to execute once the server has begun listening.
+   *          This is an optional argument.
    * @return The called server instance.
    */
   public HttpServer listen(Env env, NumberValue port, @Optional Value host, @Optional Value handler) {
@@ -63,24 +66,27 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
 
     if (PhpTypes.notNull(host)) {
       if (PhpTypes.isCallable(env, handler)) {
-        server.listen(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.http.HttpServer>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.http.HttpServer, HttpServer>() {
-          @Override
-          public HttpServer wrap(org.vertx.java.core.http.HttpServer server) {
-            return new HttpServer(server);
-          }
-        }));
+        server.listen(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.http.HttpServer>(env,
+            PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.http.HttpServer, HttpServer>() {
+              @Override
+              public HttpServer wrap(org.vertx.java.core.http.HttpServer server) {
+                return new HttpServer(server);
+              }
+            }));
       }
       else {
         server.listen(port.toInt(), host.toString());
       }
     }
     else if (PhpTypes.isCallable(env, handler)) {
-      server.listen(port.toInt(), new AsyncResultHandler<org.vertx.java.core.http.HttpServer>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.http.HttpServer, HttpServer>() {
-        @Override
-        public HttpServer wrap(org.vertx.java.core.http.HttpServer server) {
-          return new HttpServer(server);
-        }
-      }));
+      server.listen(port.toInt(),
+          new AsyncResultHandler<org.vertx.java.core.http.HttpServer>(env, PhpTypes.toCallable(handler),
+              new AsyncResultWrapper<org.vertx.java.core.http.HttpServer, HttpServer>() {
+                @Override
+                public HttpServer wrap(org.vertx.java.core.http.HttpServer server) {
+                  return new HttpServer(server);
+                }
+              }));
     }
     else {
       server.listen(port.toInt());
@@ -90,22 +96,25 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
 
   /**
    * Creates or gets the server request handler.
-   *
-   * @param handler An optional handler. If no handler is provided
-   * then the current request handler will be returned.
+   * 
+   * @param handler
+   *          An optional handler. If no handler is provided then the current
+   *          request handler will be returned.
    */
   public Value requestHandler(Env env, @Optional Value handler) {
     if (PhpTypes.notNull(handler)) {
-      PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServer::requestHandler() must be callable.");
+      PhpTypes.assertCallable(env, handler,
+          "Handler argument to Vertx\\Http\\HttpServer::requestHandler() must be callable.");
     }
 
     if (PhpTypes.isCallable(env, handler)) {
-      server.requestHandler(new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-        @Override
-        public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-          return new HttpServerRequest(request);
-        }
-      }));
+      server.requestHandler(new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+          new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+            @Override
+            public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+              return new HttpServerRequest(request);
+            }
+          }));
       return env.wrapJava(this);
     }
     else {
@@ -136,16 +145,18 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
    */
   public Value websocketHandler(Env env, @Optional Value handler) {
     if (PhpTypes.notNull(handler)) {
-      PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServer::websocketHandler() must be callable.");
+      PhpTypes.assertCallable(env, handler,
+          "Handler argument to Vertx\\Http\\HttpServer::websocketHandler() must be callable.");
     }
 
     if (PhpTypes.isCallable(env, handler)) {
-      server.websocketHandler(new Handler<org.vertx.java.core.http.ServerWebSocket>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.ServerWebSocket, ServerWebSocket>() {
-        @Override
-        public ServerWebSocket modify(org.vertx.java.core.http.ServerWebSocket socket) {
-          return new ServerWebSocket(socket);
-        }
-      }));
+      server.websocketHandler(new Handler<org.vertx.java.core.http.ServerWebSocket>(env, PhpTypes.toCallable(handler),
+          new ResultModifier<org.vertx.java.core.http.ServerWebSocket, ServerWebSocket>() {
+            @Override
+            public ServerWebSocket modify(org.vertx.java.core.http.ServerWebSocket socket) {
+              return new ServerWebSocket(socket);
+            }
+          }));
       return env.wrapJava(this);
     }
     else {

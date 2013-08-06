@@ -24,7 +24,7 @@ import com.caucho.quercus.env.Value;
 
 /**
  * An HTTP route matcher implementation.
- *
+ * 
  * @author Jordan Halterman
  */
 public class RouteMatcher {
@@ -40,12 +40,14 @@ public class RouteMatcher {
    */
   public RouteMatcher all(Env env, StringValue pattern, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::all() must be callable.");
-    matcher.all(pattern.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.all(pattern.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -54,12 +56,14 @@ public class RouteMatcher {
    */
   public RouteMatcher allWithRegex(Env env, StringValue regex, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::allWithRegex() must be callable.");
-    matcher.allWithRegEx(regex.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.allWithRegEx(regex.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -68,12 +72,14 @@ public class RouteMatcher {
    */
   public RouteMatcher connect(Env env, StringValue pattern, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::connect() must be callable.");
-    matcher.connect(pattern.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.connect(pattern.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -81,13 +87,16 @@ public class RouteMatcher {
    * Specify a handler that will be called for a matching HTTP CONNECT.
    */
   public RouteMatcher connectWithRegex(Env env, StringValue regex, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::connectWithRegex() must be callable.");
-    matcher.connectWithRegEx(regex.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    PhpTypes
+        .assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::connectWithRegex() must be callable.");
+    matcher.connectWithRegEx(regex.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -96,12 +105,14 @@ public class RouteMatcher {
    */
   public RouteMatcher get(Env env, StringValue pattern, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::get() must be callable.");
-    matcher.get(pattern.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.get(pattern.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -110,12 +121,14 @@ public class RouteMatcher {
    */
   public RouteMatcher getWithRegex(Env env, StringValue regex, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::getWithRegex() must be callable.");
-    matcher.getWithRegEx(regex.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.getWithRegEx(regex.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -124,12 +137,14 @@ public class RouteMatcher {
    */
   public RouteMatcher post(Env env, StringValue pattern, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::post() must be callable.");
-    matcher.post(pattern.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.post(pattern.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -138,12 +153,14 @@ public class RouteMatcher {
    */
   public RouteMatcher postWithRegex(Env env, StringValue regex, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::postWithRegex() must be callable.");
-    matcher.postWithRegEx(regex.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.postWithRegEx(regex.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -152,12 +169,14 @@ public class RouteMatcher {
    */
   public RouteMatcher put(Env env, StringValue pattern, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::put() must be callable.");
-    matcher.put(pattern.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.put(pattern.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -166,12 +185,14 @@ public class RouteMatcher {
    */
   public RouteMatcher putWithRegex(Env env, StringValue regex, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::putWithRegex() must be callable.");
-    matcher.putWithRegEx(regex.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.putWithRegEx(regex.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -180,12 +201,14 @@ public class RouteMatcher {
    */
   public RouteMatcher delete(Env env, StringValue pattern, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::delete() must be callable.");
-    matcher.delete(pattern.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.delete(pattern.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -194,12 +217,14 @@ public class RouteMatcher {
    */
   public RouteMatcher deleteWithRegex(Env env, StringValue regex, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::deleteWithRegex() must be callable.");
-    matcher.deleteWithRegEx(regex.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.deleteWithRegEx(regex.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -208,12 +233,14 @@ public class RouteMatcher {
    */
   public RouteMatcher head(Env env, StringValue pattern, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::head() must be callable.");
-    matcher.head(pattern.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.head(pattern.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -222,12 +249,14 @@ public class RouteMatcher {
    */
   public RouteMatcher headWithRegex(Env env, StringValue regex, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::headWithRegex() must be callable.");
-    matcher.headWithRegEx(regex.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.headWithRegEx(regex.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -236,12 +265,14 @@ public class RouteMatcher {
    */
   public RouteMatcher trace(Env env, StringValue pattern, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::trace() must be callable.");
-    matcher.trace(pattern.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.trace(pattern.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -250,12 +281,14 @@ public class RouteMatcher {
    */
   public RouteMatcher traceWithRegex(Env env, StringValue regex, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::traceWithRegex() must be callable.");
-    matcher.traceWithRegEx(regex.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.traceWithRegEx(regex.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -264,12 +297,14 @@ public class RouteMatcher {
    */
   public RouteMatcher options(Env env, StringValue pattern, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::options() must be callable.");
-    matcher.options(pattern.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.options(pattern.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -277,13 +312,16 @@ public class RouteMatcher {
    * Specify a handler that will be called for a matching HTTP OPTIONS.
    */
   public RouteMatcher optionsWithRegex(Env env, StringValue regex, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::optionsWithRegex() must be callable.");
-    matcher.optionsWithRegEx(regex.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    PhpTypes
+        .assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::optionsWithRegex() must be callable.");
+    matcher.optionsWithRegEx(regex.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -292,12 +330,14 @@ public class RouteMatcher {
    */
   public RouteMatcher patch(Env env, StringValue pattern, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::patch() must be callable.");
-    matcher.patch(pattern.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.patch(pattern.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -306,12 +346,14 @@ public class RouteMatcher {
    */
   public RouteMatcher patchWithRegex(Env env, StringValue regex, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::patchWithRegex() must be callable.");
-    matcher.patchWithRegEx(regex.toString(), new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.patchWithRegEx(regex.toString(),
+        new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+            new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+              @Override
+              public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+                return new HttpServerRequest(request);
+              }
+            }));
     return this;
   }
 
@@ -320,12 +362,13 @@ public class RouteMatcher {
    */
   public RouteMatcher noMatch(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\RouteMatcher::noMatch() must be callable.");
-    matcher.noMatch(new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
-      @Override
-      public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
-        return new HttpServerRequest(request);
-      }
-    }));
+    matcher.noMatch(new Handler<org.vertx.java.core.http.HttpServerRequest>(env, PhpTypes.toCallable(handler),
+        new ResultModifier<org.vertx.java.core.http.HttpServerRequest, HttpServerRequest>() {
+          @Override
+          public HttpServerRequest modify(org.vertx.java.core.http.HttpServerRequest request) {
+            return new HttpServerRequest(request);
+          }
+        }));
     return this;
   }
 

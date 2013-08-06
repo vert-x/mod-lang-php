@@ -18,7 +18,7 @@ import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x AsyncFile.
- *
+ * 
  * @author Jordan Halterman
  */
 public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<AsyncFile> {
@@ -32,9 +32,11 @@ public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<Async
   /**
    * Reads from the file.
    */
-  public AsyncFile read(Env env, Buffer buffer, NumberValue offset, NumberValue position, NumberValue length, Value handler) {
+  public AsyncFile read(Env env, Buffer buffer, NumberValue offset, NumberValue position, NumberValue length,
+      Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\AsyncFile::read() must be callable.");
-    file.read(buffer, offset.toInt(), position.toInt(), length.toInt(), new AsyncResultHandler<Buffer>(env, PhpTypes.toCallable(handler)));
+    file.read(buffer, offset.toInt(), position.toInt(), length.toInt(),
+        new AsyncResultHandler<Buffer>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -59,7 +61,8 @@ public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<Async
    * Sets the file data handler.
    */
   public AsyncFile dataHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\AsyncFile::dataHandler() must be callable.");
+    PhpTypes
+        .assertCallable(env, handler, "Handler argument to Vertx\\File\\AsyncFile::dataHandler() must be callable.");
     file.dataHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
     return this;
   }
@@ -93,7 +96,8 @@ public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<Async
    * Sets the file drain handler.
    */
   public AsyncFile drainHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\AsyncFile::drainHandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\File\\AsyncFile::drainHandler() must be callable.");
     file.drainHandler(new VoidHandler(env, PhpTypes.toCallable(handler)));
     return this;
   }
@@ -144,7 +148,8 @@ public final class AsyncFile implements ReadStream<AsyncFile>, WriteStream<Async
    * Sets the socket exception handler callback.
    */
   public AsyncFile exceptionHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\AsyncFile::exceptionHandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\File\\AsyncFile::exceptionHandler() must be callable.");
     file.exceptionHandler(new Handler<Throwable>(env, PhpTypes.toCallable(handler)));
     return this;
   }

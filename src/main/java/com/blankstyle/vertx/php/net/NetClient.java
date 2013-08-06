@@ -31,7 +31,7 @@ import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x NetClient.
- *
+ * 
  * @author Jordan Halterman
  */
 public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
@@ -53,20 +53,23 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
     }
 
     if (PhpTypes.notNull(host)) {
-      client.connect(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.net.NetSocket>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.net.NetSocket, NetSocket>() {
-        @Override
-        public NetSocket wrap(org.vertx.java.core.net.NetSocket socket) {
-          return new NetSocket(socket);
-        }
-      }));
+      client.connect(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.net.NetSocket>(env,
+          PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.net.NetSocket, NetSocket>() {
+            @Override
+            public NetSocket wrap(org.vertx.java.core.net.NetSocket socket) {
+              return new NetSocket(socket);
+            }
+          }));
     }
     else {
-      client.connect(port.toInt(), new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.net.NetSocket, NetSocket>() {
-        @Override
-        public NetSocket wrap(org.vertx.java.core.net.NetSocket socket) {
-          return new NetSocket(socket);
-        }
-      }));
+      client.connect(port.toInt(),
+          new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, PhpTypes.toCallable(handler),
+              new AsyncResultWrapper<org.vertx.java.core.net.NetSocket, NetSocket>() {
+                @Override
+                public NetSocket wrap(org.vertx.java.core.net.NetSocket socket) {
+                  return new NetSocket(socket);
+                }
+              }));
     }
     return this;
   }

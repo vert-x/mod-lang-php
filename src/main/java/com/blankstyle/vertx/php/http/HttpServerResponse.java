@@ -30,10 +30,11 @@ import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x HttpServerResponse.
- *
+ * 
  * @author Jordan Halterman
  */
-public class HttpServerResponse implements WriteStream<HttpServerResponse>, ExceptionSupport<HttpServerResponse>, Gettable, Settable {
+public class HttpServerResponse implements WriteStream<HttpServerResponse>, ExceptionSupport<HttpServerResponse>,
+    Gettable, Settable {
 
   private org.vertx.java.core.http.HttpServerResponse response;
 
@@ -140,13 +141,15 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
 
   @Override
   public HttpServerResponse drainHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServerResponse::drainHandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\Http\\HttpServerResponse::drainHandler() must be callable.");
     response.drainHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
   public HttpServerResponse closeHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServerResponse::closeHandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\Http\\HttpServerResponse::closeHandler() must be callable.");
     response.closeHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
@@ -169,7 +172,8 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
 
   @Override
   public HttpServerResponse writeQueueMaxSize(Env env, NumberValue size) {
-    PhpTypes.assertNotNull(env, size, "Size to Vertx\\Http\\HttpServerResponse::writeQueueMaxSize() must be an integer.");
+    PhpTypes.assertNotNull(env, size,
+        "Size to Vertx\\Http\\HttpServerResponse::writeQueueMaxSize() must be an integer.");
     response.setWriteQueueMaxSize(size.toInt());
     return this;
   }
@@ -181,7 +185,8 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
 
   @Override
   public HttpServerResponse exceptionHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpServerResponse::exceptionHandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\Http\\HttpServerResponse::exceptionHandler() must be callable.");
     response.exceptionHandler(new Handler<Throwable>(env, PhpTypes.toCallable(handler)));
     return this;
   }

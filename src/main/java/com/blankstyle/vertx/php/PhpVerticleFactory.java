@@ -30,10 +30,9 @@ import com.caucho.quercus.env.Env;
 
 /**
  * A PHP verticle factory.
- *
- * The PHP implementation is run on the Java-based Quercus
- * PHP engine.
- *
+ * 
+ * The PHP implementation is run on the Java-based Quercus PHP engine.
+ * 
  * @author Jordan Halterman
  */
 public class PhpVerticleFactory implements VerticleFactory {
@@ -83,14 +82,17 @@ public class PhpVerticleFactory implements VerticleFactory {
       String funcName = location.getFunctionName();
       if (funcName != null && funcName != "NULL" && !funcName.startsWith("__quercus_")) {
         if (className != "NULL" && funcName != "NULL" && !funcName.startsWith("__quercus_")) {
-          logger.error(String.format("%s in %s on line %d in %s::%s()", t.getMessage(), location.getFileName(), location.getLineNumber(), className, funcName));
+          logger.error(String.format("%s in %s on line %d in %s::%s()", t.getMessage(), location.getFileName(),
+              location.getLineNumber(), className, funcName));
         }
         else {
-          logger.error(String.format("%s in %s on line %d in %s()", t.getMessage(), location.getFileName(), location.getLineNumber(), funcName));
+          logger.error(String.format("%s in %s on line %d in %s()", t.getMessage(), location.getFileName(),
+              location.getLineNumber(), funcName));
         }
       }
       else {
-        logger.error(String.format("%s in %s on line %d", t.getMessage(), location.getFileName(), location.getLineNumber()));
+        logger.error(String.format("%s in %s on line %d", t.getMessage(), location.getFileName(),
+            location.getLineNumber()));
       }
     }
     else {
@@ -103,7 +105,7 @@ public class PhpVerticleFactory implements VerticleFactory {
    */
   @Override
   public void close() {
-    
+
   }
 
   /**

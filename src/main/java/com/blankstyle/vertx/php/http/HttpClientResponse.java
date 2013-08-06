@@ -28,10 +28,11 @@ import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x HttpClientResponse.
- *
+ * 
  * @author Jordan Halterman
  */
-public class HttpClientResponse implements ReadStream<HttpClientResponse>, ExceptionSupport<HttpClientResponse>, Gettable {
+public class HttpClientResponse implements ReadStream<HttpClientResponse>, ExceptionSupport<HttpClientResponse>,
+    Gettable {
 
   private org.vertx.java.core.http.HttpClientResponse response;
 
@@ -86,27 +87,31 @@ public class HttpClientResponse implements ReadStream<HttpClientResponse>, Excep
 
   @Override
   public HttpClientResponse dataHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpClientResponse::dataHandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\Http\\HttpClientResponse::dataHandler() must be callable.");
     response.dataHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
   public HttpClientResponse bodyHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpClientResponse::bodyHandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\Http\\HttpClientResponse::bodyHandler() must be callable.");
     response.bodyHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
   @Override
   public HttpClientResponse endHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpClientResponse::endHandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\Http\\HttpClientResponse::endHandler() must be callable.");
     response.endHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
   @Override
   public HttpClientResponse exceptionHandler(Env env, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Http\\HttpClientResponse::exceptionHandler() must be callable.");
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\Http\\HttpClientResponse::exceptionHandler() must be callable.");
     response.exceptionHandler(new Handler<Throwable>(env, PhpTypes.toCallable(handler)));
     return this;
   }

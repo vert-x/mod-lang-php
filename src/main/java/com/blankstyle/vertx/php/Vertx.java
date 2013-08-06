@@ -43,11 +43,10 @@ import com.caucho.quercus.env.LongValue;
 
 /**
  * A static Vertx instance access class.
- *
- * This is a PHP compatible class that acts as the primary
- * interface for interacting with the Vert.x core API
- * within PHP.
- *
+ * 
+ * This is a PHP compatible class that acts as the primary interface for
+ * interacting with the Vert.x core API within PHP.
+ * 
  * @author Jordan Halterman
  */
 public final class Vertx {
@@ -88,16 +87,16 @@ public final class Vertx {
   }
 
   /**
-   * Returns a boolean value indicating whether the current
-   * thread is an event loop thread.
+   * Returns a boolean value indicating whether the current thread is an event
+   * loop thread.
    */
   public static BooleanValue isEventLoop(Env env) {
     return BooleanValue.create(PhpVerticleFactory.vertx.isEventLoop());
   }
 
   /**
-   * Returns a boolean value indicating whether the current
-   * thread is a worker thread.
+   * Returns a boolean value indicating whether the current thread is a worker
+   * thread.
    */
   public static BooleanValue isWorker(Env env) {
     return BooleanValue.create(PhpVerticleFactory.vertx.isWorker());
@@ -128,14 +127,15 @@ public final class Vertx {
    * Returns the current Vertx context.
    */
   public static Context currentContext(Env env) {
-   return new Context(PhpVerticleFactory.vertx.currentContext());
+    return new Context(PhpVerticleFactory.vertx.currentContext());
   }
 
   /**
-   * Put the handler on the event queue for the current loop
-   * (or worker context) so it will be run asynchronously ASAP
-   * after this event has been processed
-   * @param callback A callable PHP function, method, or closure.
+   * Put the handler on the event queue for the current loop (or worker context)
+   * so it will be run asynchronously ASAP after this event has been processed
+   * 
+   * @param callback
+   *          A callable PHP function, method, or closure.
    */
   public static void runOnContext(Env env, Value handler) {
     currentContext(env).runOnContext(env, handler);
@@ -161,8 +161,9 @@ public final class Vertx {
 
   /**
    * Cancels the timer with the specified id.
-   *
-   * @param id The timer id.
+   * 
+   * @param id
+   *          The timer id.
    * @return A value indicating whether the timer was successfully cancelled.
    */
   public static BooleanValue cancelTimer(Env env, LongValue id) {
@@ -181,19 +182,24 @@ public final class Vertx {
    * Deploys a module.
    */
   @SuppressWarnings("unchecked")
-  public static void deployModule(Env env, StringValue moduleName, @Optional ArrayValue config, @Optional("1") NumberValue instances, @Optional Value handler) {
+  public static void deployModule(Env env, StringValue moduleName, @Optional ArrayValue config,
+      @Optional("1") NumberValue instances, @Optional Value handler) {
     boolean hasConfig = PhpTypes.notNull(config);
     boolean hasHandler = PhpTypes.notNull(handler);
     if (hasConfig && hasHandler) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployModule() must be callable.");
-      PhpVerticleFactory.container.deployModule(moduleName.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(), new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
+      PhpVerticleFactory.container.deployModule(moduleName.toString(),
+          new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(),
+          new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
     }
     else if (hasConfig) {
-      PhpVerticleFactory.container.deployModule(moduleName.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
+      PhpVerticleFactory.container.deployModule(moduleName.toString(),
+          new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
     }
     else if (hasHandler) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployModule() must be callable.");
-      PhpVerticleFactory.container.deployModule(moduleName.toString(), instances.toInt(), new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
+      PhpVerticleFactory.container.deployModule(moduleName.toString(), instances.toInt(),
+          new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
     }
     else {
       PhpVerticleFactory.container.deployModule(moduleName.toString(), instances.toInt());
@@ -206,7 +212,8 @@ public final class Vertx {
   public static void undeployModule(Env env, StringValue deploymentID, @Optional Value handler) {
     if (PhpTypes.notNull(handler)) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::undeployModule() must be callable.");
-      PhpVerticleFactory.container.undeployModule(deploymentID.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      PhpVerticleFactory.container.undeployModule(deploymentID.toString(),
+          new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
     }
     else {
       PhpVerticleFactory.container.undeployModule(deploymentID.toString());
@@ -217,19 +224,24 @@ public final class Vertx {
    * Deploys a verticle.
    */
   @SuppressWarnings("unchecked")
-  public static void deployVerticle(Env env, StringValue main, @Optional ArrayValue config, @Optional("1") NumberValue instances, @Optional Value handler) {
+  public static void deployVerticle(Env env, StringValue main, @Optional ArrayValue config,
+      @Optional("1") NumberValue instances, @Optional Value handler) {
     boolean hasConfig = PhpTypes.notNull(config);
     boolean hasHandler = PhpTypes.notNull(handler);
     if (hasConfig && hasHandler) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployVerticle() must be callable.");
-      PhpVerticleFactory.container.deployVerticle(main.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(), new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
+      PhpVerticleFactory.container.deployVerticle(main.toString(),
+          new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(),
+          new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
     }
     else if (hasConfig) {
-      PhpVerticleFactory.container.deployVerticle(main.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
+      PhpVerticleFactory.container.deployVerticle(main.toString(),
+          new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
     }
     else if (hasHandler) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployVerticle() must be callable.");
-      PhpVerticleFactory.container.deployVerticle(main.toString(), instances.toInt(), new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
+      PhpVerticleFactory.container.deployVerticle(main.toString(), instances.toInt(), new Handler<AsyncResult<String>>(
+          env, PhpTypes.toCallable(handler)));
     }
     else {
       PhpVerticleFactory.container.deployVerticle(main.toString(), instances.toInt());
@@ -242,7 +254,8 @@ public final class Vertx {
   public static void undeployVerticle(Env env, StringValue deploymentID, @Optional Value handler) {
     if (PhpTypes.notNull(handler)) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::undeployVerticle() must be callable.");
-      PhpVerticleFactory.container.undeployVerticle(deploymentID.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      PhpVerticleFactory.container.undeployVerticle(deploymentID.toString(), new Handler<AsyncResult<Void>>(env,
+          PhpTypes.toCallable(handler)));
     }
     else {
       PhpVerticleFactory.container.undeployVerticle(deploymentID.toString());
@@ -253,10 +266,12 @@ public final class Vertx {
    * Deploys a verticle.
    */
   @SuppressWarnings("unchecked")
-  public static void deployWorkerVerticle(Env env, StringValue main, @Optional ArrayValue config, @Optional("1") NumberValue instances) {
+  public static void deployWorkerVerticle(Env env, StringValue main, @Optional ArrayValue config,
+      @Optional("1") NumberValue instances) {
     boolean hasConfig = config != null && !config.isDefault();
     if (hasConfig) {
-      PhpVerticleFactory.container.deployWorkerVerticle(main.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
+      PhpVerticleFactory.container.deployWorkerVerticle(main.toString(),
+          new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
     }
     else {
       PhpVerticleFactory.container.deployWorkerVerticle(main.toString(), instances.toInt());

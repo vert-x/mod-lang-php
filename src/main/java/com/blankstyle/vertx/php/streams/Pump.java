@@ -26,7 +26,7 @@ import com.caucho.quercus.env.Value;
 
 /**
  * A PHP compatible implementation of the Vert.x Pump.
- *
+ * 
  * @author Jordan Halterman
  */
 public class Pump {
@@ -139,7 +139,8 @@ public class Pump {
     }
   };
 
-  public Pump(Env env, ReadStream<?> readStream, WriteStream<?> writeStream, @Optional NumberValue writeQueueMaxSize) {
+  public Pump(Env env, ReadStream<?> readStream, WriteStream<?> writeStream,
+      @Optional NumberValue writeQueueMaxSize) {
     this.env = env;
     this.readStream = readStream;
     this.writeStream = writeStream;
@@ -151,7 +152,8 @@ public class Pump {
   /**
    * Creates a new pump.
    */
-  public static Pump createPump(Env env, ReadStream<?> readStream, WriteStream<?> writeStream, @Optional NumberValue writeQueueMaxSize) {
+  public static Pump createPump(Env env, ReadStream<?> readStream, WriteStream<?> writeStream,
+      @Optional NumberValue writeQueueMaxSize) {
     return new Pump(env, readStream, writeStream, writeQueueMaxSize);
   }
 
