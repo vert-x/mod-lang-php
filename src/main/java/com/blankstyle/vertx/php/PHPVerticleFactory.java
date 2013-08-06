@@ -41,9 +41,9 @@ public class PHPVerticleFactory implements VerticleFactory {
   @SuppressWarnings("unused")
   private ClassLoader cl;
 
-  private static org.vertx.java.core.Vertx vertx;
+  static org.vertx.java.core.Vertx vertx;
 
-  private static org.vertx.java.platform.Container container;
+  static org.vertx.java.platform.Container container;
 
   /**
    * Initializes the factory.
