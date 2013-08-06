@@ -219,7 +219,7 @@ connections and any data received by it is echoed back on the connection.
 Copy the following into a text editor and save it as `server.php`
 
 ```php
-use Vertx\Streams\Pump;
+use Vertx\Pump;
 
 $server = Vertx::createNetServer();
 
@@ -250,10 +250,10 @@ TODO
 If JSON configuration has been passed when deploying a verticle from either the
 command line using `vertx run` or `vertx deploy` and specifying a configuration
 file, or when deploying programmatically, that configuration is available to
-the verticle through the static `Container` class by calling `Container::config`.
+the verticle through the static `Vertx` class by calling `Vertx::config`.
 
 ```php
-$config = Container::config();
+$config = Vertx::config();
 
 print_r($config);
 ```
@@ -263,10 +263,10 @@ The config returned is an associative array.
 ## Logging from a Verticle
 
 Each verticle is given its own logger which can also be accessed via the
-static `Container` class by calling `Container::logger`:
+static `Vertx` class by calling `Vertx::logger`:
 
 ```php
-$log = Container::logger();
+$log = Vertx::logger();
 $log->info('I am loggin something!');
 ```
 
@@ -288,19 +288,19 @@ For more information on configuring logging, please see the main manual.
 
 ## Accessing environment variables from a Verticle
 
-You can access environment variables from a Verticle from the static `Container`
-class by calling `Container::env`.
+You can access environment variables from a Verticle from the static `Vertx`
+class by calling `Vertx::env`.
 
 ```php
-$env = Container::env();
+$env = Vertx::env();
 ```
 
 ## Causing the container to exit
 
-To exit the container, simply call the static `Container::exit` method.
+To exit the container, simply call the static `Vertx::exit` method.
 
 ```php
-Container::exit();
+Vertx::exit();
 ```
 
 # Deploying and Undeploying Verticles Programmatically
@@ -311,14 +311,14 @@ parent verticle.
 
 ## Deploying a simple verticle
 
-To deploy a verticle programmatically call the static method `Container::deployVerticle`.
-The return value of `Container::deployVerticle` is the unique id of the deployment,
+To deploy a verticle programmatically call the static method `Vertx::deployVerticle`.
+The return value of `Vertx::deployVerticle` is the unique id of the deployment,
 which can be used later to undeploy the verticle.
 
 To deploy a single instance of a verticle :
 
 ```php
-$id = Container::deployVerticl('my_verticle.php');
+$id = Vertx::deployVerticle('my_verticle.php');
 ```
 
 ## Deploying a module programmatically
@@ -326,7 +326,7 @@ $id = Container::deployVerticl('my_verticle.php');
 You should use `deployModule` to deploy a module, for example:
 
 ```php
-Container::deployModule('vertx.mailer-v1.0', $config);
+Vertx::deployModule('vertx.mailer-v1.0', $config);
 ```
 
 Would deploy an instance of the `vertx.mailer` module with the specified
@@ -336,24 +336,24 @@ configuration. Please see the modules manual for more information about modules.
   
 A configuration array can be passed to a verticle that is deployed
 programmatically. Inside the deployed verticle the configuration is
-accessed with the `Container::config` static method. For example:
+accessed with the `Vertx::config` static method. For example:
 
 ```php
 $config = array(
   'name' => 'foo',
   'age' => 234,
 );
-Container::deployVerticle('my_verticle.php', $config);
+Vertx::deployVerticle('my_verticle.php', $config);
 ```
 
-Then, in `my_verticle.php` you can access the config via `Container::config`
+Then, in `my_verticle.php` you can access the config via `Vertx::config`
 as previously explained.
 
 `my_verticle.php`
 
 ```php
 <?php
-$config = Container::config();
+$config = Vertx::config();
 print_r($config);
 ```
 
@@ -387,11 +387,11 @@ $config = array(
 );
 
 // Start the verticles that make up the app.
-Container::deployVerticle('verticle1.php', $config['verticle1config']);
-Container::deployVerticle('verticle2.php', $config['verticle2config']);
-Container::deployVerticle('verticle3.php', $config['verticle3config']);
-Container::deployVerticle('verticle4.php', $config['verticle4config']);
-Container::deployVerticle('verticle5.php', $config['verticle5config']);
+Vertx::deployVerticle('verticle1.php', $config['verticle1config']);
+Vertx::deployVerticle('verticle2.php', $config['verticle2config']);
+Vertx::deployVerticle('verticle3.php', $config['verticle3config']);
+Vertx::deployVerticle('verticle4.php', $config['verticle4config']);
+Vertx::deployVerticle('verticle5.php', $config['verticle5config']);
 ```
 
 Then you can start your entire application by simply running:
@@ -409,7 +409,7 @@ is deployed. If you want more than one instance to be deployed, e.g. so
 you can scale over your cores better, you can specify the number of
 instances as follows:
 
-    Container::deployVerticle('my_verticle.php', NULL, 10);   
+    Vertx::deployVerticle('my_verticle.php', NULL, 10);   
   
 The above example would deploy 10 instances.
 
@@ -421,8 +421,8 @@ want to be notified when the verticle has completed being deployed, you
 can pass a handler as the final argument to `deployVerticle`:
 
 ```php
-Container::deployVerticle('my_verticle.php', NULL, 10, function() use ($log) {
-    $log->info("It's been deployed!");
+Vertx::deployVerticle('my_verticle.php', NULL, 10, function() use ($log) {
+  $log->info("It's been deployed!");
 });
 ```
 
@@ -432,8 +432,8 @@ _must include any external variables in the closure with the `use` keyword_.
 ## Deploying Worker Verticles
 
 The `vertx::deployVerticle` method deploys standard (non worker) verticles.
-If you want to deploy worker verticles use the `Container::deployWorkerVerticle`
-static method. This method takes the same parameters as `Container::deployVerticle`
+If you want to deploy worker verticles use the `Vertx::deployWorkerVerticle`
+static method. This method takes the same parameters as `Vertx::deployVerticle`
 with the same meanings.
 
 ## Undeploying a Verticle
@@ -442,13 +442,13 @@ Any verticles that you deploy programmatically from within a verticle, and
 all of their children are automatically undeployed when the parent verticle
 is undeployed, so in most cases you will not need to undeploy a verticle
 manually, however if you do want to do this, it can be done by calling the
-static `Container::undeployVerticle` method and passing in the deployment id
-that was returned from the call to `Container::deployVerticle`
+static `Vertx::undeployVerticle` method and passing in the deployment id
+that was returned from the call to `Vertx::deployVerticle`
 
 ```php
-$deployID = Container::deployVerticle('my_verticle.php');
+$deployID = Vertx::deployVerticle('my_verticle.php');
 
-Container::undeployVerticle($deployID);
+Vertx::undeployVerticle($deployID);
 ```
 
 # The Event Bus
@@ -552,7 +552,7 @@ To set a message handler on the address `test.address`, you do the following:
 
 ```php
 $eventBus = Vertx::eventBus();
-$log = Container::logger();
+$log = Vertx::logger();
 
 $myHandler = function($message) use ($log) {
   $log->info('I received a message '. $message->body);
@@ -645,7 +645,7 @@ make this clear:
 The receiver:
 
 ```php
-$log = Container::logger();
+$log = Vertx::logger();
 
 $myHandler = function($message) use ($log) {
   $log->info('I received a message '. $message->body);
@@ -659,7 +659,7 @@ $eventBus->registerHandler('test.address', $myHandler);
 The sender:
 
 ```php
-$log = Container::logger();
+$log = Vertx::logger();
 
 $eventBus->send('test.address', 'This is a message', function($reply) use ($log) {
   $log->info('I received a reply '. $reply->body);
@@ -770,7 +770,7 @@ And then, in a different verticle:
 
 ```php
 $map = $sharedData->getMap('demo.mymap');
-Container::logger()->info('value of some-key is '. $map->get('some-key'));
+Vertx::logger()->info('value of some-key is '. $map->get('some-key'));
 ```
 
 ## Shared Sets
@@ -803,7 +803,7 @@ Create a buffer from a String. The String will be encoded in the buffer using
 UTF-8.
 
 ```php
-use Vertx\Buffer\Buffer;
+use Vertx\Buffer;
 
 $buff = new Buffer('some-string');
 ```
@@ -812,7 +812,7 @@ Create a buffer from a String: The String will be encoded using the specified
 encoding, e.g:
 
 ```php
-use Vertx\Buffer\Buffer;
+use Vertx\Buffer;
 
 $buff = new Buffer('some-string', 'UTF-16');
 ```
@@ -827,7 +827,7 @@ Note that buffers created this way *are empty*. It does not create a buffer
 filled with zeros up to the specified size.
 
 ```php
-$buff = new Vertx\Buffer\Buffer(100000);
+$buff = new Vertx\Buffer(100000);
 ```
 
 ## Writing to a Buffer
@@ -845,7 +845,7 @@ The return value of the `appendXXX` methods is the buffer itself, so these can
 be chained:
 
 ```php
-$buff = new Vertx\Buffer\Buffer();
+$buff = new Vertx\Buffer();
 $buff->appendInt(123)->appendString('hello')->appendChar('\n');
 
 $socket->write($buff);
@@ -897,7 +897,7 @@ the buffer where to start writing the data.
 The buffer will always expand as necessary to accomodate the data.
 
 ```php
-$buff = new Vertx\Buffer\Buffer();
+$buff = new Vertx\Buffer();
 
 $buff->setInt(1000, 123);
 $buff->setBytes(0, "hello");
@@ -946,10 +946,10 @@ strings and numbers. The first argument to these methods is an index in the
 buffer from where to get the data.
 
 ```php
-$buff = new Vertx\Buffer\Buffer();
+$buff = new Vertx\Buffer();
 
 for ($i = 0; $i < $buff->length(); $i += 4) {
-  Container::logger()->info('int value at '. $i .' is '. $buff->getInt($i));
+  Vertx::logger()->info('int value at '. $i .' is '. $buff->getInt($i));
 }
 ```
 
@@ -1107,7 +1107,7 @@ connection is made:
 
 ```php
 $server = Vertx::createNetServer();
-$log = Container::logger();
+$log = Vertx::logger();
 
 $server->connectHandler(function($socket) use ($log) {
   $log->info('A client has connected!');
@@ -1124,7 +1124,7 @@ invocations can be chained together. That means we can rewrite the above as:
 
 ```php
 $server = Vertx::createNetServer();
-$log = Container::logger();
+$log = Vertx::logger();
 
 $server->connectHandler(function($socket) use ($log) {
   $log->info('A client has connected!');
@@ -1134,7 +1134,7 @@ $server->connectHandler(function($socket) use ($log) {
 or 
 
 ```php
-$log = Container::logger();
+$log = Vertx::logger();
 
 Vertx::createNetServer()->connectHandler(function($socket) use ($log) {
   $log->info('A client has connected!');
@@ -1239,7 +1239,7 @@ invoked in a few ways:
 With a single buffer:
 
 ```php
-$myBuffer = new Vertx\Buffer\Buffer();
+$myBuffer = new Vertx\Buffer();
 $socket->write($myBuffer);
 ```
 
@@ -1277,7 +1277,7 @@ Here's an example of a simple TCP echo server which simply writes back (echoes)
 everything that it receives on the socket:
 
 ```php
-$log = Container::logger();
+$log = Vertx::logger();
 
 $server = Vertx::createNetServer();
 
@@ -1725,7 +1725,7 @@ write queue is ready to accept more data, this resumes the `NetSocket` which
 allows it to read more data.
 
 It's very common to want to do this when writing vert.x applications, so we
-provide a helper class called `Vertx\Streams\Pump` which does all this hard work
+provide a helper class called `Vertx\Pump` which does all this hard work
 for you. You just feed it the `ReadStream` and the `WriteStream` and it tell it
 to start:
 
@@ -1734,7 +1734,7 @@ $server = Vertx::createNetServer();
 
 $server->connectHandler(function($socket) {
 
-  $pump = new Vertx\Streams\Pump($socket, $socket);
+  $pump = new Vertx\Pump($socket, $socket);
   $pump->start();
 
 })->listen(1234, 'localhost');
@@ -1786,7 +1786,7 @@ is considered no longer full.
 
 ## Pump
 
-Instances of `Vertx\Streams\Pump` have the following methods:
+Instances of `Vertx\Pump` have the following methods:
 
 * `start()`: Start the pump.
 * `stop()`: Stops the pump. When the pump starts it is in stopped mode.
@@ -2002,7 +2002,7 @@ $server = Vertx::createHttpServer();
 
 $server->requestHandler(function($request) use ($log) {
 
-  $body = new Vertx\Buffer\Buffer();
+  $body = new Vertx\Buffer();
 
   $request->dataHandler(function($buffer) {
     $body->appendBuffer($buffer);
@@ -2080,7 +2080,7 @@ be invoked in a few ways:
 With a single buffer:
 
 ```php
-$myBuffer = new Vertx\Buffer\Buffer();
+$myBuffer = new Vertx\Buffer();
 $request->response->write($myBuffer);
 ```
 
@@ -2257,7 +2257,7 @@ It uses a pump for the body, so it will work even if the HTTP request body is
 much larger than can fit in memory at any one time:
 
 ```php
-use Vertx\Streams\Pump;
+use Vertx\Pump;
 
 $server = Vertx::createHttpServer();
 
@@ -2450,7 +2450,7 @@ be invoked in a few ways:
 With a single buffer:
 
 ```php
-$myBuffer = new Vertx\Buffer\Buffer();
+$myBuffer = new Vertx\Buffer();
 
 $request->write($myBuffer);
 ```
@@ -2609,7 +2609,7 @@ As with a server request, if you wanted to read the entire response body before
 doing something with it you could do something like the following:
 
 ```php
-use Vertx\Buffer\Buffer;
+use Vertx\Buffer;
 
 $client = Vertx::createHttpClient()->host('foo.com');
 
@@ -2901,8 +2901,8 @@ See the chapter on `NetSocket` and streams and pumps for more information.
 For example, to echo all data received on a WebSocket:
 
 ```php
-// Include the Pump from the Vertx\Streams namespace.
-use Vertx\Streams\Pump;
+// Include the Pump from the Vertx namespace.
+use Vertx\Pump;
 
 $server = Vertx::createHttpServer();
 
@@ -2921,7 +2921,7 @@ Another method `writeTextFrame` also exists for writing text data. This is
 equivalent to calling 
 
 ```php
-$websocket->writeBuffer(new Vertx\Buffer\Buffer('some-string'));
+$websocket->writeBuffer(new Vertx\Buffer('some-string'));
 ```
 
 ### Rejecting WebSockets
@@ -2932,7 +2932,7 @@ To check the path, you can query the `path` property of the `websocket`. You can
 then call the `reject` function to reject the websocket.
 
 ```php
-use Vertx\Streams\Pump;
+use Vertx\Pump;
 
 $server = Vertx::createHttpServer();
 
@@ -3063,7 +3063,7 @@ $sockJSServer = Vertx::createSockJSServer($httpServer);
 $config = array('prefix' => '/echo');
 
 $sockJSServer->installApp($config, function($socket) {
-  $pump = new Vertx\Streams\Pump($socket, $socket);
+  $pump = new Vertx\Pump($socket, $socket);
   $pump->start();
 });
 
@@ -3771,7 +3771,7 @@ to accomodate the offset.
 Here is an example of random access writes:
 
 ```php
-use Vertx\Buffer\Buffer;
+use Vertx\Buffer;
 
 Vertx::fileSystem()->open('some-file.dat', function($asyncFile, $error) use ($log) {
   if ($error) {
@@ -3810,7 +3810,7 @@ The parameters to the method are:
 Here's an example of random access reads:
 
 ```php
-use Vertx\Buffer\Buffer;
+use Vertx\Buffer;
 
 Vertx::fileSystem()->open('some-file.dat', function($asyncFile, $error) use ($log) {
   if ($error) {
@@ -3846,7 +3846,7 @@ pumps and other related APIs.
 Here's an example of pumping data from a file on a client to a HTTP request:
 
 ```php
-use Vertx\Streams\Pump;
+use Vertx\Pump;
 
 $client = Vertx::createHttpClient()->host('foo.com');
 
@@ -3878,7 +3878,7 @@ a handler function as an argument to `close`.
 
 ```php
 $fileSystem->close(function() {
-  Container::logger()->info('File system was closed!');
+  Vertx::logger()->info('File system was closed!');
 });
 ```
 

@@ -15,6 +15,11 @@
  */
 package com.blankstyle.vertx.php;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.vertx.java.core.AsyncResult;
+import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.core.logging.Logger;
 import org.vertx.java.core.shareddata.SharedData;
 
@@ -26,7 +31,12 @@ import com.blankstyle.vertx.php.net.NetClient;
 import com.blankstyle.vertx.php.net.NetServer;
 import com.blankstyle.vertx.php.sockjs.SockJSServer;
 import com.blankstyle.vertx.php.util.PhpTypes;
+import com.caucho.quercus.annotation.Optional;
+import com.caucho.quercus.env.ArrayValue;
+import com.caucho.quercus.env.ArrayValueImpl;
 import com.caucho.quercus.env.BooleanValue;
+import com.caucho.quercus.env.NumberValue;
+import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.LongValue;
@@ -42,59 +52,39 @@ import com.caucho.quercus.env.LongValue;
  */
 public final class Vertx {
 
-  private static org.vertx.java.core.Vertx instance;
-
-  /**
-   * Initializes the static internal Vertx instance.
-   *
-   * @param instance The Vert.x Vertx instance.
-   */
-  public static void init(org.vertx.java.core.Vertx instance) {
-    if (Vertx.instance == null) {
-      Vertx.instance = instance;
-    }
-  }
-
-  /**
-   * Allows the Vert.x logger to be accessed via the static Vertx PHP class.
-   */
-  public static Logger logger(Env env) {
-    return Container.logger();
-  }
-
   /**
    * Creates a TCP/SSL server.
    */
   public static NetServer createNetServer(Env env) {
-    return new NetServer(Vertx.instance.createNetServer());
+    return new NetServer(PhpVerticleFactory.vertx.createNetServer());
   }
 
   /**
    * Creates a TCP/SSL client.
    */
   public static NetClient createNetClient(Env env) {
-    return new NetClient(Vertx.instance.createNetClient());
+    return new NetClient(PhpVerticleFactory.vertx.createNetClient());
   }
 
   /**
    * Creates an HTTP/HTTPS server.
    */
   public static HttpServer createHttpServer(Env env) {
-    return new HttpServer(Vertx.instance.createHttpServer());
+    return new HttpServer(PhpVerticleFactory.vertx.createHttpServer());
   }
 
   /**
    * Creates an HTTP/HTTPS client.
    */
   public static HttpClient createHttpClient(Env env) {
-    return new HttpClient(Vertx.instance.createHttpClient());
+    return new HttpClient(PhpVerticleFactory.vertx.createHttpClient());
   }
 
   /**
    * Creates a SockJS server.
    */
   public static SockJSServer createSockJSServer(Env env, HttpServer server) {
-    return new SockJSServer(Vertx.instance.createSockJSServer(server.getVertxServer()));
+    return new SockJSServer(PhpVerticleFactory.vertx.createSockJSServer(server.getVertxServer()));
   }
 
   /**
@@ -102,7 +92,7 @@ public final class Vertx {
    * thread is an event loop thread.
    */
   public static BooleanValue isEventLoop(Env env) {
-    return BooleanValue.create(Vertx.instance.isEventLoop());
+    return BooleanValue.create(PhpVerticleFactory.vertx.isEventLoop());
   }
 
   /**
@@ -110,35 +100,35 @@ public final class Vertx {
    * thread is a worker thread.
    */
   public static BooleanValue isWorker(Env env) {
-    return BooleanValue.create(Vertx.instance.isWorker());
+    return BooleanValue.create(PhpVerticleFactory.vertx.isWorker());
   }
 
   /**
    * Returns the Vert.x event bus.
    */
   public static EventBus eventBus(Env env) {
-    return new EventBus(Vertx.instance.eventBus());
+    return new EventBus(PhpVerticleFactory.vertx.eventBus());
   }
 
   /**
    * Returns the Vertx FileSystem instance.
    */
   public static FileSystem fileSystem(Env env) {
-    return new FileSystem(Vertx.instance.fileSystem());
+    return new FileSystem(PhpVerticleFactory.vertx.fileSystem());
   }
 
   /**
    * Returns the Vertx SharedData instance.
    */
   public static SharedData sharedData(Env env) {
-    return Vertx.instance.sharedData();
+    return PhpVerticleFactory.vertx.sharedData();
   }
 
   /**
    * Returns the current Vertx context.
    */
   public static Context currentContext(Env env) {
-   return new Context(Vertx.instance.currentContext());
+   return new Context(PhpVerticleFactory.vertx.currentContext());
   }
 
   /**
@@ -156,7 +146,7 @@ public final class Vertx {
    */
   public static LongValue setTimer(Env env, LongValue delay, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::runOnContext() must be callable.");
-    Vertx.instance.setTimer(delay.toLong(), new Handler<Long>(env, PhpTypes.toCallable(handler)));
+    PhpVerticleFactory.vertx.setTimer(delay.toLong(), new Handler<Long>(env, PhpTypes.toCallable(handler)));
     return delay;
   }
 
@@ -165,7 +155,7 @@ public final class Vertx {
    */
   public static LongValue setPeriodic(Env env, LongValue delay, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::runOnContext() must be callable.");
-    Vertx.instance.setPeriodic(delay.toLong(), new Handler<Long>(env, PhpTypes.toCallable(handler)));
+    PhpVerticleFactory.vertx.setPeriodic(delay.toLong(), new Handler<Long>(env, PhpTypes.toCallable(handler)));
     return delay;
   }
 
@@ -176,7 +166,7 @@ public final class Vertx {
    * @return A value indicating whether the timer was successfully cancelled.
    */
   public static BooleanValue cancelTimer(Env env, LongValue id) {
-    boolean result = Vertx.instance.cancelTimer(id.toLong());
+    boolean result = PhpVerticleFactory.vertx.cancelTimer(id.toLong());
     return BooleanValue.create(result);
   }
 
@@ -184,7 +174,131 @@ public final class Vertx {
    * Stops the eventbus and any resources managed by the eventbus.
    */
   public static void stop(Env env) {
-    Vertx.instance.stop();
+    PhpVerticleFactory.vertx.stop();
+  }
+
+  /**
+   * Deploys a module.
+   */
+  @SuppressWarnings("unchecked")
+  public static void deployModule(Env env, StringValue moduleName, @Optional ArrayValue config, @Optional("1") NumberValue instances, @Optional Value handler) {
+    boolean hasConfig = PhpTypes.notNull(config);
+    boolean hasHandler = PhpTypes.notNull(handler);
+    if (hasConfig && hasHandler) {
+      PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployModule() must be callable.");
+      PhpVerticleFactory.container.deployModule(moduleName.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(), new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
+    }
+    else if (hasConfig) {
+      PhpVerticleFactory.container.deployModule(moduleName.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
+    }
+    else if (hasHandler) {
+      PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployModule() must be callable.");
+      PhpVerticleFactory.container.deployModule(moduleName.toString(), instances.toInt(), new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
+    }
+    else {
+      PhpVerticleFactory.container.deployModule(moduleName.toString(), instances.toInt());
+    }
+  }
+
+  /**
+   * Undeploys a module.
+   */
+  public static void undeployModule(Env env, StringValue deploymentID, @Optional Value handler) {
+    if (PhpTypes.notNull(handler)) {
+      PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::undeployModule() must be callable.");
+      PhpVerticleFactory.container.undeployModule(deploymentID.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+    }
+    else {
+      PhpVerticleFactory.container.undeployModule(deploymentID.toString());
+    }
+  }
+
+  /**
+   * Deploys a verticle.
+   */
+  @SuppressWarnings("unchecked")
+  public static void deployVerticle(Env env, StringValue main, @Optional ArrayValue config, @Optional("1") NumberValue instances, @Optional Value handler) {
+    boolean hasConfig = PhpTypes.notNull(config);
+    boolean hasHandler = PhpTypes.notNull(handler);
+    if (hasConfig && hasHandler) {
+      PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployVerticle() must be callable.");
+      PhpVerticleFactory.container.deployVerticle(main.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(), new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
+    }
+    else if (hasConfig) {
+      PhpVerticleFactory.container.deployVerticle(main.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
+    }
+    else if (hasHandler) {
+      PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployVerticle() must be callable.");
+      PhpVerticleFactory.container.deployVerticle(main.toString(), instances.toInt(), new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
+    }
+    else {
+      PhpVerticleFactory.container.deployVerticle(main.toString(), instances.toInt());
+    }
+  }
+
+  /**
+   * Undeploys a verticle.
+   */
+  public static void undeployVerticle(Env env, StringValue deploymentID, @Optional Value handler) {
+    if (PhpTypes.notNull(handler)) {
+      PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::undeployVerticle() must be callable.");
+      PhpVerticleFactory.container.undeployVerticle(deploymentID.toString(), new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+    }
+    else {
+      PhpVerticleFactory.container.undeployVerticle(deploymentID.toString());
+    }
+  }
+
+  /**
+   * Deploys a verticle.
+   */
+  @SuppressWarnings("unchecked")
+  public static void deployWorkerVerticle(Env env, StringValue main, @Optional ArrayValue config, @Optional("1") NumberValue instances) {
+    boolean hasConfig = config != null && !config.isDefault();
+    if (hasConfig) {
+      PhpVerticleFactory.container.deployWorkerVerticle(main.toString(), new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
+    }
+    else {
+      PhpVerticleFactory.container.deployWorkerVerticle(main.toString(), instances.toInt());
+    }
+  }
+
+  /**
+   * Returns the current Vertx container environment.
+   */
+  public static ArrayValue env(Env env) {
+    Map<String, String> map = PhpVerticleFactory.container.env();
+    ArrayValue array = new ArrayValueImpl();
+    for (Map.Entry<String, String> entry : map.entrySet()) {
+      array.append(env.createString(entry.getKey()), env.createString(entry.getValue()));
+    }
+    return array;
+  }
+
+  /**
+   * Exits the container.
+   */
+  public static void exit() {
+    PhpVerticleFactory.container.exit();
+  }
+
+  /**
+   * Returns the Vertx logger.
+   */
+  public static Logger logger() {
+    return PhpVerticleFactory.container.logger();
+  }
+
+  /**
+   * Returns the Vertx configuration.
+   */
+  public static ArrayValue config(Env env) {
+    JsonObject config = PhpVerticleFactory.container.config();
+    ArrayValue array = new ArrayValueImpl();
+    for (Map.Entry<String, Object> entry : config.toMap().entrySet()) {
+      array.append(env.createString(entry.getKey()), env.wrapJava(entry.getValue()));
+    }
+    return array;
   }
 
   public String toString() {

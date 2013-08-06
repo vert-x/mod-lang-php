@@ -36,7 +36,7 @@ import com.caucho.quercus.env.Env;
  *
  * @author Jordan Halterman
  */
-public class PHPVerticleFactory implements VerticleFactory {
+public class PhpVerticleFactory implements VerticleFactory {
 
   @SuppressWarnings("unused")
   private ClassLoader cl;
@@ -51,8 +51,8 @@ public class PHPVerticleFactory implements VerticleFactory {
   @Override
   public void init(org.vertx.java.core.Vertx vertx, org.vertx.java.platform.Container container, ClassLoader cl) {
     this.cl = cl;
-    PHPVerticleFactory.vertx = vertx;
-    PHPVerticleFactory.container = container;
+    PhpVerticleFactory.vertx = vertx;
+    PhpVerticleFactory.container = container;
   }
 
   /**
@@ -144,21 +144,18 @@ public class PHPVerticleFactory implements VerticleFactory {
       // for the various wrapper classes, we should expose as many classes
       // as possible for extensibility's sake.
       context.addJavaClass("Vertx", com.blankstyle.vertx.php.Vertx.class);
-      context.addJavaClass("Container", com.blankstyle.vertx.php.Container.class);
       context.addJavaClass("Vertx\\Http\\HttpServer", com.blankstyle.vertx.php.http.HttpServer.class);
       context.addJavaClass("Vertx\\Http\\HttpClient", com.blankstyle.vertx.php.http.HttpClient.class);
       context.addJavaClass("Vertx\\Http\\RouteMatcher", com.blankstyle.vertx.php.http.RouteMatcher.class);
       context.addJavaClass("Vertx\\Net\\NetServer", com.blankstyle.vertx.php.net.NetServer.class);
       context.addJavaClass("Vertx\\Net\\NetClient", com.blankstyle.vertx.php.net.NetClient.class);
       context.addJavaClass("Vertx\\Net\\NetSocket", com.blankstyle.vertx.php.net.NetSocket.class);
-      context.addJavaClass("Vertx\\Buffer\\Buffer", org.vertx.java.core.buffer.Buffer.class);
-      context.addJavaClass("Vertx\\Logging\\Logger", org.vertx.java.core.logging.Logger.class);
-      context.addJavaClass("Vertx\\Streams\\Pump", com.blankstyle.vertx.php.streams.Pump.class);
+      context.addJavaClass("Vertx\\Buffer", org.vertx.java.core.buffer.Buffer.class);
+      context.addJavaClass("Vertx\\Logger", org.vertx.java.core.logging.Logger.class);
+      context.addJavaClass("Vertx\\Pump", com.blankstyle.vertx.php.streams.Pump.class);
       context.addJavaClass("Vertx\\FileSystem", com.blankstyle.vertx.php.file.FileSystem.class);
-      context.addJavaClass("Vertx\\SharedData\\SharedData", org.vertx.java.core.shareddata.SharedData.class);
-
-      Vertx.init(PHPVerticleFactory.vertx);
-      Container.init(PHPVerticleFactory.container);
+      context.addJavaClass("Vertx\\SharedData", org.vertx.java.core.shareddata.SharedData.class);
+      context.addJavaClass("Vertx\\ParseTools\\RecordParser", com.blankstyle.vertx.php.parsetools.RecordParser.class);
 
       // Evaluate a single line script which includes the verticle
       // script. This ensures that exceptions can be accurately logged
