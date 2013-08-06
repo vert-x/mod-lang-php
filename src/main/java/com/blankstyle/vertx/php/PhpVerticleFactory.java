@@ -59,7 +59,7 @@ public class PhpVerticleFactory implements VerticleFactory {
    */
   @Override
   public Verticle createVerticle(String main) throws Exception {
-    return new PHPVerticle(main);
+    return new PhpVerticle(main);
   }
 
   /**
@@ -111,7 +111,7 @@ public class PhpVerticleFactory implements VerticleFactory {
   /**
    * A PHP Verticle that runs PHP scripts via Quercus.
    */
-  private class PHPVerticle extends Verticle {
+  private class PhpVerticle extends Verticle {
 
     /**
      * The path to the verticle PHP script.
@@ -123,7 +123,7 @@ public class PhpVerticleFactory implements VerticleFactory {
      */
     QuercusEngine engine;
 
-    PHPVerticle(String script) {
+    PhpVerticle(String script) {
       this.script = script;
     }
 
