@@ -95,10 +95,10 @@
             </goals>
             <configuration>
               <overwrite>true</overwrite>
-              <outputDirectory>${basedir}/target/mods/${module.name}</outputDirectory>
+              <outputDirectory>${basedir}/target/mods/${module.name}/com</outputDirectory>
               <resources>
                 <resource>
-                  <directory>target/classes</directory>
+                  <directory>target/classes/com</directory>
                   <filtering>false</filtering>
                 </resource>
               </resources>
