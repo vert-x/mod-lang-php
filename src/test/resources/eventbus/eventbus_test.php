@@ -131,15 +131,33 @@ class EventBusTestCase extends PhpTestCase {
    * Helper method for echoing messages.
    */
   private function doEcho($message) {
-    $this->currentHandlerId = $this->eventBus->registerHandler('test-address', function($echo) {
+    $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($echo) {
       $echo->reply($echo->body);
     });
 
-    $this->eventBus->send('test-address', $message, function($reply) use ($message) {
-      $this->assertEquals($reply->body, $message);
+    $this->eventBus->send(self::TEST_ADDRESS, $message, function($reply) use ($message) {
+      if (is_array($message)) {
+        $this->assertEqualsRecursive($reply->body, $message);
+      }
+      else {
+        $this->assertEquals($reply->body, $message);
+      }
       $this->eventBus->unregisterHandler($this->currentHandlerId);
       $this->complete();
     });
+  }
+
+  private function assertEqualsRecursive($expected, $actual) {
+    foreach ($actual as $key => $value) {
+      $this->assertTrue(array_key_exists($key, $expected));
+      if (is_array($expected[$key])) {
+        $this->assertTrue(is_array($value));
+        $this->assertEqualsRecursive($expected[$key], $value);
+      }
+      else {
+        $this->assertEquals($expected[$key], $value);
+      }
+    }
   }
 
   /**
@@ -175,6 +193,13 @@ class EventBusTestCase extends PhpTestCase {
    */
   public function testEchoBooleanFalse() {
     $this->doEcho(FALSE);
+  }
+
+  /**
+   * Tests echoing an associative array.
+   */
+  public function testEchoAssoc() {
+    $this->doEcho(array('foo' => 'bar', 'bar' => 'baz'));
   }
 
 }

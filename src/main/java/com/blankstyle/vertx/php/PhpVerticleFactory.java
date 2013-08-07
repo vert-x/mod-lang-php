@@ -16,6 +16,7 @@
 package com.blankstyle.vertx.php;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 import org.vertx.java.core.VertxException;
@@ -192,7 +193,7 @@ public class PhpVerticleFactory implements VerticleFactory {
       catch (QuercusExitException e) {
         // The interpreter exiting cleanly, do nothing.
       }
-      catch (Exception e) {
+      catch (IOException e) {
         throw new VertxException(e);
       }
     }
