@@ -97,6 +97,10 @@ Java, producing meaningful PHP documentation may require some work.
 
 # PHP API Manual
 
+In the interest of consistency, this manual is adapted from the
+[Vert.x API manuals](http://vertx.io/docs.html) and is licensed under the
+[Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/)
+
 1. [Writing Verticles](#writing-verticles)
    * [Verticle clean-up](#verticle-clean-up)
    * [Getting Configuration in a Verticle](#getting-configuration-in-a-verticle)
