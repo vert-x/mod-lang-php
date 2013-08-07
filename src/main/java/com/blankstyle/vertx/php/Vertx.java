@@ -18,7 +18,6 @@ package com.blankstyle.vertx.php;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.core.logging.Logger;
 import org.vertx.java.core.shareddata.SharedData;
@@ -179,7 +178,7 @@ public final class Vertx {
   }
 
   /**
-   * Deploys a module.
+   * Deploys a module. AsyncResultHandler<Void>
    */
   @SuppressWarnings("unchecked")
   public static void deployModule(Env env, StringValue moduleName, @Optional ArrayValue config,
@@ -190,7 +189,7 @@ public final class Vertx {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployModule() must be callable.");
       PhpVerticleFactory.container.deployModule(moduleName.toString(),
           new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(),
-          new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
+          new AsyncResultHandler<String>(env, PhpTypes.toCallable(handler)));
     }
     else if (hasConfig) {
       PhpVerticleFactory.container.deployModule(moduleName.toString(),
@@ -199,7 +198,7 @@ public final class Vertx {
     else if (hasHandler) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployModule() must be callable.");
       PhpVerticleFactory.container.deployModule(moduleName.toString(), instances.toInt(),
-          new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
+          new AsyncResultHandler<String>(env, PhpTypes.toCallable(handler)));
     }
     else {
       PhpVerticleFactory.container.deployModule(moduleName.toString(), instances.toInt());
@@ -213,7 +212,7 @@ public final class Vertx {
     if (PhpTypes.notNull(handler)) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::undeployModule() must be callable.");
       PhpVerticleFactory.container.undeployModule(deploymentID.toString(),
-          new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+          new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
     }
     else {
       PhpVerticleFactory.container.undeployModule(deploymentID.toString());
@@ -232,7 +231,7 @@ public final class Vertx {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployVerticle() must be callable.");
       PhpVerticleFactory.container.deployVerticle(main.toString(),
           new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(),
-          new Handler<AsyncResult<String>>(env, PhpTypes.toCallable(handler)));
+          new AsyncResultHandler<String>(env, PhpTypes.toCallable(handler)));
     }
     else if (hasConfig) {
       PhpVerticleFactory.container.deployVerticle(main.toString(),
@@ -240,7 +239,7 @@ public final class Vertx {
     }
     else if (hasHandler) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployVerticle() must be callable.");
-      PhpVerticleFactory.container.deployVerticle(main.toString(), instances.toInt(), new Handler<AsyncResult<String>>(
+      PhpVerticleFactory.container.deployVerticle(main.toString(), instances.toInt(), new AsyncResultHandler<String>(
           env, PhpTypes.toCallable(handler)));
     }
     else {
@@ -254,7 +253,7 @@ public final class Vertx {
   public static void undeployVerticle(Env env, StringValue deploymentID, @Optional Value handler) {
     if (PhpTypes.notNull(handler)) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::undeployVerticle() must be callable.");
-      PhpVerticleFactory.container.undeployVerticle(deploymentID.toString(), new Handler<AsyncResult<Void>>(env,
+      PhpVerticleFactory.container.undeployVerticle(deploymentID.toString(), new VoidAsyncResultHandler(env,
           PhpTypes.toCallable(handler)));
     }
     else {

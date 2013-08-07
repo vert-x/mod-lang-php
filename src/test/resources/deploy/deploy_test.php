@@ -23,6 +23,79 @@ use Vertx\Test\PhpTestCase;
  */
 class DeployTestCase extends PhpTestCase {
 
+  private $eventBus = NULL;
+
+  const TEST_ADDRESS = 'test-address';
+
+  public function setUp() {
+    $this->eventBus = Vertx::eventBus();
+  }
+
+  /**
+   * Tests deploying a verticle.
+   */
+  public function testDeploy() {
+    $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
+      if ($message->body == 'started') {
+        $this->complete();
+      }
+    });
+
+    Vertx::deployVerticle('child.php', array('foo' => 'bar'), 1, function($id, $error) {
+      $this->assertNull($error);
+    });
+  }
+
+  /**
+   * Tests undeploying a verticle.
+   */
+  public function testUndeploy() {
+    $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {});
+
+    Vertx::deployVerticle('child.php', array('foo' => 'bar'), 1, function($id, $error) {
+      $this->assertNull($error);
+      Vertx::undeployVerticle($id, function($error) {
+        $this->assertNull($error);
+        $this->complete();
+      });
+    });
+  }
+
+  /**
+   * Tests deploying a verticle.
+   */
+  public function testDeploy2() {
+    Vertx::deployVerticle('child2.php', NULL, 1, function($id, $error) {
+      $this->assertNull($error);
+      $this->assertNotNull($id);
+      Vertx::undeployVerticle($id, function($error) {
+        $this->assertNull($error);
+        $this->complete();
+      });
+    });
+  }
+
+  /**
+   * Tests failing a verticle deploy.
+   */
+  public function testDeployFail() {
+    Vertx::deployVerticle('asdlkjsdalf', NULL, 1, function($id, $error) {
+      $this->assertNull($id);
+      $this->assertNotNull($error);
+      $this->complete();
+    });
+  }
+
+  /**
+   * Tests failing a verticle undeploy.
+   */
+  public function testUndeployFail() {
+    Vertx::undeployVerticle('asdlkjsdalf', function($error) {
+      $this->assertNotNull($error);
+      $this->complete();
+    });
+  }
+
 }
 
 TestRunner::run(new DeployTestCase());
