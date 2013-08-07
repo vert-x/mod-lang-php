@@ -42,9 +42,9 @@ public class PhpVerticleFactory implements VerticleFactory {
 
   private ClassLoader cl;
 
-  static org.vertx.java.core.Vertx vertx;
+  public static org.vertx.java.core.Vertx vertx;
 
-  static org.vertx.java.platform.Container container;
+  public static org.vertx.java.platform.Container container;
 
   /**
    * Initializes the factory.
@@ -174,6 +174,10 @@ public class PhpVerticleFactory implements VerticleFactory {
       context.addJavaClass("Vertx\\FileSystem", com.blankstyle.vertx.php.file.FileSystem.class);
       context.addJavaClass("Vertx\\SharedData", org.vertx.java.core.shareddata.SharedData.class);
       context.addJavaClass("Vertx\\ParseTools\\RecordParser", com.blankstyle.vertx.php.parsetools.RecordParser.class);
+
+      // Add PHP test helpers.
+      context.addJavaClass("Vertx\\Test\\TestRunner", com.blankstyle.vertx.php.testtools.PhpTestRunner.class);
+      context.addJavaClass("Vertx\\Test\\PhpTestCase", com.blankstyle.vertx.php.testtools.PhpTestCase.class);
 
       // Evaluate a single line script which includes the verticle
       // script. This ensures that exceptions can be accurately logged
