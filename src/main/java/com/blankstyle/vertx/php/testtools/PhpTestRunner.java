@@ -39,7 +39,9 @@ public class PhpTestRunner {
   public static void run(Env env, ObjectValue test) {
     String methodName = PhpVerticleFactory.container.config().getString("methodName");
     VertxAssert.initialize(PhpVerticleFactory.vertx);
+    test.callMethod(env, env.createString("setUp"));
     test.callMethod(env, env.createString(methodName));
+    test.callMethod(env, env.createString("tearDown"));
   }
 
 }

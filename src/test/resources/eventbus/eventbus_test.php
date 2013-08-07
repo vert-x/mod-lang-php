@@ -8,12 +8,26 @@ use Vertx\Test\PhpTestCase;
  */
 class EventBusTest extends PhpTestCase {
 
+  public function setUp() {
+    print "In setup!";
+  }
+
   /**
    * Tests sending a simple message on the event bus.
    */
-  public function testSimpleSend() {
+  public function testSendSimple() {
     $eventBus = Vertx::eventBus();
     $this->assertTrue(TRUE);
+    $this->complete();
+  }
+
+  /**
+   * Tests sending an array.
+   */
+  public function testSendArray() {
+    $eventBus = Vertx::eventBus();
+    $this->assertTrue(TRUE);
+    $this->complete();
   }
 
 }

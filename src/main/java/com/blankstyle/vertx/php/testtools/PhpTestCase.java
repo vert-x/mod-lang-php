@@ -61,6 +61,12 @@ public abstract class PhpTestCase {
   }
 
   /**
+   * Sets up the test case.
+   */
+  public static void setUp(Env env, @This ObjectValue obj) {
+  }
+
+  /**
    * Asserts that the given condition is true.
    * 
    * @param condition The condition to evaluate.
@@ -277,6 +283,19 @@ public abstract class PhpTestCase {
     else {
       VertxAssert.fail();
     }
+  }
+
+  /**
+   * Completes the test.
+   */
+  public static void complete(Env env, @This ObjectValue obj) {
+    VertxAssert.testComplete();
+  }
+
+  /**
+   * Tears down the test case.
+   */
+  public static void tearDown(Env env, @This ObjectValue obj) {
   }
 
 }
