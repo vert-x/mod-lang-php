@@ -20,6 +20,14 @@
     <vertx.version>2.0.0-final</vertx.version>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>local</id>
+      <name>Local Jars</name>
+      <url>${basedir}/lib</url>
+    </repository>
+  </repositories>
+
   <licenses>
     <license>
       <name>MIT License</name>
@@ -133,6 +141,34 @@
             <phase>verify</phase>
             <goals>
               <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.14</version>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>vertx.mods</name>
+              <value>target/mods</value>
+            </property>
+            <property>
+              <name>vertx.test.timeout</name>
+              <value>15</value>
+            </property>
+          </systemProperties>
+          <includes>
+            <include>**/integration/**</include>
+          </includes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
             </goals>
           </execution>
         </executions>
