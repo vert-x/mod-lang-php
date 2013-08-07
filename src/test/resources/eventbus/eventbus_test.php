@@ -23,52 +23,64 @@ use Vertx\Test\PhpTestCase;
  */
 class EventBusTestCase extends PhpTestCase {
 
+  private $eventBus = NULL;
+
   private $currentHandlerId = NULL;
+
+  private $received = FALSE;
+
+  const TEST_ADDRESS = 'test-address';
+
+  private static $jsonMessage = array(
+    'message' => 'Hello world!',
+  );
 
   public function setUp() {
     $this->eventBus = Vertx::eventBus();
     $this->currentHandlerId = NULL;
+    $this->received = FALSE;
   }
 
   /**
    * Tests sending an empty message on the event bus.
    */
   public function testSendEmpty() {
-    $this->currentHandlerId = $this->eventBus->registerHandler('test-address', function($message) {
+    $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
       $this->assertEquals($message->body, array());
       $this->eventBus->unregisterHandler($this->currentHandlerId);
       $this->complete();
     });
 
-    $message = array();
-    $this->eventBus->send('test-address', $message);
+    $this->assertNotNull($this->currentHandlerId);
+    $this->eventBus->send(self::TEST_ADDRESS, array());
   }
 
   /**
    * Tests sending a simple array message on the event bus.
    */
   public function testSendSimple() {
-    $this->currentHandlerId = $this->eventBus->registerHandler('test-address', function($message) {
-      $this->assertEquals($message->body['message'], 'Hello world!');
+    $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
+      $this->assertEquals($message->body['message'], self::$jsonMessage['message']);
       $this->eventBus->unregisterHandler($this->currentHandlerId);
       $this->complete();
     });
 
-    $message = array('message' => 'Hello world!');
-    $this->eventBus->send('test-address', $message);
+    $this->assertNotNull($this->currentHandlerId);
+    $this->eventBus->send(self::TEST_ADDRESS, self::$jsonMessage);
   }
 
   /**
    * Tests sending an empty reply on the event bus.
    */
   public function testReplyEmpty() {
-    $this->currentHandlerId = $this->eventBus->registerHandler('test-address', function($message) {
-      $this->assertEquals($message->body['message'], 'Hello world!');
+    $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
+      $this->assertEquals($message->body['message'], self::$jsonMessage['message']);
       $message->reply(array());
     });
 
-    $message = array('message' => 'Hello world!');
-    $this->eventBus->send('test-address', $message, function($reply) {
+    $this->assertNotNull($this->currentHandlerId);
+
+    $this->eventBus->send(self::TEST_ADDRESS, self::$jsonMessage, function($reply) {
       $this->assertEquals($reply->body, array());
       $this->eventBus->unregisterHandler($this->currentHandlerId);
       $this->complete();
@@ -79,17 +91,40 @@ class EventBusTestCase extends PhpTestCase {
    * Tests replying to a message on the event bus.
    */
   public function testReplySimple() {
-    $this->currentHandlerId = $this->eventBus->registerHandler('test-address', function($message) {
-      $this->assertEquals($message->body['message'], 'Hello world!');
+    $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
+      $this->assertEquals($message->body['message'], self::$jsonMessage['message']);
       $message->reply(array('message2' => 'Hello world 2!'));
     });
 
-    $message = array('message' => 'Hello world!');
-    $this->eventBus->send('test-address', $message, function($reply) {
+    $this->assertNotNull($this->currentHandlerId);
+
+    $this->eventBus->send(self::TEST_ADDRESS, self::$jsonMessage, function($reply) {
       $this->assertEquals($reply->body['message2'], 'Hello world 2!');
       $this->eventBus->unregisterHandler($this->currentHandlerId);
       $this->complete();
     });
+  }
+
+  /**
+   * Tests sending a message to an unregistering handler.
+   */
+  public function testSendUnregisterSend() {
+    $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
+      if ($this->received) {
+        $this->assertTrue(FALSE, 'Handler was already called.');
+      }
+      $this->assertEquals($message->body['message'], self::$jsonMessage['message']);
+      $this->eventBus->unregisterHandler($this->currentHandlerId);
+      $this->received = TRUE;
+
+      Vertx::setTimer(100, function() {
+        $this->complete();
+      });
+    });
+
+    $this->assertNotNull($this->currentHandlerId);
+    $this->eventBus->send(self::TEST_ADDRESS, self::$jsonMessage);
+    $this->eventBus->send(self::TEST_ADDRESS, self::$jsonMessage);
   }
 
   /**
