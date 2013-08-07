@@ -7,30 +7,45 @@ a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, Calif
 Vert.x PHP
 ==========
 
-This project provides PHP language support for [Vert.x](http://vertx.io/).
+### For API documentation and tutorials see the [PHP User Manual](#php-api-manual)
+
+This project provides PHP language wrappers for [Vert.x](http://vertx.io/).
 Since Vert.x runs on the JVM, this module is built on the Java-based
 [Quercus](http://quercus.caucho.com/) PHP implementation, one which is
-kept up to date and supports many useful new PHP features such as closures.
-The Vert.x PHP API closely resembles that of the Javascript module, using
-shorter method names and closures for event handlers. The PHP Vert.x API
-is simply a wrapper around the core Vert.x Java API and is similarly
-implemented entirely through the Quercus Java API so at to allow more
-control over interacting with the core Vert.x API.
+kept up to date and supports many useful new PHP features. The Vert.x PHP
+API closely resembles that of the Javascript module, using shorter method
+names and closures for event handlers. The PHP Vert.x API is implemented
+entirely through the Quercus Java API so at to allow more control over
+interacting with the core Vert.x API.
 
-#### For API documentation and tutorials see the [PHP API User Manual](#php-api-manual)
+## Project status
+This project is young and is still undergoing heavy development. Integration
+tests are currently be written for all portions of the API. Until tests are
+completed and passed _it is not recommended that this module be used in a
+production environment_. That said, I intend to _begin_ developing applications
+on the Vert.x PHP API in the very near future, so I am working hard to make
+PHP integration a reality. Until then, check back for frequent updates.
 
 ## Contributing
-Please feel free to send pull requests. Contributors to Vert.x PHP will be
-recognized on the project page. A couple of suggestions on which areas of
-this project need work:
+Please feel free to send pull requests. _Contributors to this project will be
+recognized on the project page_.
+
+### Project structure
+The Java package structure intentionally resembles that of the
+`org.vertx.java.core` package. Developers that are familiar with the core
+Vert.x API will have no problem diving into the PHP wrappers. In most areas,
+the API implements modified PHP friendly versions of the core Vert.x interfaces,
+such as custom `Handler`, `StreamReader`, and `StreamWriter` implementations
+as well as many other common interfaces. There is an analogue for most every
+core Vert.x interface in the PHP API.
 
 ### Integration tests
 The Vert.x PHP project is now structured in a way that supports integration
 testing with the Vert.x `testtools` library. I will be working tirelessly
 to get full coverage of integration testing for the project. Contributions
-to this effort are certainly encouraged. The PHP API manual below demonstrates
-the intended usage of the API, so integration tests should be easy to write
-with that documentation as a reference.
+to this effort are certainly encouraged. The [PHP API manual](#php-api-manual)
+demonstrates the intended usage of the API, so integration tests should
+be easy to write with that documentation as a reference.
 
 #### Writing integration tests for the PHP API
 Vert.x PHP exposes a couple of classes to the PHP namespace that are intended
@@ -67,7 +82,9 @@ test class to be run.
 Vertx\Test\TestRunner::run(new EventBusTestCase());
 ```
 
-#### Other ways to contribute
+_See the existing integration tests in `src/test/resources` for more examples._
+
+### Other ways to contribute
 * Performance issues - Not much attention has been focused on performance
 issues, particularly in the area of starting up PHP Vert.x verticles.
 * Reporting of PHP errors - Currently, error messages often times do not
@@ -77,14 +94,6 @@ As a reference, error messages are reported in
 `com.blankstyle.vertx.php.PhpVerticleFactory`.
 * API documentation - Since the PHP API is currently written entirely in
 Java, producing meaningful PHP documentation may require some work.
-
-The Vert.x PHP module is purely written as a Quercus PHP module through
-the Quercus Java API. It is intentionally modelled directly after the core
-Vert.x Java library, providing simple wrappers for each Vert.x data structure
-that allow PHP code to more seamlessly interact with the core Vert.x API. This
-means contributors should have a good understanding of Java and the core Vert.x
-API, as well as a solid understanding of PHP, particularly in the differences
-between data types in PHP and Java.
 
 # PHP API Manual
 
