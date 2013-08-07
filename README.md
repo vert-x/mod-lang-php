@@ -17,24 +17,66 @@ is simply a wrapper around the core Vert.x Java API and is similarly
 implemented entirely through the Quercus Java API so at to allow more
 control over interacting with the core Vert.x API.
 
-## Installation
+#### For API documentation and tutorials see the [PHP API User Manual](#php-api-manual)
 
 ## Contributing
 Please feel free to send pull requests. Contributors to Vert.x PHP will be
 recognized on the project page. A couple of suggestions on which areas of
 this project need work:
 
+### Integration tests
+The Vert.x PHP project is now structured in a way that supports integration
+testing with the Vert.x `testtools` library. I will be working tirelessly
+to get full coverage of integration testing for the project. Contributions
+to this effort are certainly encouraged. The PHP API manual below demonstrates
+the intended usage of the API, so integration tests should be easy to write
+with that documentation as a reference.
+
+#### Writing integration tests for the PHP API
+Vert.x PHP exposes a couple of classes to the PHP namespace that are intended
+solely to support writing integration tests. You can find the current (albeit
+sparse) integration tests in the `src/test/resources` directory. To create
+a new test, add a `.php` file to that directory and in it extend the base
+`Vertx\Test\PhpTestCase` class. This class exposes methods for setting up or
+tearing down tests, making assertions, and completing or failing tests. Any
+public method prefixed with `test` will be tested.
+
+`eventbus_test.php`
+
+```php
+use Vertx\Test\PhpTestCase;
+
+class EventBusTestCase extends PhpTestCase {
+
+  public function testSend() {
+    $eventBus = Vertx::eventBus();
+    $eventBus->send('foo', 'Hello foo!');
+    $this->assertTrue(TRUE, 'Not true!');
+    $this->complete();
+  }
+
+}
+```
+
+Once a test case has been set up in the `.php` file, we have to run it
+with the `Vertx\Test\TestRunner` class' static `run` method. When Vert.x
+PHP executes the script this will cause all of the `test*` methods on the
+test class to be run.
+
+```php
+Vertx\Test\TestRunner::run(new EventBusTestCase());
+```
+
+#### Other ways to contribute
 * Performance issues - Not much attention has been focused on performance
 issues, particularly in the area of starting up PHP Vert.x verticles.
 * Reporting of PHP errors - Currently, error messages often times do not
 have enough useful information such as file names or line numbers, not to
 mention meaningful stack traces, each of which are vital to development.
-* PHP-based unit tests - I have not yet tried runninga PHP testing framework
-in Quercus, but the Vert.x PHP API should be tested from the PHP side, not
-the Java side.
+As a reference, error messages are reported in
+`com.blankstyle.vertx.php.PhpVerticleFactory`.
 * API documentation - Since the PHP API is currently written entirely in
-Java, producing meaningful documentation may require replicating the exposed
-API in PHP code and generating documentation from that.
+Java, producing meaningful PHP documentation may require some work.
 
 The Vert.x PHP module is purely written as a Quercus PHP module through
 the Quercus Java API. It is intentionally modelled directly after the core
