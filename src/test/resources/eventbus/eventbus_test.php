@@ -23,47 +23,54 @@ use Vertx\Test\PhpTestCase;
  */
 class EventBusTestCase extends PhpTestCase {
 
+  private $currentHandlerId = NULL;
+
+  public function setUp() {
+    $this->eventBus = Vertx::eventBus();
+    $this->currentHandlerId = NULL;
+  }
+
   /**
    * Tests sending an empty message on the event bus.
    */
   public function testSendEmpty() {
-    $eventBus = Vertx::eventBus();
-    $eventBus->registerHandler('test-address', function($message) {
+    $this->currentHandlerId = $this->eventBus->registerHandler('test-address', function($message) {
       $this->assertEquals($message->body, array());
+      $this->eventBus->unregisterHandler($this->currentHandlerId);
       $this->complete();
     });
 
     $message = array();
-    $eventBus->send('test-address', $message);
+    $this->eventBus->send('test-address', $message);
   }
 
   /**
    * Tests sending a simple array message on the event bus.
    */
   public function testSendSimple() {
-    $eventBus = Vertx::eventBus();
-    $eventBus->registerHandler('test-address', function($message) {
+    $this->currentHandlerId = $this->eventBus->registerHandler('test-address', function($message) {
       $this->assertEquals($message->body['message'], 'Hello world!');
+      $this->eventBus->unregisterHandler($this->currentHandlerId);
       $this->complete();
     });
 
     $message = array('message' => 'Hello world!');
-    $eventBus->send('test-address', $message);
+    $this->eventBus->send('test-address', $message);
   }
 
   /**
    * Tests sending an empty reply on the event bus.
    */
   public function testReplyEmpty() {
-    $eventBus = Vertx::eventBus();
-    $eventBus->registerHandler('test-address', function($message) {
+    $this->currentHandlerId = $this->eventBus->registerHandler('test-address', function($message) {
       $this->assertEquals($message->body['message'], 'Hello world!');
       $message->reply(array());
     });
 
     $message = array('message' => 'Hello world!');
-    $eventBus->send('test-address', $message, function($reply) {
+    $this->eventBus->send('test-address', $message, function($reply) {
       $this->assertEquals($reply->body, array());
+      $this->eventBus->unregisterHandler($this->currentHandlerId);
       $this->complete();
     });
   }
@@ -72,15 +79,15 @@ class EventBusTestCase extends PhpTestCase {
    * Tests replying to a message on the event bus.
    */
   public function testReplySimple() {
-    $eventBus = Vertx::eventBus();
-    $eventBus->registerHandler('test-address', function($message) {
+    $this->currentHandlerId = $this->eventBus->registerHandler('test-address', function($message) {
       $this->assertEquals($message->body['message'], 'Hello world!');
       $message->reply(array('message2' => 'Hello world 2!'));
     });
 
     $message = array('message' => 'Hello world!');
-    $eventBus->send('test-address', $message, function($reply) {
+    $this->eventBus->send('test-address', $message, function($reply) {
       $this->assertEquals($reply->body['message2'], 'Hello world 2!');
+      $this->eventBus->unregisterHandler($this->currentHandlerId);
       $this->complete();
     });
   }
@@ -89,13 +96,13 @@ class EventBusTestCase extends PhpTestCase {
    * Helper method for echoing messages.
    */
   private function doEcho($message) {
-    $eventBus = Vertx::eventBus();
-    $eventBus->registerHandler('test-address', function($echo) {
+    $this->currentHandlerId = $this->eventBus->registerHandler('test-address', function($echo) {
       $echo->reply($echo->body);
     });
 
-    $eventBus->send('test-address', $message, function($reply) use ($message) {
+    $this->eventBus->send('test-address', $message, function($reply) use ($message) {
       $this->assertEquals($reply->body, $message);
+      $this->eventBus->unregisterHandler($this->currentHandlerId);
       $this->complete();
     });
   }

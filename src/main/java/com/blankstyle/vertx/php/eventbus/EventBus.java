@@ -17,6 +17,7 @@ package com.blankstyle.vertx.php.eventbus;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.vertx.java.core.AsyncResult;
 import org.vertx.java.core.json.JsonObject;
@@ -39,7 +40,7 @@ public final class EventBus {
 
   private org.vertx.java.core.eventbus.EventBus eventBus;
 
-  private static Map<String, Map<Value, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>>> handlers = new HashMap<String, Map<Value, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>>>();
+  private static PairRegistry<String, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>> handlers = new PairRegistry<String, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>>();
 
   public EventBus(org.vertx.java.core.eventbus.EventBus eventBus) {
     this.eventBus = eventBus;
@@ -54,46 +55,23 @@ public final class EventBus {
    * @param handler
    *          A PHP callable event handler.
    */
-  private org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> createAddressHandler(Env env,
-      String address, Value callback) {
-    org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> handler = new Handler<org.vertx.java.core.eventbus.Message<Object>>(
-        env, PhpTypes.toCallable(callback),
+  private org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> createAddressHandler(Env env, String address, Value callback) {
+    return new Handler<org.vertx.java.core.eventbus.Message<Object>>(env, PhpTypes.toCallable(callback),
         new ResultModifier<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
           @Override
           public Message<Object> modify(org.vertx.java.core.eventbus.Message<Object> message) {
             return new Message<Object>(message);
           }
         });
-
-    if (!EventBus.handlers.containsKey(address)) {
-      Map<Value, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>> hashMap = new HashMap<Value, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>>();
-      EventBus.handlers.put(address, hashMap);
-    }
-    else {
-      Map<Value, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>> hashMap = EventBus.handlers
-          .get(address);
-      hashMap.put(callback, handler);
-    }
-    return handler;
   }
 
   /**
-   * Looks up an existing internal address handler.
-   * 
-   * @param address
-   *          The address at which the handler was registered.
-   * @param callback
-   *          A PHP callable event handler.
-   * @return The internal handler to which the given callable was mapped.
+   * Creates an address/handler pair from PHP arguments.
    */
-  private org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> findAddressHandler(Env env,
-      String address, Value callback) {
-    if (!EventBus.handlers.containsKey(address)) {
-      return null;
-    }
-    Map<Value, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>> hashMap = EventBus.handlers
-        .get(address);
-    return hashMap.containsKey(callback) ? hashMap.get(callback) : null;
+  public AddressPair<String, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>> createAddressPair(Env env, StringValue address, Value handler) {
+    String realAddress = address.toString();
+    org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> realHandler = createAddressHandler(env, realAddress, handler);
+    return new AddressPair<String, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>>(realAddress, realHandler);
   }
 
   /**
@@ -109,22 +87,19 @@ public final class EventBus {
    *          single argument that represents an error if one occurs, else null.
    * @return The called object.
    */
-  public EventBus registerHandler(Env env, StringValue address, Value handler, @Optional Value resultHandler) {
+  public StringValue registerHandler(Env env, StringValue address, Value handler, @Optional Value resultHandler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::registerHandler() must be callable.");
+    AddressPair<String, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>> addressPair = createAddressPair(env, address, handler);
+
     if (PhpTypes.isCallable(env, resultHandler)) {
-      // Create Vert.x API compatible handlers. This will wrap PHP callbacks
-      // and wrap return values when the handler is invoked.
-      org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> eventHandler = createAddressHandler(
-          env, address.toString(), handler);
       org.vertx.java.core.Handler<AsyncResult<Void>> resultEventHandler = new VoidAsyncResultHandler(env,
           PhpTypes.toCallable(resultHandler));
-
-      eventBus.registerHandler(address.toString(), eventHandler, resultEventHandler);
+      eventBus.registerHandler(addressPair.getAddress(), addressPair.getHandler(), resultEventHandler);
     }
     else {
-      eventBus.registerHandler(address.toString(), createAddressHandler(env, address.toString(), handler));
+      eventBus.registerHandler(addressPair.getAddress(), addressPair.getHandler());
     }
-    return this;
+    return env.createString(handlers.register(addressPair).toString());
   }
 
   /**
@@ -136,11 +111,12 @@ public final class EventBus {
    *          The handler to register. This can be any PHP callable.
    * @return The called object.
    */
-  public EventBus registerLocalHandler(Env env, StringValue address, Value handler) {
+  public StringValue registerLocalHandler(Env env, StringValue address, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\EventBus::registerLocalHandler() must be callable.");
-    eventBus.registerLocalHandler(address.toString(), createAddressHandler(env, address.toString(), handler));
-    return this;
+    AddressPair<String, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>> addressPair = createAddressPair(env, address, handler);
+    eventBus.registerLocalHandler(addressPair.getAddress(), addressPair.getHandler());
+    return env.createString(handlers.register(addressPair).toString());
   }
 
   /**
@@ -152,11 +128,12 @@ public final class EventBus {
    *          The handler to unregister. This can be any PHP callable.
    * @return The called object.
    */
-  public EventBus unregisterHandler(Env env, StringValue address, Value handler) {
-    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::unregisterHandler() must be callable.");
-    org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>> eventHandler = findAddressHandler(env,
-        address.toString(), handler);
-    eventBus.unregisterHandler(address.toString(), eventHandler);
+  public EventBus unregisterHandler(Env env, Value handlerID) {
+    if (handlers.exists(handlerID.toString())) {
+      AddressPair<String, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>> pair = handlers.get(handlerID.toString());
+      eventBus.unregisterHandler(pair.getAddress(), pair.getHandler());
+      handlers.unregister(pair);
+    }
     return this;
   }
 
@@ -266,6 +243,128 @@ public final class EventBus {
 
   public String toString() {
     return "php:Vertx\\EventBus";
+  }
+
+  /**
+   * A registry of current eventbus handlers.
+   *
+   * @author Jordan Halterman
+   *
+   * @param <A> An address pair address type.
+   * @param <H> An address pair handler type.
+   */
+  static private class PairRegistry<A, H> {
+    private Map<UUID, AddressPair<A, H>> registry;
+
+    public PairRegistry() {
+      registry = new HashMap<UUID, AddressPair<A, H>>();
+    }
+
+    /**
+     * Registers a new pair.
+     */
+    public UUID register(AddressPair<A, H> pair) {
+      registry.put(pair.getIdentifier(), pair);
+      return pair.getIdentifier();
+    }
+
+    /**
+     * Checks whether a pair with the given ID exists in the registry.
+     */
+    public boolean exists(UUID id) {
+      return registry.containsKey(id);
+    }
+
+    /**
+     * Checks whether a pair with the given ID exists in the registry.
+     */
+    public boolean exists(String id) {
+      return exists(UUID.fromString(id));
+    }
+
+    /**
+     * Gets an address pair by ID.
+     */
+    public AddressPair<A, H> get(UUID id) {
+      if (!registry.containsKey(id)) {
+        return null;
+      }
+      return registry.get(id);
+    }
+
+    /**
+     * Gets an address pair by ID.
+     */
+    public AddressPair<A, H> get(String id) {
+      return get(UUID.fromString(id));
+    }
+
+    /**
+     * Unregisters an address pair by ID.
+     */
+    public void unregister(UUID id) {
+      if (registry.containsKey(id)) {
+        registry.remove(id);
+      }
+    }
+
+    /**
+     * Unregisters an address pair by ID.
+     */
+    public void unregister(AddressPair<A, H> pair) {
+      unregister(pair.getIdentifier());
+    }
+  }
+
+  /**
+   * An address/handler pair.
+   *
+   * @author Jordan Halterman
+   *
+   * @param <A> An address type.
+   * @param <H> A handler type.
+   */
+  static private class AddressPair<L, R> {
+    private L address;
+    private R handler;
+    private UUID id;
+
+    public AddressPair(L address, R handler) {
+      this.address = address;
+      this.handler = handler;
+      this.id = UUID.randomUUID();
+    }
+
+    /**
+     * Returns the unique pair identifier.
+     */
+    public UUID getIdentifier() {
+      return id;
+    }
+
+    /**
+     * Returns the pair address.
+     */
+    public L getAddress() {
+      return address;
+    }
+
+    /**
+     * Returns the pair handler.
+     */
+    public R getHandler() {
+      return handler;
+    }
+
+    public int hashCode() {
+      int hashLeft = address != null ? address.hashCode() : 0;
+      int hashRight = handler != null ? handler.hashCode() : 0;
+      return (hashLeft + hashRight) * hashRight + hashLeft;
+    }
+
+    public String toString() {
+      return String.format("(%s, %s)", address, handler);
+    }
   }
 
 }
