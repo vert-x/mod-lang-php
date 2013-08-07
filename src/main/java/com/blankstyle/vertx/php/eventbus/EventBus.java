@@ -29,7 +29,6 @@ import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
-import com.caucho.quercus.lib.json.JsonModule;
 
 /**
  * A PHP compatible implementation of the Vert.x EventBus.
@@ -172,6 +171,7 @@ public final class EventBus {
    *          An optional handler to be invoked in response to the message.
    * @return The called object.
    */
+  @SuppressWarnings("unchecked")
   public EventBus send(Env env, StringValue address, Value message, @Optional Value handler) {
     boolean hasHandler = false;
     Handler<org.vertx.java.core.eventbus.Message<Object>> sendHandler = null;
@@ -214,11 +214,11 @@ public final class EventBus {
     }
     else if (message.isArray()) {
       if (hasHandler) {
-        eventBus.send(address.toString(), new JsonObject(JsonModule.json_encode(env, message, 0).toString()),
+        eventBus.send(address.toString(), new JsonObject(message.toArray().toJavaMap(env, new HashMap<String, Object>().getClass())),
             sendHandler);
       }
       else {
-        eventBus.send(address.toString(), new JsonObject(JsonModule.json_encode(env, message, 0).toString()));
+        eventBus.send(address.toString(), new JsonObject(message.toArray().toJavaMap(env, new HashMap<String, Object>().getClass())));
       }
     }
     return this;
@@ -233,6 +233,7 @@ public final class EventBus {
    *          A mixed value message to send.
    * @return The called object.
    */
+  @SuppressWarnings("unchecked")
   public EventBus publish(Env env, Value address, Value message) {
     if (message.isBoolean()) {
       eventBus.send(address.toString(), message.toBoolean());
@@ -244,7 +245,7 @@ public final class EventBus {
       eventBus.send(address.toString(), message.toInt());
     }
     else if (message.isArray()) {
-      eventBus.send(address.toString(), new JsonObject(JsonModule.json_encode(env, message, 0).toString()));
+      eventBus.send(address.toString(), new JsonObject(message.toArray().toJavaMap(env, new HashMap<String, Object>().getClass())));
     }
     return this;
   }

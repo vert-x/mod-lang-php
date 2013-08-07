@@ -23,6 +23,17 @@ use Vertx\Test\PhpTestCase;
  */
 class EventBusTestCase extends PhpTestCase {
 
+  public function testSendEmpty() {
+    $eventBus = Vertx::eventBus();
+    $eventBus->registerHandler('test-address', function($message) {
+      $this->assertEquals($message->body['foo'], 'bar');
+      $this->complete();
+    });
+
+    $message = array('foo' => 'bar');
+    $eventBus->send('test-address', $message);
+  }
+
 }
 
 TestRunner::run(new EventBusTestCase());

@@ -15,6 +15,8 @@
  */
 package com.blankstyle.vertx.php.testtools;
 
+import java.util.HashMap;
+
 import org.junit.Assert;
 import org.vertx.testtools.VertxAssert;
 
@@ -130,9 +132,6 @@ public abstract class PhpTestCase {
    * @param message An optional assertion message.
    */
   public static void assertEquals(Env env, @This ObjectValue obj, Value expected, Value actual, @Optional StringValue message) {
-    if (expected.isArray()) {
-      throw new UnsupportedOperationException();
-    }
     if (expected.isBoolean()) {
       if (!actual.isBoolean()) {
         PhpTestCase.doAssertTrue(false, message);
@@ -169,8 +168,16 @@ public abstract class PhpTestCase {
         PhpTestCase.doAssertEquals(expected.toJavaObject(), actual.toJavaObject(), message);
       }
     }
+    else if (expected.isArray()) {
+      if (!actual.isArray()) {
+        PhpTestCase.doAssertTrue(false, message);
+      }
+      else {
+        PhpTestCase.doAssertEquals(expected.toJavaMap(env, new HashMap<String, Object>().getClass()), actual.toJavaMap(env, new HashMap<String, Object>().getClass()), message);
+      }
+    }
     else {
-      throw new UnsupportedOperationException("Unknown data type.");
+      PhpTestCase.doAssertTrue(actual.eq(expected), message);
     }
   }
 
@@ -191,9 +198,6 @@ public abstract class PhpTestCase {
    * @param message An optional assertion message.
    */
   public static void assertNotEquals(Env env, @This ObjectValue obj, Value expected, Value actual, @Optional StringValue message) {
-    if (expected.isArray()) {
-      throw new UnsupportedOperationException();
-    }
     if (expected.isBoolean()) {
       if (actual.isBoolean()) {
         if (expected.toBoolean()) {
@@ -224,7 +228,7 @@ public abstract class PhpTestCase {
       }
     }
     else {
-      throw new UnsupportedOperationException("Unknown data type.");
+      PhpTestCase.doAssertFalse(actual.eq(expected), message);
     }
   }
 

@@ -25,9 +25,11 @@ import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.ArrayValue;
+import com.caucho.quercus.env.ArrayValueImpl;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.StringValue;
+import com.caucho.quercus.lib.json.JsonModule;
 
 /**
  * A PHP compatible implementation of the Vert.x message.
@@ -38,8 +40,21 @@ public class Message<T> implements Gettable {
 
   private org.vertx.java.core.eventbus.Message<T> message;
 
+  private boolean isCache;
+
+  private Value cache;
+
   public Message(org.vertx.java.core.eventbus.Message<T> message) {
     this.message = message;
+    initCache();
+  }
+
+  private void initCache() {
+    if (message.body() instanceof JsonObject) {
+      isCache = true;
+      Env env = Env.getCurrent();
+      cache = JsonModule.json_decode(env, env.createString(((JsonObject) message.body()).encode()), true);
+    }
   }
 
   @Override
@@ -56,6 +71,9 @@ public class Message<T> implements Gettable {
    * @return The message body.
    */
   public Value body(Env env) {
+    if (isCache) {
+      return env.wrapJava(cache);
+    }
     return env.wrapJava(message.body());
   }
 
