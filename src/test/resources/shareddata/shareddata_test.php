@@ -19,10 +19,10 @@ use Vertx\Test\TestRunner;
 use Vertx\Test\PhpTestCase;
 
 /**
- * A Vert.x EventBus test case.
+ * A Vert.x SharedData test case.
  */
-class EventBusTestCase extends PhpTestCase {
+class SharedDataTestCase extends PhpTestCase {
 
 }
 
-TestRunner::run(new EventBusTestCase());
+TestRunner::run(new SharedDataTestCase());

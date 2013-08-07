@@ -19,10 +19,10 @@ use Vertx\Test\TestRunner;
 use Vertx\Test\PhpTestCase;
 
 /**
- * A Vert.x EventBus test case.
+ * A Vert.x FileSystem test case.
  */
-class EventBusTestCase extends PhpTestCase {
+class FileSystemTestCase extends PhpTestCase {
 
 }
 
-TestRunner::run(new EventBusTestCase());
+TestRunner::run(new FileSystemTestCase());

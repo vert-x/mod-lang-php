@@ -19,10 +19,10 @@ use Vertx\Test\TestRunner;
 use Vertx\Test\PhpTestCase;
 
 /**
- * A Vert.x EventBus test case.
+ * A Vert.x timer test case.
  */
-class EventBusTestCase extends PhpTestCase {
+class TimerTestCase extends PhpTestCase {
 
 }
 
-TestRunner::run(new EventBusTestCase());
+TestRunner::run(new TimerTestCase());

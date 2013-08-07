@@ -19,10 +19,10 @@ use Vertx\Test\TestRunner;
 use Vertx\Test\PhpTestCase;
 
 /**
- * A Vert.x EventBus test case.
+ * A Vert.x module/verticle deploy test case.
  */
-class EventBusTestCase extends PhpTestCase {
+class DeployTestCase extends PhpTestCase {
 
 }
 
-TestRunner::run(new EventBusTestCase());
+TestRunner::run(new DeployTestCase());
