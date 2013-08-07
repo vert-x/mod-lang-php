@@ -15,6 +15,9 @@
  */
 package com.blankstyle.vertx.php;
 
+import java.io.File;
+import java.net.URISyntaxException;
+
 import org.vertx.java.core.VertxException;
 import org.vertx.java.core.logging.Logger;
 import org.vertx.java.platform.Verticle;
@@ -37,7 +40,6 @@ import com.caucho.quercus.env.Env;
  */
 public class PhpVerticleFactory implements VerticleFactory {
 
-  @SuppressWarnings("unused")
   private ClassLoader cl;
 
   static org.vertx.java.core.Vertx vertx;
@@ -59,7 +61,21 @@ public class PhpVerticleFactory implements VerticleFactory {
    */
   @Override
   public Verticle createVerticle(String main) throws Exception {
-    return new PhpVerticle(main);
+    return new PhpVerticle(findScript(main));
+  }
+
+  /**
+   * Finds the full path to a PHP script.
+   */
+  private String findScript(String script) {
+    try {
+      File scriptFile = new File(cl.getResource(script).toURI());
+      if (scriptFile.exists()) {
+        return scriptFile.toPath().toString();
+      }
+    }
+    catch (URISyntaxException ignored) {}
+    return null;
   }
 
   /**
