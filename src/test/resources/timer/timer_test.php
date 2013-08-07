@@ -23,6 +23,36 @@ use Vertx\Test\PhpTestCase;
  */
 class TimerTestCase extends PhpTestCase {
 
+  /**
+   * Tests a one-off timer.
+   */
+  public function testOneOff() {
+    Vertx::setTimer(10, function() {
+      $this->complete();
+    });
+  }
+
+  /**
+   * Tests a periodic timer.
+   */
+  public function testPeriodic() {
+    $total = 10;
+    $count = 0;
+    Vertx::setPeriodic(10, function($timer_id) use (&$count, $total) {
+      $this->assertNotNull($timer_id);
+      $count += 1;
+      if ($count == $total) {
+        Vertx::cancelTimer($timer_id);
+        Vertx::setTimer(10, function() {
+          $this->complete();
+        });
+      }
+      else if ($count > $total) {
+        $this->assertTrue(FALSE, 'Counter went off too many times!');
+      }
+    });
+  }
+
 }
 
 TestRunner::run(new TimerTestCase());
