@@ -23,6 +23,43 @@ use Vertx\Test\PhpTestCase;
  */
 class NetTestCase extends PhpTestCase {
 
+  private $server = NULL;
+
+  private $client = NULL;
+
+  public function setUp() {
+    $this->server = Vertx::createNetServer();
+    $this->client = Vertx::createNetClient();
+  }
+
+  /**
+   * Tests connecting client to server.
+   */
+  public function testConnect() {
+    $this->server->connectHandler(function($socket) {
+      $this->assertNotNull($socket);
+      $this->assertNotNull($socket->localAddress);
+      $this->assertNotNull($socket->remoteAddress);
+    });
+
+    $this->server->listen(8181, '0.0.0.0', function($server, $error) {
+      $this->assertNull($error, 'An error was thrown on server listen.');
+      $this->assertNotNull($server, 'The server was not passed to server listen handler.');
+      $this->client->connect(8181, 'localhost', function($socket, $error) {
+        $this->assertNull($error);
+        $this->assertNotNull($socket);
+        $this->assertNotNull($socket->localAddress);
+        $this->assertNotNull($socket->remoteAddress);
+        $this->complete();
+      });
+    });
+  }
+
+  public function tearDown() {
+    $this->client->close();
+    $this->server->close();
+  }
+
 }
 
 TestRunner::run(new NetTestCase());
