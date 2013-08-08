@@ -17,6 +17,7 @@ package com.blankstyle.vertx.php.http;
 
 import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
+import com.blankstyle.vertx.php.MultiMapArray;
 import com.blankstyle.vertx.php.Settable;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.WriteStream;
@@ -90,14 +91,14 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
    * Returns response headers.
    */
   public Value headers(Env env) {
-    return env.wrapJava(response.headers());
+    return env.wrapJava(new MultiMapArray(response.headers()));
   }
 
   /**
    * Returns response trailers.
    */
   public Value trailers(Env env) {
-    return env.wrapJava(response.trailers());
+    return env.wrapJava(new MultiMapArray(response.trailers()));
   }
 
   /**

@@ -17,6 +17,7 @@ package com.blankstyle.vertx.php.http;
 
 import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
+import com.blankstyle.vertx.php.MultiMapArray;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.WriteStream;
 import com.blankstyle.vertx.php.util.PhpTypes;
@@ -53,7 +54,7 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
    * Returns request headers.
    */
   public Value headers(Env env) {
-    return env.wrapJava(request.headers());
+    return env.wrapJava(new MultiMapArray(request.headers()));
   }
 
   /**

@@ -19,6 +19,8 @@ import org.vertx.java.core.buffer.Buffer;
 
 import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
+import com.blankstyle.vertx.php.MultiMapArray;
+import com.blankstyle.vertx.php.net.NetSocket;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.ReadStream;
 import com.blankstyle.vertx.php.util.PhpTypes;
@@ -66,15 +68,15 @@ public class HttpClientResponse implements ReadStream<HttpClientResponse>, Excep
   }
 
   public Value headers(Env env) {
-    return env.wrapJava(response.headers());
+    return env.wrapJava(new MultiMapArray(response.headers()));
   }
 
   public Value trailers(Env env) {
-    return env.wrapJava(response.trailers());
+    return env.wrapJava(new MultiMapArray(response.trailers()));
   }
 
   public Value netSocket(Env env) {
-    return env.wrapJava(response.netSocket());
+    return env.wrapJava(new NetSocket(response.netSocket()));
   }
 
   public Value statusCode(Env env) {
