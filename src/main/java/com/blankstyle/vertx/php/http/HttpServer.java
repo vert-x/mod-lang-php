@@ -125,7 +125,7 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
   /**
    * Creates or gets the server route handler.
    */
-  public Value routeHandler(final Env env, @Optional final RouteMatcher matcher) {
+  public Value requestHandler(final Env env, @Optional final RouteMatcher matcher) {
     if (matcher != null) {
       server.requestHandler(new org.vertx.java.core.Handler<org.vertx.java.core.http.HttpServerRequest>() {
         @Override
@@ -136,7 +136,7 @@ public class HttpServer extends TCPServer<org.vertx.java.core.http.HttpServer> {
       return env.wrapJava(this);
     }
     else {
-      return requestHandler(env, null);
+      return env.wrapJava(server.requestHandler());
     }
   }
 

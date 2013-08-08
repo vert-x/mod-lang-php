@@ -20,13 +20,14 @@ import org.vertx.java.core.MultiMap;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.lib.spl.ArrayAccess;
+import com.caucho.quercus.lib.spl.Countable;
 
 /**
  * A PHP associative array implementation of the Vert.x MultiMap.
  *
  * @author Jordan Halterman
  */
-public class MultiMapArray implements ArrayAccess {
+public class MultiMapArray implements ArrayAccess, Countable {
 
   private MultiMap map;
 
@@ -54,6 +55,11 @@ public class MultiMapArray implements ArrayAccess {
   public Value offsetUnset(Value name) {
     map.remove(name.toString());
     return null;
+  }
+
+  @Override
+  public int count() {
+    return map.size();
   }
 
 }
