@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.core.logging.Logger;
-import org.vertx.java.core.shareddata.SharedData;
 
 import com.blankstyle.vertx.php.eventbus.EventBus;
 import com.blankstyle.vertx.php.file.FileSystem;
@@ -30,6 +29,8 @@ import com.blankstyle.vertx.php.net.NetClient;
 import com.blankstyle.vertx.php.net.NetServer;
 import com.blankstyle.vertx.php.sockjs.SockJSServer;
 import com.blankstyle.vertx.php.util.PhpTypes;
+import com.blankstyle.vertx.php.shareddata.SharedData;
+
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.ArrayValue;
 import com.caucho.quercus.env.ArrayValueImpl;
@@ -119,7 +120,7 @@ public final class Vertx {
    * Returns the Vertx SharedData instance.
    */
   public static SharedData sharedData(Env env) {
-    return PhpVerticleFactory.vertx.sharedData();
+    return new SharedData(PhpVerticleFactory.vertx.sharedData());
   }
 
   /**
