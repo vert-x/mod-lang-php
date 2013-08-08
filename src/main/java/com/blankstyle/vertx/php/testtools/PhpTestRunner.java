@@ -33,15 +33,24 @@ import com.caucho.quercus.env.ObjectValue;
  */
 public class PhpTestRunner {
 
+  private static ObjectValue currentTest;
+
   /**
    * Runs a PHP test.
    */
   public static void run(Env env, ObjectValue test) {
+    currentTest = test;
     String methodName = PhpVerticleFactory.container.config().getString("methodName");
     VertxAssert.initialize(PhpVerticleFactory.vertx);
-    test.callMethod(env, env.createString("setUp"));
-    test.callMethod(env, env.createString(methodName));
-    test.callMethod(env, env.createString("tearDown"));
+    currentTest.callMethod(env, env.createString("setUp"));
+    currentTest.callMethod(env, env.createString(methodName));
+  }
+
+  /**
+   * Runs the PHP test's tearDown() method prior to completing the test.
+   */
+  public static void cleanUp(Env env) {
+    currentTest.callMethod(env, env.createString("tearDown"));
   }
 
 }

@@ -293,6 +293,8 @@ public abstract class PhpTestCase {
    * Completes the test.
    */
   public static void complete(Env env, @This ObjectValue obj) {
+    // Run the test's cleanUp() method before completing the test.
+    PhpTestRunner.cleanUp(env);
     VertxAssert.testComplete();
   }
 
