@@ -13,46 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.blankstyle.vertx.php.shareddata;
+package com.blankstyle.vertx.php;
 
-import org.vertx.java.core.shareddata.ConcurrentSharedMap;
+import org.vertx.java.core.MultiMap;
 
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.lib.spl.ArrayAccess;
 
 /**
- * Wraps a Vert.x shared map in a PHP friendly interface.
+ * A PHP associative array implementation of the Vert.x MultiMap.
  *
  * @author Jordan Halterman
  */
-public class SharedMap implements ArrayAccess {
+public class MultiMapArray implements ArrayAccess {
 
-  private ConcurrentSharedMap<Object, Object> map;
+  private MultiMap map;
 
-  SharedMap(ConcurrentSharedMap<Object, Object> map) {
+  public MultiMapArray(MultiMap map) {
     this.map = map;
   }
 
   @Override
-  public boolean offsetExists(Value key) {
-    return map.containsKey(key.toJavaObject());
+  public boolean offsetExists(Value name) {
+    return map.contains(name.toString());
   }
 
   @Override
-  public Value offsetGet(Value key) {
-    return Env.getCurrent().wrapJava(map.get(key.toJavaObject()));
+  public Value offsetGet(Value name) {
+    return Env.getCurrent().wrapJava(map.get(name.toString()));
   }
 
   @Override
-  public Value offsetSet(Value key, Value value) {
-    map.put(key.toJavaObject(), value.toJavaObject());
+  public Value offsetSet(Value name, Value value) {
+    map.set(name.toString(), value.toString());
     return null;
   }
 
   @Override
-  public Value offsetUnset(Value key) {
-    map.remove(key.toJavaObject());
+  public Value offsetUnset(Value name) {
+    map.remove(name.toString());
     return null;
   }
 

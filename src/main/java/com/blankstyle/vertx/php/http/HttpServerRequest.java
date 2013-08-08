@@ -19,6 +19,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 
 import org.vertx.java.core.buffer.Buffer;
 
+import com.blankstyle.vertx.php.MultiMapArray;
 import com.blankstyle.vertx.php.ResultModifier;
 import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
@@ -53,7 +54,7 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest>, Gettabl
   }
 
   public Value headers(Env env) {
-    return env.wrapJava(request.headers());
+    return env.wrapJava(new MultiMapArray(request.headers()));
   }
 
   public Value method(Env env) {
@@ -61,7 +62,7 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest>, Gettabl
   }
 
   public Value params(Env env) {
-    return env.wrapJava(request.params());
+    return env.wrapJava(new MultiMapArray(request.params()));
   }
 
   public Value path(Env env) {
@@ -97,7 +98,7 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest>, Gettabl
   }
 
   public Value formAttributes(Env env) {
-    return env.wrapJava(request.formAttributes());
+    return env.wrapJava(new MultiMapArray(request.formAttributes()));
   }
 
   public Value peerCertificateChain(Env env) {
