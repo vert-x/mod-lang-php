@@ -134,21 +134,34 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
   }
 
   /**
+   * Attempts to connect a websocket to the uri.
+   */
+  public HttpClient connectWebsocket(Env env, StringValue uri, Value handler) {
+    // TODO This method needs to be able to support other HttpClient.connectWebsocket() arguments.
+    PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::connectWebsocket() must be callable.");
+    client.connectWebsocket(uri.toString(), new Handler<org.vertx.java.core.http.WebSocket>(env, PhpTypes.toCallable(handler), new ResultModifier<org.vertx.java.core.http.WebSocket, WebSocket>() {
+      @Override
+      public WebSocket modify(org.vertx.java.core.http.WebSocket socket) {
+        return new WebSocket(socket);
+      }
+    }));
+    return this;
+  }
+
+  /**
    * Executes a request.
    */
-  public HttpClient request(Env env, StringValue method, StringValue uri, Value handler) {
+  public HttpClientRequest request(Env env, StringValue method, StringValue uri, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::request() must be callable.");
-    client.request(method.toString(), uri.toString(), createResponseHandler(env, handler));
-    return this;
+    return new HttpClientRequest(client.request(method.toString(), uri.toString(), createResponseHandler(env, handler)));
   }
 
   /**
    * Executes a GET request.
    */
-  public HttpClient get(Env env, StringValue uri, Value handler) {
+  public HttpClientRequest get(Env env, StringValue uri, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::get() must be callable.");
-    client.get(uri.toString(), createResponseHandler(env, handler));
-    return this;
+    return new HttpClientRequest(client.get(uri.toString(), createResponseHandler(env, handler)));
   }
 
   /**
@@ -163,64 +176,57 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
   /**
    * Executes a PUT request.
    */
-  public HttpClient put(Env env, StringValue uri, Value handler) {
+  public HttpClientRequest put(Env env, StringValue uri, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::put() must be callable.");
-    client.put(uri.toString(), createResponseHandler(env, handler));
-    return this;
+    return new HttpClientRequest(client.put(uri.toString(), createResponseHandler(env, handler)));
   }
 
   /**
    * Executes a POST request.
    */
-  public HttpClient post(Env env, StringValue uri, Value handler) {
+  public HttpClientRequest post(Env env, StringValue uri, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::post() must be callable.");
-    client.post(uri.toString(), createResponseHandler(env, handler));
-    return this;
+    return new HttpClientRequest(client.post(uri.toString(), createResponseHandler(env, handler)));
   }
 
   /**
    * Executes a DELETE request.
    */
-  public HttpClient delete(Env env, StringValue uri, Value handler) {
+  public HttpClientRequest delete(Env env, StringValue uri, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::delete() must be callable.");
-    client.delete(uri.toString(), createResponseHandler(env, handler));
-    return this;
+    return new HttpClientRequest(client.delete(uri.toString(), createResponseHandler(env, handler)));
   }
 
   /**
    * Executes a HEAD request.
    */
-  public HttpClient head(Env env, StringValue uri, Value handler) {
+  public HttpClientRequest head(Env env, StringValue uri, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::head() must be callable.");
-    client.head(uri.toString(), createResponseHandler(env, handler));
-    return this;
+    return new HttpClientRequest(client.head(uri.toString(), createResponseHandler(env, handler)));
   }
 
   /**
    * Executes a PATCH request.
    */
-  public HttpClient patch(Env env, StringValue uri, Value handler) {
+  public HttpClientRequest patch(Env env, StringValue uri, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::patch() must be callable.");
-    client.patch(uri.toString(), createResponseHandler(env, handler));
-    return this;
+    return new HttpClientRequest(client.patch(uri.toString(), createResponseHandler(env, handler)));
   }
 
   /**
    * Executes a TRACE request.
    */
-  public HttpClient trace(Env env, StringValue uri, Value handler) {
+  public HttpClientRequest trace(Env env, StringValue uri, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::trace() must be callable.");
-    client.trace(uri.toString(), createResponseHandler(env, handler));
-    return this;
+    return new HttpClientRequest(client.trace(uri.toString(), createResponseHandler(env, handler)));
   }
 
   /**
    * Executes an OPTIONS request.
    */
-  public HttpClient options(Env env, StringValue uri, Value handler) {
+  public HttpClientRequest options(Env env, StringValue uri, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::options() must be callable.");
-    client.options(uri.toString(), createResponseHandler(env, handler));
-    return this;
+    return new HttpClientRequest(client.options(uri.toString(), createResponseHandler(env, handler)));
   }
 
   /**
