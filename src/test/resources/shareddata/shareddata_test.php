@@ -23,6 +23,78 @@ use Vertx\Test\PhpTestCase;
  */
 class SharedDataTestCase extends PhpTestCase {
 
+  private $sharedData = NULL;
+
+  public function setUp() {
+    $this->sharedData = Vertx::sharedData();
+  }
+
+  /**
+   * Tests loading shared maps.
+   */
+  public function testMapLoad() {
+    $map1 = $this->sharedData->getMap('map1');
+    $this->assertNotNull($map1);
+
+    $map2 = $this->sharedData->getMap('map1');
+    $this->assertNotNull($map2);
+
+    $this->assertEquals(count($map1), count($map2));
+
+    $map3 = $this->sharedData->getMap('map3');
+    $this->assertNotNull($map3);
+    $this->complete();
+  }
+
+  /**
+   * Tests setting and getting strings in a shared map.
+   */
+  public function testMapString() {
+    $this->doTestValue('Hello world!');
+  }
+
+  /**
+   * Tests setting and getting booleans in a shared map.
+   */
+  public function testMapBoolean() {
+    $this->doTestValue(TRUE);
+    $this->doTestValue(FALSE);
+  }
+
+  /**
+   * Tests setting and getting integers in a shared map.
+   */
+  public function testMapInteger() {
+    $this->doTestValue(12345);
+  }
+
+  /**
+   * Tests setting and getting floats in a shared map.
+   */
+  public function testMapFloat() {
+    $this->doTestValue(1.2345);
+  }
+
+  private function doTestValue($value) {
+    $map1 = $this->sharedData->getMap('map1');
+    $this->assertNotNull($map1);
+
+    $map2 = $this->sharedData->getMap('map1');
+    $this->assertNotNull($map2);
+
+    $key = 'foo';
+
+    $map1[$key] = $value;
+
+    $this->assertEquals($map1[$key], $value);
+    $this->assertEquals($map2[$key], $value);
+    $this->assertEquals($map1[$key], $map2[$key]);
+
+    $map3 = $this->sharedData->getMap('map1');
+    $this->assertEquals($map3[$key], $value);
+    $this->complete();
+  }
+
 }
 
 TestRunner::run(new SharedDataTestCase());
