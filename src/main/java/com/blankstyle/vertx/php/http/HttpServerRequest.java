@@ -126,6 +126,13 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest>, Gettabl
     return this;
   }
 
+  public HttpServerRequest bodyHandler(Env env, Value handler) {
+    PhpTypes.assertCallable(env, handler,
+        "Handler argument to Vertx\\Http\\HttpServerRequest::bodyHandler() must be callable.");
+    request.bodyHandler(new Handler<org.vertx.java.core.buffer.Buffer>(env, PhpTypes.toCallable(handler)));
+    return this;
+  }
+
   public HttpServerRequest uploadHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\Http\\HttpServerRequest::uploadHandler() must be callable.");
