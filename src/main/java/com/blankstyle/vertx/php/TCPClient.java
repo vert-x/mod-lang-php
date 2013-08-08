@@ -117,6 +117,21 @@ public abstract class TCPClient<T extends TCPSupport<T> & ClientSSLSupport<T>> i
   }
 
   /**
+   * Gets the trust store path option.
+   */
+  public StringValue trustStorePath(Env env) {
+    return env.createString(client.getTrustStorePath());
+  }
+
+  /**
+   * Sets the trust store path option.
+   */
+  public TCPClient<T> trustStorePath(Env env, StringValue pwd) {
+    client.setTrustStorePath(pwd.toString());
+    return this;
+  }
+
+  /**
    * Returns the trust store password.
    */
   public StringValue trustStorePassword(Env env) {

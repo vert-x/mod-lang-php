@@ -142,6 +142,21 @@ public abstract class TCPServer<T extends ServerTCPSupport<T> & ServerSSLSupport
   }
 
   /**
+   * Gets the trust store path option.
+   */
+  public StringValue trustStorePath(Env env) {
+    return env.createString(server.getTrustStorePath());
+  }
+
+  /**
+   * Sets the trust store path option.
+   */
+  public TCPServer<T> trustStorePath(Env env, StringValue pwd) {
+    server.setTrustStorePath(pwd.toString());
+    return this;
+  }
+
+  /**
    * Gets the send buffer size option.
    */
   public Value sendBufferSize(Env env) {
