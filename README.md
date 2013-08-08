@@ -13,14 +13,14 @@ This project provides PHP language wrappers for [Vert.x](http://vertx.io/).
 Since Vert.x runs on the JVM, this module is built on the Java-based
 [Quercus](http://quercus.caucho.com/) PHP implementation, one which is
 kept up to date and supports many useful new PHP features. The Vert.x PHP
-API closely resembles that of the Javascript module, using shorter method
+API closely resembles that of the JavaScript module, using shorter method
 names and closures for event handlers. The PHP Vert.x API is implemented
-entirely through the Quercus Java API so at to allow more control over
-interacting with the core Vert.x API.
+entirely through the Quercus Java API so as to allow more control over
+interaction with the core Vert.x API.
 
 ## Project status
 This project is young and is still undergoing heavy development. Integration
-tests are currently be written for all portions of the API. Until tests are
+tests are currently beng written for all portions of the API. Until tests are
 completed and passed _it is not recommended that this module be used in a
 production environment_. That said, I intend to _begin_ developing applications
 on the Vert.x PHP API in the very near future, so I am working hard to make
@@ -34,7 +34,7 @@ recognized on the project page_.
 The Java package structure intentionally resembles that of the
 `org.vertx.java.core` package. Developers that are familiar with the core
 Vert.x API will have no problem diving into the PHP wrappers. In most areas,
-the API implements modified PHP friendly versions of the core Vert.x interfaces,
+the API implements modified PHP-friendly versions of the core Vert.x interfaces,
 such as custom `Handler`, `StreamReader`, and `StreamWriter` implementations
 as well as many other common interfaces. There is an analogue for most every
 core Vert.x interface in the PHP API.
@@ -459,7 +459,7 @@ or
 
 ## Specifying number of instances
 
-By default, when you deploy a verticle only one instance of the verticle
+By default, when you deploy a verticle, only one instance of the verticle
 is deployed. If you want more than one instance to be deployed, e.g. so
 you can scale over your cores better, you can specify the number of
 instances as follows:
