@@ -46,6 +46,7 @@ class EventBusTestCase extends PhpTestCase {
    */
   public function testSendEmpty() {
     $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
+      $this->assertNotNull($message->replyAddress);
       $this->assertEquals($message->body, array());
       $this->eventBus->unregisterHandler($this->currentHandlerId);
       $this->complete();
@@ -60,6 +61,7 @@ class EventBusTestCase extends PhpTestCase {
    */
   public function testSendSimple() {
     $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
+      $this->assertNotNull($message->replyAddress);
       $this->assertEquals($message->body['message'], self::$jsonMessage['message']);
       $this->eventBus->unregisterHandler($this->currentHandlerId);
       $this->complete();
@@ -74,6 +76,7 @@ class EventBusTestCase extends PhpTestCase {
    */
   public function testReplyEmpty() {
     $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
+      $this->assertNotNull($message->replyAddress);
       $this->assertEquals($message->body['message'], self::$jsonMessage['message']);
       $message->reply(array());
     });
@@ -92,6 +95,7 @@ class EventBusTestCase extends PhpTestCase {
    */
   public function testReplySimple() {
     $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
+      $this->assertNotNull($message->replyAddress);
       $this->assertEquals($message->body['message'], self::$jsonMessage['message']);
       $message->reply(array('message2' => 'Hello world 2!'));
     });
@@ -110,6 +114,7 @@ class EventBusTestCase extends PhpTestCase {
    */
   public function testSendUnregisterSend() {
     $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
+      $this->assertNotNull($message->replyAddress);
       if ($this->received) {
         $this->assertTrue(FALSE, 'Handler was already called.');
       }
@@ -132,6 +137,7 @@ class EventBusTestCase extends PhpTestCase {
    */
   private function doEcho($message) {
     $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($echo) {
+      $this->assertNotNull($echo->replyAddress);
       $echo->reply($echo->body);
     });
 
