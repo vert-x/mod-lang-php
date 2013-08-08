@@ -195,7 +195,7 @@
               <goal>verify</goal>
             </goals>
           </execution>
-        </executions>jar
+        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
