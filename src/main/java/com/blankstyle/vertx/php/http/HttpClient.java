@@ -127,10 +127,9 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
   /**
    * Connects to the server.
    */
-  public HttpClient connect(Env env, StringValue uri, Value handler) {
+  public HttpClientRequest connect(Env env, StringValue uri, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::connect() must be callable.");
-    client.connect(uri.toString(), createResponseHandler(env, handler));
-    return this;
+    return new HttpClientRequest(client.connect(uri.toString(), createResponseHandler(env, handler)));
   }
 
   /**
