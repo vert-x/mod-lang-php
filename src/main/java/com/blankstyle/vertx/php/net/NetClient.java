@@ -47,11 +47,8 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
   /**
    * Connects to a server.
    */
-  public NetClient connect(Env env, NumberValue port, @Optional StringValue host, @Optional Value handler) {
-    if (PhpTypes.notNull(handler)) {
-      PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetClient::connect() must be callable.");
-    }
-
+  public NetClient connect(Env env, NumberValue port, @Optional StringValue host, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetClient::connect() must be callable.");
     if (PhpTypes.notNull(host)) {
       client.connect(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.net.NetSocket>(env,
           PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.net.NetSocket, NetSocket>() {
