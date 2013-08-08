@@ -15,6 +15,7 @@
  */
 package com.blankstyle.vertx.php.net;
 
+import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.ReadStream;
@@ -31,12 +32,17 @@ import com.caucho.quercus.env.StringValue;
  *
  * @author Jordan Halterman
  */
-public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>, ExceptionSupport<NetSocket> {
+public class NetSocket implements ReadStream<NetSocket>, WriteStream<NetSocket>, ExceptionSupport<NetSocket>, Gettable {
 
   private org.vertx.java.core.net.NetSocket socket;
 
   public NetSocket(org.vertx.java.core.net.NetSocket socket) {
     this.socket = socket;
+  }
+
+  @Override
+  public Value __getField(Env env, StringValue name) {
+    return env.wrapJava(this).callMethod(env, name);
   }
 
   /**
