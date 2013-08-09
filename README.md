@@ -140,6 +140,7 @@ In the interest of consistency, this manual is adapted from the
       * [Appending to a Buffer](#appending-to-a-buffer)
       * [Random access buffer writes](#random-access-buffer-writes)
    * [Reading from a Buffer](#reading-from-a-buffer)
+   * [Getting the length of a buffer](#getting-the-length-of-a-buffer)
    * [Other buffer methods](#other-buffer-methods)
 1. [Delayed and Periodic Tasks](#delayed-and-periodic-tasks)
    * [One-shot Timers](#one-shot-timers)
@@ -863,28 +864,6 @@ use Vertx\Buffer;
 $buff = new Buffer('some-string');
 ```
 
-Create a buffer from a String: The String will be encoded using the specified
-encoding, e.g:
-
-```php
-use Vertx\Buffer;
-
-$buff = new Buffer('some-string', 'UTF-16');
-```
-
-Create a buffer with an initial size hint. If you know your buffer will have a
-certain amount of data written to it you can create the buffer and specify
-this size. This makes the buffer initially allocate that much memory and is
-more efficient than the buffer automatically resizing multiple times as data
-is written to it.
-
-Note that buffers created this way *are empty*. It does not create a buffer
-filled with zeros up to the specified size.
-
-```php
-$buff = new Vertx\Buffer(100000);
-```
-
 ## Writing to a Buffer
 
 There are two ways to write to a buffer: appending, and random access. In either
@@ -901,7 +880,7 @@ be chained:
 
 ```php
 $buff = new Vertx\Buffer();
-$buff->appendInt(123)->appendString('hello')->appendChar('\n');
+$buff->appendInt(123)->appendString('hello');
 
 $socket->write($buff);
 ```
@@ -940,6 +919,19 @@ Use `appendBuffer` to append another buffer
 
 ```php
 $buff->appendBuffer($anotherBuffer);    
+```
+
+Vert.x PHP also supports a more abstract `append` method, which attempts to
+determine the type of data being appended to the buffer and acts accordingly.
+
+```php
+$buff->append('foo')->append(1)->append(2.23);
+```
+
+Similarly, there are equivalent `get` and `set` methods as well.
+
+```php
+$buff->set(0, 'foo')->set(3, 4.55);
 ```
 
 ### Random access buffer writes
@@ -1003,7 +995,8 @@ buffer from where to get the data.
 ```php
 $buff = new Vertx\Buffer();
 
-for ($i = 0; $i < $buff->length(); $i += 4) {
+$length = count($buff);
+for ($i = 0; $i < $length; $i += 4) {
   Vertx::logger()->info('int value at '. $i .' is '. $buff->getInt($i));
 }
 ```
@@ -1043,10 +1036,23 @@ Or as buffers
 $subBuffer = $buff->getBuffer($pos, $end); // Read from pos to end into another buffer    
 ```
 
+## Getting the length of a buffer
+
+The PHP buffer implements the `Countable` interface. Thus, you can determine
+the length of the buffer by using PHP's built-in `count` function.
+
+```php
+$length = count($buff);
+```
+
+Alternatively, the `length` property also contains the buffer length.
+
+```php
+$length = $buff->length;
+```
+
 ## Other buffer methods:
 
-* `length()`. To obtain the length of the buffer. The length of a buffer is
-the index of the byte in the buffer with the largest index + 1.
 * `copy()`. Copy the entire buffer
 
 See the JavaDoc for more detailed method level documentation.    
