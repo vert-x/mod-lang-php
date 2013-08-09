@@ -96,6 +96,14 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
   }
 
   /**
+   * Puts an HTTP header.
+   */
+  public HttpServerResponse putHeader(Env env, StringValue name, Value value) {
+    response.putHeader(name.toString(), value.toString());
+    return this;
+  }
+
+  /**
    * Returns response trailers.
    */
   public Value trailers(Env env) {
@@ -103,10 +111,10 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
   }
 
   /**
-   * Puts an HTTP header.
+   * Puts an HTTP trailer.
    */
-  public HttpServerResponse putHeader(Env env, StringValue name, Value value) {
-    response.putHeader(name.toString(), value.toString());
+  public HttpServerResponse putTrailer(Env env, StringValue name, Value value) {
+    response.putTrailer(name.toString(), value.toString());
     return this;
   }
 

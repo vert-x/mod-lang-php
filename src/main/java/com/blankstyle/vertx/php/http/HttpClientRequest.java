@@ -17,6 +17,7 @@ package com.blankstyle.vertx.php.http;
 
 import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.MultiMapArray;
+import com.blankstyle.vertx.php.Settable;
 import com.blankstyle.vertx.php.buffer.Buffer;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.WriteStream;
@@ -34,7 +35,7 @@ import com.caucho.quercus.env.Value;
  * 
  * @author Jordan Halterman
  */
-public class HttpClientRequest implements WriteStream<HttpClientRequest>, ExceptionSupport<HttpClientRequest>, Gettable {
+public class HttpClientRequest implements WriteStream<HttpClientRequest>, ExceptionSupport<HttpClientRequest>, Gettable, Settable {
 
   private org.vertx.java.core.http.HttpClientRequest request;
 
@@ -49,6 +50,11 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
   @Override
   public Value __getField(Env env, StringValue name) {
     return env.wrapJava(this).callMethod(env, name);
+  }
+
+  @Override
+  public void __setField(Env env, StringValue name, Value value) {
+    env.wrapJava(this).callMethod(env, name, value);
   }
 
   /**

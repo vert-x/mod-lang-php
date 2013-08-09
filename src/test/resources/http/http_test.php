@@ -17,11 +17,240 @@
 
 use Vertx\Test\TestRunner;
 use Vertx\Test\PhpTestCase;
+use Vertx\Buffer;
 
 /**
  * A Vert.x HTTP test case.
  */
 class HttpTestCase extends PhpTestCase {
+
+  private static $path = '/someurl/blah.html';
+
+  private static $query = 'param1=vparam1&param2=vparam2';
+
+  private static $uri = 'http://localhost:8080/someurl/blah.html?param1=vparam1&param2=vparam2';
+
+  private $server = NULL;
+
+  private $client = NULL;
+
+  public function setUp() {
+    $this->server = Vertx::createHttpServer();
+    $this->client = Vertx::createHttpClient();
+    $this->client->port = 8080;
+  }
+
+  /**
+   * Tests the HTTP GET method.
+   */
+  public function testGet() {
+    $this->executeMethod('GET', FALSE);
+  }
+
+  /**
+   * Tests the HTTP GET method using a chunked request.
+   */
+  public function testGetChunked() {
+    $this->executeMethod('GET', TRUE);
+  }
+
+  /**
+   * Tests the HTTP PUT method.
+   */
+  public function testPut() {
+    $this->executeMethod('PUT', FALSE);
+  }
+
+  /**
+   * Tests the HTTP PUT method using a chunked request.
+   */
+  public function testPutChunked() {
+    $this->executeMethod('PUT', TRUE);
+  }
+
+  /**
+   * Tests the HTTP POST method.
+   */
+  public function testPost() {
+    $this->executeMethod('POST', FALSE);
+  }
+
+  /**
+   * Tests the HTTP POST method using a chunked request.
+   */
+  public function testPostChunked() {
+    $this->executeMethod('POST', TRUE);
+  }
+
+  /**
+   * Tests the HTTP DELETE method.
+   */
+  public function testDelete() {
+    $this->executeMethod('DELETE', FALSE);
+  }
+
+  /**
+   * Tests the HTTP DELETE method using a chunked request.
+   */
+  public function testDeleteChunked() {
+    $this->executeMethod('DELETE', TRUE);
+  }
+
+  /**
+   * Tests the HTTP HEAD method.
+   */
+  public function testHead() {
+    $this->executeMethod('HEAD', FALSE);
+  }
+
+  /**
+   * Tests the HTTP HEAD method using a chunked request.
+   */
+  public function testHeadChunked() {
+    $this->executeMethod('HEAD', TRUE);
+  }
+
+  /**
+   * Tests the HTTP OPTIONS method.
+   */
+  public function testOptions() {
+    $this->executeMethod('OPTIONS', FALSE);
+  }
+
+  /**
+   * Tests the HTTP OPTIONS method using a chunked request.
+   */
+  public function testOptionsChunked() {
+    $this->executeMethod('OPTIONS', TRUE);
+  }
+
+  /**
+   * Tests the HTTP TRACE method.
+   */
+  public function testTrace() {
+    $this->executeMethod('TRACE', FALSE);
+  }
+
+  /**
+   * Tests the HTTP TRACE method using a chunked request.
+   */
+  public function testTraceChunked() {
+    $this->executeMethod('TRACE', TRUE);
+  }
+
+  /**
+   * Tests the HTTP PATCH method.
+   */
+  public function testPatch() {
+    $this->executeMethod('PATCH', FALSE);
+  }
+
+  /**
+   * Tests the HTTP PATCH method using a chunked request.
+   */
+  public function testPatchChunked() {
+    $this->executeMethod('PATCH', TRUE);
+  }
+
+  /**
+   * Tests the HTTP CONNECT method.
+   */
+  public function testConnect() {
+    $this->executeMethod('CONNECT', FALSE);
+  }
+
+  /**
+   * Tests the HTTP CONNECT method using a chunked request.
+   */
+  public function testConnectChunked() {
+    $this->executeMethod('CONNECT', TRUE);
+  }
+
+  /**
+   * Executes an HTTP request method.
+   */
+  private function executeMethod($method, $chunked) {
+    $sent_buff = $this->createBuffer(1000);
+
+    $this->server->requestHandler(function($request) use ($method, $chunked) {
+      $this->assertEquals((string) $request->version, 'HTTP_1_1', 'HTTP version is incorrect.');
+      $this->assertEquals($request->uri, self::$uri, 'URI is incorect.');
+      $this->assertEquals($request->method, $method, 'HTTP method is incorrect.');
+      $this->assertEquals($request->path, self::$path, 'Path is incorrect.');
+      $this->assertEquals($request->query, self::$query, 'Query is incorrect.');
+      $this->assertEquals($request->headers['header1'], 'vheader1', 'First header is incorrect.');
+      $this->assertEquals($request->headers['header2'], 'vheader2', 'Second header is incorrect.');
+      $this->assertEquals($request->params['param1'], 'vparam1', 'First parameter is incorrect.');
+      $this->assertEquals($request->params['param2'], 'vparam2', 'Second parameter is incorrect.');
+
+      $request->response->putHeader('rheader1', 'vrheader1');
+      $request->response->putHeader('rheader2', 'vrheader2');
+
+      $body = new Buffer();
+      $request->dataHandler(function($buffer) use ($body) {
+        $body->appendBuffer($buffer);
+      });
+
+      if ($method != 'HEAD' && $method != 'CONNECT') {
+        $request->response->chunked = $chunked;
+      }
+
+      $request->endHandler(function() use ($method, $chunked, $body, $request) {
+        if ($method != 'HEAD' && $method != 'CONNECT') {
+          if (empty($chunked)) {
+            $request->response->putHeader('Content-Length', (string) count($body));
+          }
+          $request->response->write($body);
+          if (!empty($chunked)) {
+            $request->response->putTrailer('trailer1', 'vtrailer1');
+            $request->response->putTrailer('trailer2', 'vtrailer2');
+          }
+        }
+        $request->response->end();
+      });
+    });
+
+    $this->server->listen(8080, '0.0.0.0', function($server, $error) use ($method, $chunked, $sent_buff) {
+      $this->assertNotNull($server);
+      $this->assertNull($error);
+
+      $request = $this->client->request($method, self::$uri, function($response) use ($method, $chunked, $sent_buff) {
+        $this->assertEquals($response->statusCode, 200);
+        $this->assertEquals($response->headers['rheader1'], 'vrheader1', 'First header is incorrect.');
+        $this->assertEquals($response->headers['rheader2'], 'vrheader2', 'Second header is incorrect.');
+
+        $body = new Buffer();
+        $response->dataHandler(function($buffer) use ($body) {
+          $body->appendBuffer($buffer);
+        });
+
+        $response->endHandler(function() use ($method, $chunked, $sent_buff, $body, $response) {
+          if ($method != 'HEAD' && $method != 'CONNECT') {
+            $this->assertEquals((string) $sent_buff, (string) $body, 'Sent and received buffers do not match.');
+            if (!empty($chunked)) {
+              $this->assertEquals($response->trailers['trailer1'], 'vtrailer1', 'First trailer is incorrect.');
+              $this->assertEquals($response->trailers['trailer2'], 'vtrailer2', 'Second trailer is incorrect.');
+            }
+          }
+          $this->complete();
+        });
+      });
+
+      $request->chunked = $chunked;
+      $request->putHeader('header1', 'vheader1');
+      $request->putHeader('header2', 'vheader2');
+
+      if (empty($chunked)) {
+        $request->putHeader('Content-Length', (string) $sent_buff->length);
+      }
+
+      $request->headers['header3'] = 'vheader3_1';
+      $request->headers['header3'] = 'vheader3';
+
+      $request->write($sent_buff);
+      $request->end();
+    });
+  }
 
   /**
    * Tests HTTP server methods.
@@ -185,6 +414,19 @@ class HttpTestCase extends PhpTestCase {
     $this->assertEquals($client->maxPoolSize, 12345);
 
     $this->complete();
+  }
+
+  private function createBuffer($size) {
+    $str = '';
+    while (strlen($str) < $size) {
+      $str .= 'abcdefghijklmnopqrstuvwxyz';
+    }
+    return new Buffer(substr($str, 0, $size));
+  }
+
+  public function tearDown() {
+    $this->client->close();
+    $this->server->close();
   }
 
 }
