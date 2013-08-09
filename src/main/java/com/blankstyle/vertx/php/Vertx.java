@@ -28,9 +28,9 @@ import com.blankstyle.vertx.php.http.HttpServer;
 import com.blankstyle.vertx.php.net.NetClient;
 import com.blankstyle.vertx.php.net.NetServer;
 import com.blankstyle.vertx.php.sockjs.SockJSServer;
+import com.blankstyle.vertx.php.util.HandlerFactory;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.blankstyle.vertx.php.shareddata.SharedData;
-
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.ArrayValue;
 import com.caucho.quercus.env.ArrayValueImpl;
@@ -146,7 +146,7 @@ public final class Vertx {
    */
   public static LongValue setTimer(Env env, LongValue delay, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::runOnContext() must be callable.");
-    PhpVerticleFactory.vertx.setTimer(delay.toLong(), new Handler<Long>(env, PhpTypes.toCallable(handler)));
+    PhpVerticleFactory.vertx.setTimer(delay.toLong(), HandlerFactory.<Long>createGenericHandler(env, handler));
     return delay;
   }
 
@@ -155,7 +155,7 @@ public final class Vertx {
    */
   public static LongValue setPeriodic(Env env, LongValue delay, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::runOnContext() must be callable.");
-    PhpVerticleFactory.vertx.setPeriodic(delay.toLong(), new Handler<Long>(env, PhpTypes.toCallable(handler)));
+    PhpVerticleFactory.vertx.setPeriodic(delay.toLong(), HandlerFactory.<Long>createGenericHandler(env, handler));
     return delay;
   }
 
@@ -190,7 +190,7 @@ public final class Vertx {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployModule() must be callable.");
       PhpVerticleFactory.container.deployModule(moduleName.toString(),
           new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(),
-          new AsyncResultHandler<String>(env, PhpTypes.toCallable(handler)));
+          HandlerFactory.<String>createAsyncGenericHandler(env, handler));
     }
     else if (hasConfig) {
       PhpVerticleFactory.container.deployModule(moduleName.toString(),
@@ -199,7 +199,7 @@ public final class Vertx {
     else if (hasHandler) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployModule() must be callable.");
       PhpVerticleFactory.container.deployModule(moduleName.toString(), instances.toInt(),
-          new AsyncResultHandler<String>(env, PhpTypes.toCallable(handler)));
+          HandlerFactory.<String>createAsyncGenericHandler(env, handler));
     }
     else {
       PhpVerticleFactory.container.deployModule(moduleName.toString(), instances.toInt());
@@ -213,7 +213,7 @@ public final class Vertx {
     if (PhpTypes.notNull(handler)) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::undeployModule() must be callable.");
       PhpVerticleFactory.container.undeployModule(deploymentID.toString(),
-          new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+          HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     else {
       PhpVerticleFactory.container.undeployModule(deploymentID.toString());
@@ -232,7 +232,7 @@ public final class Vertx {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployVerticle() must be callable.");
       PhpVerticleFactory.container.deployVerticle(main.toString(),
           new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(),
-          new AsyncResultHandler<String>(env, PhpTypes.toCallable(handler)));
+          HandlerFactory.<String>createAsyncGenericHandler(env, handler));
     }
     else if (hasConfig) {
       PhpVerticleFactory.container.deployVerticle(main.toString(),
@@ -240,8 +240,8 @@ public final class Vertx {
     }
     else if (hasHandler) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployVerticle() must be callable.");
-      PhpVerticleFactory.container.deployVerticle(main.toString(), instances.toInt(), new AsyncResultHandler<String>(
-          env, PhpTypes.toCallable(handler)));
+      PhpVerticleFactory.container.deployVerticle(main.toString(), instances.toInt(),
+          HandlerFactory.<String>createAsyncGenericHandler(env, handler));
     }
     else {
       PhpVerticleFactory.container.deployVerticle(main.toString(), instances.toInt());
@@ -254,8 +254,7 @@ public final class Vertx {
   public static void undeployVerticle(Env env, StringValue deploymentID, @Optional Value handler) {
     if (PhpTypes.notNull(handler)) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::undeployVerticle() must be callable.");
-      PhpVerticleFactory.container.undeployVerticle(deploymentID.toString(), new VoidAsyncResultHandler(env,
-          PhpTypes.toCallable(handler)));
+      PhpVerticleFactory.container.undeployVerticle(deploymentID.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     else {
       PhpVerticleFactory.container.undeployVerticle(deploymentID.toString());

@@ -160,12 +160,12 @@ public class Buffer implements ArrayAccess, Countable, Gettable {
   }
 
   public Buffer setBuffer(Env env, NumberValue pos, Value value) {
-    buffer.setBuffer(pos.toInt(), ((Buffer) value.toJavaObject(env, Buffer.class)).getWrapped());
+    buffer.setBuffer(pos.toInt(), ((Buffer) value.toJavaObject(env, Buffer.class)).__toVertxBuffer());
     return this;
   }
 
   public Buffer appendBuffer(Env env, Value value) {
-    buffer.appendBuffer(((Buffer) value.toJavaObject(env, Buffer.class)).getWrapped());
+    buffer.appendBuffer(((Buffer) value.toJavaObject(env, Buffer.class)).__toVertxBuffer());
     return this;
   }
 
@@ -186,7 +186,7 @@ public class Buffer implements ArrayAccess, Countable, Gettable {
       buffer.setString(pos.toInt(), value.toString());
     }
     else if (value.isObject()) {
-      buffer.setBuffer(pos.toInt(), ((Buffer) value.toJavaObject(Env.getCurrent(), Buffer.class)).getWrapped());
+      buffer.setBuffer(pos.toInt(), ((Buffer) value.toJavaObject(Env.getCurrent(), Buffer.class)).__toVertxBuffer());
     }
     return this;
   }
@@ -276,7 +276,7 @@ public class Buffer implements ArrayAccess, Countable, Gettable {
     return env.wrapJava(buffer.toString(enc.toString()));
   }
 
-  org.vertx.java.core.buffer.Buffer getWrapped() {
+  public org.vertx.java.core.buffer.Buffer __toVertxBuffer() {
     return buffer;
   }
 

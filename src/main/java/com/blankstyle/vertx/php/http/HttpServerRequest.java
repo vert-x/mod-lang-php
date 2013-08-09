@@ -17,14 +17,13 @@ package com.blankstyle.vertx.php.http;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 
-import org.vertx.java.core.buffer.Buffer;
-
 import com.blankstyle.vertx.php.MultiMapArray;
 import com.blankstyle.vertx.php.ResultModifier;
 import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.net.NetSocket;
 import com.blankstyle.vertx.php.streams.ReadStream;
+import com.blankstyle.vertx.php.util.HandlerFactory;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Env;
@@ -130,7 +129,7 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest>, Gettabl
   public HttpServerRequest bodyHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\Http\\HttpServerRequest::bodyHandler() must be callable.");
-    request.bodyHandler(new Handler<org.vertx.java.core.buffer.Buffer>(env, PhpTypes.toCallable(handler)));
+    request.bodyHandler(HandlerFactory.createBufferHandler(env, handler));
     return this;
   }
 
@@ -151,7 +150,7 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest>, Gettabl
   public HttpServerRequest dataHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\Http\\HttpServerRequest::dataHandler() must be callable.");
-    request.dataHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
+    request.dataHandler(HandlerFactory.createBufferHandler(env, handler));
     return this;
   }
 
@@ -159,7 +158,7 @@ public class HttpServerRequest implements ReadStream<HttpServerRequest>, Gettabl
   public HttpServerRequest endHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\Http\\HttpServerRequest::endHandler() must be callable.");
-    request.endHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
+    request.endHandler(HandlerFactory.createVoidHandler(env, handler));
     return this;
   }
 

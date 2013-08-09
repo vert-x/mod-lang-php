@@ -16,11 +16,12 @@
 package com.blankstyle.vertx.php.http;
 
 import com.blankstyle.vertx.php.Gettable;
-import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.MultiMapArray;
 import com.blankstyle.vertx.php.Settable;
+import com.blankstyle.vertx.php.buffer.Buffer;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.WriteStream;
+import com.blankstyle.vertx.php.util.HandlerFactory;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.BooleanValue;
@@ -119,11 +120,21 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
 
   @Override
   public HttpServerResponse write(Env env, Value data, @Optional StringValue enc) {
-    if (enc != null && !enc.isDefault()) {
-      response.write(data.toString(), enc.toString());
+    if (PhpTypes.notNull(enc) && !enc.isDefault()) {
+      if (data.isObject()) {
+        response.write(((Buffer) data.toJavaObject(env, Buffer.class)).__toVertxBuffer());
+      }
+      else {
+        response.write(data.toString(), enc.toString());
+      }
     }
     else {
-      response.write(data.toString());
+      if (data.isObject()) {
+        response.write(((Buffer) data.toJavaObject(env, Buffer.class)).__toVertxBuffer());
+      }
+      else {
+        response.write(data.toString());
+      }
     }
     return this;
   }
@@ -144,14 +155,14 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
   public HttpServerResponse drainHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\Http\\HttpServerResponse::drainHandler() must be callable.");
-    response.drainHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
+    response.drainHandler(HandlerFactory.createVoidHandler(env, handler));
     return this;
   }
 
   public HttpServerResponse closeHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\Http\\HttpServerResponse::closeHandler() must be callable.");
-    response.closeHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
+    response.closeHandler(HandlerFactory.createVoidHandler(env, handler));
     return this;
   }
 
@@ -188,7 +199,7 @@ public class HttpServerResponse implements WriteStream<HttpServerResponse>, Exce
   public HttpServerResponse exceptionHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\Http\\HttpServerResponse::exceptionHandler() must be callable.");
-    response.exceptionHandler(new Handler<Throwable>(env, PhpTypes.toCallable(handler)));
+    response.exceptionHandler(HandlerFactory.createExceptionHandler(env, handler));
     return this;
   }
 

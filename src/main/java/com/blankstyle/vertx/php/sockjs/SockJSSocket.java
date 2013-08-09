@@ -17,9 +17,9 @@ package com.blankstyle.vertx.php.sockjs;
 
 import org.vertx.java.core.buffer.Buffer;
 
-import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.streams.ReadStream;
 import com.blankstyle.vertx.php.streams.WriteStream;
+import com.blankstyle.vertx.php.util.HandlerFactory;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.Env;
@@ -53,7 +53,7 @@ public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJ
   @Override
   public SockJSSocket drainHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\SockJS\\SockJSSocket::drainHandler() must be callable.");
-    socket.drainHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
+    socket.drainHandler(HandlerFactory.createVoidHandler(env, handler));
     return this;
   }
 
@@ -90,14 +90,14 @@ public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJ
   @Override
   public SockJSSocket dataHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\SockJS\\SockJSSocket::dataHandler() must be callable.");
-    socket.dataHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
+    socket.dataHandler(HandlerFactory.createBufferHandler(env, handler));
     return this;
   }
 
   @Override
   public SockJSSocket endHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\SockJS\\SockJSSocket::endHandler() must be callable.");
-    socket.endHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
+    socket.endHandler(HandlerFactory.createVoidHandler(env, handler));
     return this;
   }
 

@@ -1,14 +1,14 @@
 package com.blankstyle.vertx.php.file;
 
 import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.buffer.Buffer;
 import org.vertx.java.core.file.FileProps;
 import org.vertx.java.core.file.FileSystemProps;
 
 import com.blankstyle.vertx.php.AsyncResultHandler;
 import com.blankstyle.vertx.php.AsyncResultWrapper;
 import com.blankstyle.vertx.php.Handler;
-import com.blankstyle.vertx.php.VoidAsyncResultHandler;
+import com.blankstyle.vertx.php.buffer.Buffer;
+import com.blankstyle.vertx.php.util.HandlerFactory;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.BooleanValue;
@@ -43,11 +43,11 @@ public final class FileSystem {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::chmod() must be callable.");
     if (PhpTypes.notNull(dirPerms)) {
       fileSystem.chmod(path.toString(), perms.toString(), dirPerms.toString(),
-          new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+          HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     else {
       fileSystem
-          .chmod(path.toString(), perms.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+          .chmod(path.toString(), perms.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     return this;
   }
@@ -72,10 +72,10 @@ public final class FileSystem {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::copy() must be callable.");
     if (PhpTypes.notNull(recursive)) {
       fileSystem.copy(from.toString(), to.toString(), recursive.toBoolean(),
-          new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+          HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     else {
-      fileSystem.copy(from.toString(), to.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+      fileSystem.copy(from.toString(), to.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     return this;
   }
@@ -101,10 +101,10 @@ public final class FileSystem {
         .assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::createFile() must be callable.");
     if (PhpTypes.notNull(perms)) {
       fileSystem.createFile(path.toString(), perms.toString(),
-          new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+          HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     else {
-      fileSystem.createFile(path.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+      fileSystem.createFile(path.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     return this;
   }
@@ -129,10 +129,10 @@ public final class FileSystem {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::delete() must be callable.");
     if (PhpTypes.notNull(recursive)) {
       fileSystem.delete(path.toString(), recursive.toBoolean(),
-          new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+          HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     else {
-      fileSystem.delete(path.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+      fileSystem.delete(path.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     return this;
   }
@@ -188,7 +188,7 @@ public final class FileSystem {
   public FileSystem link(Env env, StringValue link, StringValue existing, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::link() must be callable.");
     fileSystem
-        .link(link.toString(), existing.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+        .link(link.toString(), existing.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
     return this;
   }
 
@@ -225,20 +225,19 @@ public final class FileSystem {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::mkdir() must be callable.");
     if (PhpTypes.notNull(perms)) {
       if (PhpTypes.notNull(createParents)) {
-        fileSystem.mkdir(path.toString(), perms.toString(), createParents.toBoolean(), new VoidAsyncResultHandler(env,
-            PhpTypes.toCallable(handler)));
+        fileSystem.mkdir(path.toString(), perms.toString(), createParents.toBoolean(), HandlerFactory.createAsyncVoidHandler(env, handler));
       }
       else {
         fileSystem.mkdir(path.toString(), perms.toString(),
-            new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+            HandlerFactory.createAsyncVoidHandler(env, handler));
       }
     }
     else if (PhpTypes.notNull(createParents)) {
       fileSystem.mkdir(path.toString(), createParents.toBoolean(),
-          new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+          HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     else {
-      fileSystem.mkdir(path.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+      fileSystem.mkdir(path.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     return this;
   }
@@ -270,7 +269,7 @@ public final class FileSystem {
    */
   public FileSystem move(Env env, StringValue from, StringValue to, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::move() must be callable.");
-    fileSystem.move(from.toString(), to.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+    fileSystem.move(from.toString(), to.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
     return this;
   }
 
@@ -419,7 +418,12 @@ public final class FileSystem {
    */
   public FileSystem readFile(Env env, StringValue path, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::readFile() must be callable.");
-    fileSystem.readFile(path.toString(), new AsyncResultHandler<Buffer>(env, PhpTypes.toCallable(handler)));
+    fileSystem.readFile(path.toString(), new AsyncResultHandler<org.vertx.java.core.buffer.Buffer>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.buffer.Buffer, Buffer>() {
+      @Override
+      public Buffer wrap(org.vertx.java.core.buffer.Buffer buffer) {
+        return new Buffer(buffer);
+      }
+    }));
     return this;
   }
 
@@ -454,7 +458,7 @@ public final class FileSystem {
   public FileSystem symlink(Env env, StringValue link, StringValue existing, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::symlink() must be callable.");
     fileSystem.symlink(link.toString(), existing.toString(),
-        new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+        HandlerFactory.createAsyncVoidHandler(env, handler));
     return this;
   }
 
@@ -471,7 +475,7 @@ public final class FileSystem {
    */
   public FileSystem truncate(Env env, StringValue path, NumberValue len, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::truncate() must be callable.");
-    fileSystem.truncate(path.toString(), len.toLong(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+    fileSystem.truncate(path.toString(), len.toLong(), HandlerFactory.createAsyncVoidHandler(env, handler));
     return this;
   }
 
@@ -488,7 +492,7 @@ public final class FileSystem {
    */
   public FileSystem unlink(Env env, StringValue link, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::unlink() must be callable.");
-    fileSystem.unlink(link.toString(), new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+    fileSystem.unlink(link.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
     return this;
   }
 
@@ -503,17 +507,17 @@ public final class FileSystem {
   /**
    * Executes an asynchronous write file call.
    */
-  public FileSystem writeFile(Env env, StringValue path, Buffer data, Value handler) {
+  public FileSystem writeFile(Env env, StringValue path, Buffer buffer, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::writeFile() must be callable.");
-    fileSystem.writeFile(path.toString(), data, new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+    fileSystem.writeFile(path.toString(), buffer.__toVertxBuffer(), HandlerFactory.createAsyncVoidHandler(env, handler));
     return this;
   }
 
   /**
    * Executes a synchronous write file call.
    */
-  public FileSystem writeFileSync(Env env, StringValue path, Buffer data) {
-    fileSystem.writeFileSync(path.toString(), data);
+  public FileSystem writeFileSync(Env env, StringValue path, Buffer buffer) {
+    fileSystem.writeFileSync(path.toString(), buffer.__toVertxBuffer());
     return this;
   }
 

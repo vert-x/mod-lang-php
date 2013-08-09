@@ -15,14 +15,12 @@
  */
 package com.blankstyle.vertx.php.http;
 
-import org.vertx.java.core.buffer.Buffer;
-
 import com.blankstyle.vertx.php.Gettable;
-import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.MultiMapArray;
 import com.blankstyle.vertx.php.net.NetSocket;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.ReadStream;
+import com.blankstyle.vertx.php.util.HandlerFactory;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.StringValue;
@@ -91,14 +89,14 @@ public class HttpClientResponse implements ReadStream<HttpClientResponse>, Excep
   public HttpClientResponse dataHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\Http\\HttpClientResponse::dataHandler() must be callable.");
-    response.dataHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
+    response.dataHandler(HandlerFactory.createBufferHandler(env, handler));
     return this;
   }
 
   public HttpClientResponse bodyHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\Http\\HttpClientResponse::bodyHandler() must be callable.");
-    response.bodyHandler(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
+    response.bodyHandler(HandlerFactory.createBufferHandler(env, handler));
     return this;
   }
 
@@ -106,7 +104,7 @@ public class HttpClientResponse implements ReadStream<HttpClientResponse>, Excep
   public HttpClientResponse endHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\Http\\HttpClientResponse::endHandler() must be callable.");
-    response.endHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
+    response.endHandler(HandlerFactory.createVoidHandler(env, handler));
     return this;
   }
 
@@ -114,7 +112,7 @@ public class HttpClientResponse implements ReadStream<HttpClientResponse>, Excep
   public HttpClientResponse exceptionHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\Http\\HttpClientResponse::exceptionHandler() must be callable.");
-    response.exceptionHandler(new Handler<Throwable>(env, PhpTypes.toCallable(handler)));
+    response.exceptionHandler(HandlerFactory.createExceptionHandler(env, handler));
     return this;
   }
 

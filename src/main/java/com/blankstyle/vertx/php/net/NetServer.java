@@ -15,13 +15,12 @@
  */
 package com.blankstyle.vertx.php.net;
 
-import org.vertx.java.core.AsyncResult;
-
 import com.blankstyle.vertx.php.AsyncResultHandler;
 import com.blankstyle.vertx.php.AsyncResultWrapper;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.ResultModifier;
 import com.blankstyle.vertx.php.TCPServer;
+import com.blankstyle.vertx.php.util.HandlerFactory;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.Env;
@@ -129,7 +128,7 @@ public class NetServer extends TCPServer<org.vertx.java.core.net.NetServer> {
   public void close(Env env, @Optional Value handler) {
     if (PhpTypes.notNull(handler)) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetServer::close() must be callable.");
-      server.close(new Handler<AsyncResult<Void>>(env, PhpTypes.toCallable(handler)));
+      server.close(HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     else {
       server.close();

@@ -24,7 +24,7 @@ import org.vertx.java.core.json.JsonObject;
 
 import com.blankstyle.vertx.php.ResultModifier;
 import com.blankstyle.vertx.php.Handler;
-import com.blankstyle.vertx.php.VoidAsyncResultHandler;
+import com.blankstyle.vertx.php.util.HandlerFactory;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.StringValue;
@@ -92,8 +92,7 @@ public final class EventBus {
     AddressPair<String, org.vertx.java.core.Handler<org.vertx.java.core.eventbus.Message<Object>>> addressPair = createAddressPair(env, address, handler);
 
     if (PhpTypes.isCallable(env, resultHandler)) {
-      org.vertx.java.core.Handler<AsyncResult<Void>> resultEventHandler = new VoidAsyncResultHandler(env,
-          PhpTypes.toCallable(resultHandler));
+      org.vertx.java.core.Handler<AsyncResult<Void>> resultEventHandler = HandlerFactory.createAsyncVoidHandler(env, handler);
       eventBus.registerHandler(addressPair.getAddress(), addressPair.getHandler(), resultEventHandler);
     }
     else {
@@ -238,7 +237,7 @@ public final class EventBus {
    */
   public void close(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::close() must be callable.");
-    eventBus.close(new VoidAsyncResultHandler(env, PhpTypes.toCallable(handler)));
+    eventBus.close(HandlerFactory.createAsyncVoidHandler(env, handler));
   }
 
   public String toString() {

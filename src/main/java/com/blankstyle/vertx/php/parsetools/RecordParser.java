@@ -1,8 +1,6 @@
 package com.blankstyle.vertx.php.parsetools;
 
-import org.vertx.java.core.buffer.Buffer;
-
-import com.blankstyle.vertx.php.Handler;
+import com.blankstyle.vertx.php.util.HandlerFactory;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NumberValue;
@@ -33,7 +31,7 @@ public class RecordParser {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\ParseTools\\RecordParser::newDelimited() must be callable.");
     return new RecordParser(org.vertx.java.core.parsetools.RecordParser.newDelimited(delim.toString(),
-        new Handler<Buffer>(env, PhpTypes.toCallable(handler))));
+        HandlerFactory.createBufferHandler(env, handler)));
   }
 
   /**
@@ -43,8 +41,8 @@ public class RecordParser {
     PhpTypes.assertNotNull(env, size);
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\ParseTools\\RecordParser::newFixed() must be callable.");
-    return new RecordParser(org.vertx.java.core.parsetools.RecordParser.newFixed(size.toInt(), new Handler<Buffer>(env,
-        PhpTypes.toCallable(handler))));
+    return new RecordParser(org.vertx.java.core.parsetools.RecordParser.newFixed(size.toInt(),
+        HandlerFactory.createBufferHandler(env, handler)));
   }
 
   /**
@@ -66,7 +64,7 @@ public class RecordParser {
   /**
    * Feeds the parser with data.
    */
-  public void handle(Buffer buffer) {
+  public void handle(org.vertx.java.core.buffer.Buffer buffer) {
     parser.handle(buffer);
   }
 
@@ -76,7 +74,7 @@ public class RecordParser {
   public void setOutput(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\ParseTools\\RecordParser::setOutput() must be callable.");
-    parser.setOutput(new Handler<Buffer>(env, PhpTypes.toCallable(handler)));
+    parser.setOutput(HandlerFactory.createBufferHandler(env, handler));
   }
 
 }

@@ -18,6 +18,7 @@ package com.blankstyle.vertx.php.http;
 import com.blankstyle.vertx.php.TCPClient;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.ResultModifier;
+import com.blankstyle.vertx.php.util.HandlerFactory;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.BooleanValue;
 import com.caucho.quercus.env.NumberValue;
@@ -246,7 +247,7 @@ public class HttpClient extends TCPClient<org.vertx.java.core.http.HttpClient> {
    */
   public HttpClient exceptionHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Argument to Vertx\\Http\\HttpClient::exceptionHandler() must be callable.");
-    client.exceptionHandler(new Handler<Throwable>(env, PhpTypes.toCallable(handler)));
+    client.exceptionHandler(HandlerFactory.createExceptionHandler(env, handler));
     return this;
   }
 

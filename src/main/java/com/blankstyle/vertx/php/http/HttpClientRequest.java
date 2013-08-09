@@ -16,10 +16,11 @@
 package com.blankstyle.vertx.php.http;
 
 import com.blankstyle.vertx.php.Gettable;
-import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.MultiMapArray;
+import com.blankstyle.vertx.php.buffer.Buffer;
 import com.blankstyle.vertx.php.streams.ExceptionSupport;
 import com.blankstyle.vertx.php.streams.WriteStream;
+import com.blankstyle.vertx.php.util.HandlerFactory;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.BooleanValue;
@@ -76,10 +77,20 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
   @Override
   public HttpClientRequest write(Env env, Value data, @Optional StringValue enc) {
     if (enc != null && !enc.isDefault()) {
-      request.write(data.toString(), enc.toString());
+      if (data.isObject()) {
+        request.write(((Buffer) data.toJavaObject(env, Buffer.class)).__toVertxBuffer());
+      }
+      else {
+        request.write(data.toString(), enc.toString());
+      }
     }
     else {
-      request.write(data.toString());
+      if (data.isObject()) {
+        request.write(((Buffer) data.toJavaObject(env, Buffer.class)).__toVertxBuffer());
+      }
+      else {
+        request.write(data.toString());
+      }
     }
     return this;
   }
@@ -87,7 +98,7 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
   public HttpClientRequest continueHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\Http\\HttpClientRequest::continueHandler() must be callable.");
-    request.continueHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
+    request.continueHandler(HandlerFactory.createVoidHandler(env, handler));
     return this;
   }
 
@@ -107,7 +118,7 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
   public HttpClientRequest drainHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\Http\\HttpClientRequest::drainHandler() must be callable.");
-    request.drainHandler(new Handler<Void>(env, PhpTypes.toCallable(handler)));
+    request.drainHandler(HandlerFactory.createVoidHandler(env, handler));
     return this;
   }
 
@@ -140,7 +151,7 @@ public class HttpClientRequest implements WriteStream<HttpClientRequest>, Except
   public HttpClientRequest exceptionHandler(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler,
         "Handler argument to Vertx\\Http\\HttpClientRequest::exceptionhandler() must be callable.");
-    request.exceptionHandler(new Handler<Throwable>(env, PhpTypes.toCallable(handler)));
+    request.exceptionHandler(HandlerFactory.createExceptionHandler(env, handler));
     return this;
   }
 

@@ -26,7 +26,6 @@ import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.NumberValue;
-import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
 
 /**
@@ -47,7 +46,7 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
   /**
    * Connects to a server.
    */
-  public NetClient connect(Env env, NumberValue port, @Optional StringValue host, Value handler) {
+  public NetClient connect(Env env, NumberValue port, @Optional Value host, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\Net\\NetClient::connect() must be callable.");
     if (PhpTypes.notNull(host)) {
       client.connect(port.toInt(), host.toString(), new AsyncResultHandler<org.vertx.java.core.net.NetSocket>(env,

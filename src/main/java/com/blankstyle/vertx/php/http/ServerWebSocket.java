@@ -62,9 +62,9 @@ public class ServerWebSocket extends WebSocket {
   /**
    * Rejects the websocket.
    */
-  public Value reject(Env env) {
+  public ServerWebSocket reject(Env env) {
     socket.reject();
-    return env.wrapJava(this);
+    return this;
   }
 
   public String toString() {
