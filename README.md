@@ -768,19 +768,20 @@ $sharedData = Vertx::sharedData();
 ## Shared Maps
 
 To use a shared map to share data between verticles first we get a reference to
-the map, and then we just use standard `put` and `get` to put and get data from
-the map:
+the map. Shared maps are simply objects that mimic PHP's associative arrays. Note
+that they are _not_ actually arrays, but the are instances of a class that
+implements the `ArrayAccess` and `Countable` interfaces.
 
 ```php
 $map = $sharedData->getMap('demo.mymap');
-$map->put('some-key', 'some-value');
+$map['some-key'] = 'some-value';
 ```
 
 And then, in a different verticle:
 
 ```php
 $map = $sharedData->getMap('demo.mymap');
-Vertx::logger()->info('value of some-key is '. $map->get('some-key'));
+Vertx::logger()->info('value of some-key is '. $map['some-key']);
 ```
 
 ## Shared Sets
