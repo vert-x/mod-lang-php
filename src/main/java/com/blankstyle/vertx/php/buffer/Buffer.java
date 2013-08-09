@@ -1,5 +1,8 @@
 package com.blankstyle.vertx.php.buffer;
 
+import java.util.Arrays;
+
+import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.Env;
@@ -14,9 +17,11 @@ import com.caucho.quercus.lib.spl.Countable;
  *
  * @author Jordan Halterman
  */
-public class Buffer implements ArrayAccess, Countable {
+public class Buffer implements ArrayAccess, Countable, Gettable {
 
   private org.vertx.java.core.buffer.Buffer buffer;
+
+  private static final String[] properties = {"length"};
 
   public Buffer() {
     buffer = new org.vertx.java.core.buffer.Buffer();
@@ -30,8 +35,16 @@ public class Buffer implements ArrayAccess, Countable {
     this.buffer = buffer;
   }
 
-  public Buffer(Env env, StringValue value) {
+  public Buffer(Env env, Value value) {
     buffer = new org.vertx.java.core.buffer.Buffer(value.toString());
+  }
+
+  @Override
+  public Value __getField(Env env, StringValue name) {
+    if (Arrays.asList(Buffer.properties).contains(name.toString())) {
+      return env.wrapJava(this).callMethod(env, name);
+    }
+    return null;
   }
 
   public Value getByte(Env env, NumberValue pos) {
@@ -43,8 +56,22 @@ public class Buffer implements ArrayAccess, Countable {
     return this;
   }
 
-  public Buffer appendByte(Env env, NumberValue pos, Value value) {
+  public Buffer appendByte(Env env, Value value) {
     buffer.appendByte(value.toJavaByte());
+    return this;
+  }
+
+  public double getDouble(Env env, NumberValue pos) {
+    return buffer.getDouble(pos.toInt());
+  }
+
+  public Buffer setDouble(Env env, NumberValue pos, Value value) {
+    buffer.setDouble(pos.toInt(), value.toDouble());
+    return this;
+  }
+
+  public Buffer appendDouble(Env env, Value value) {
+    buffer.appendDouble(value.toDouble());
     return this;
   }
 
@@ -57,7 +84,7 @@ public class Buffer implements ArrayAccess, Countable {
     return this;
   }
 
-  public Buffer appendFloat(Env env, NumberValue pos, Value value) {
+  public Buffer appendFloat(Env env, Value value) {
     buffer.appendFloat(value.toJavaFloat());
     return this;
   }
@@ -71,8 +98,36 @@ public class Buffer implements ArrayAccess, Countable {
     return this;
   }
 
-  public Buffer appendInt(Env env, NumberValue pos, Value value) {
+  public Buffer appendInt(Env env, Value value) {
     buffer.appendInt(value.toInt());
+    return this;
+  }
+
+  public long getLong(Env env, NumberValue pos) {
+    return buffer.getLong(pos.toInt());
+  }
+
+  public Buffer setLong(Env env, NumberValue pos, Value value) {
+    buffer.setLong(pos.toInt(), value.toLong());
+    return this;
+  }
+
+  public Buffer appendLong(Env env, Value value) {
+    buffer.appendLong(value.toLong());
+    return this;
+  }
+
+  public short getShort(Env env, NumberValue pos) {
+    return buffer.getShort(pos.toInt());
+  }
+
+  public Buffer setShort(Env env, NumberValue pos, Value value) {
+    buffer.setShort(pos.toInt(), value.toJavaShort());
+    return this;
+  }
+
+  public Buffer appendShort(Env env, Value value) {
+    buffer.appendShort(value.toJavaShort());
     return this;
   }
 
@@ -80,7 +135,7 @@ public class Buffer implements ArrayAccess, Countable {
     return env.wrapJava(buffer.getString(start.toInt(), end.toInt()));
   }
 
-  public Buffer setString(Env env, NumberValue pos, Value value, @Optional StringValue enc) {
+  public Buffer setString(Env env, NumberValue pos, Value value, @Optional Value enc) {
     if (PhpTypes.notNull(enc)) {
       buffer.setString(pos.toInt(), value.toString(), enc.toString());
     }
@@ -90,7 +145,7 @@ public class Buffer implements ArrayAccess, Countable {
     return this;
   }
 
-  public Buffer appendString(Env env, NumberValue pos, Value value, @Optional StringValue enc) {
+  public Buffer appendString(Env env, Value value, @Optional Value enc) {
     if (PhpTypes.notNull(enc)) {
       buffer.appendString(value.toString(), enc.toString());
     }
@@ -109,7 +164,7 @@ public class Buffer implements ArrayAccess, Countable {
     return this;
   }
 
-  public Buffer appendBuffer(Env env, NumberValue pos, Value value) {
+  public Buffer appendBuffer(Env env, Value value) {
     buffer.appendBuffer(((Buffer) value.toJavaObject(env, Buffer.class)).getWrapped());
     return this;
   }
@@ -191,6 +246,10 @@ public class Buffer implements ArrayAccess, Countable {
     return buffer.length();
   }
 
+  public int length() {
+    return buffer.length();
+  }
+
   /**
    * Copies the buffer.
    */
@@ -203,10 +262,14 @@ public class Buffer implements ArrayAccess, Countable {
   }
 
   public Value toString(Env env) {
-    return env.wrapJava(buffer.toString());
+    return env.wrapJava(toString());
   }
 
-  public Value toString(Env env, StringValue enc) {
+  public String __toString() {
+    return toString();
+  }
+
+  public Value toString(Env env, Value enc) {
     if (PhpTypes.isNull(env, enc)) {
       return toString(env);
     }

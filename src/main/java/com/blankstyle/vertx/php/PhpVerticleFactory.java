@@ -169,11 +169,9 @@ public class PhpVerticleFactory implements VerticleFactory {
       context.addJavaClass("Vertx\\Net\\NetServer", com.blankstyle.vertx.php.net.NetServer.class);
       context.addJavaClass("Vertx\\Net\\NetClient", com.blankstyle.vertx.php.net.NetClient.class);
       context.addJavaClass("Vertx\\Net\\NetSocket", com.blankstyle.vertx.php.net.NetSocket.class);
-      context.addJavaClass("Vertx\\Buffer", org.vertx.java.core.buffer.Buffer.class);
+      context.addJavaClass("Vertx\\Buffer", com.blankstyle.vertx.php.buffer.Buffer.class);
       context.addJavaClass("Vertx\\Logger", org.vertx.java.core.logging.Logger.class);
       context.addJavaClass("Vertx\\Pump", com.blankstyle.vertx.php.streams.Pump.class);
-      context.addJavaClass("Vertx\\FileSystem", com.blankstyle.vertx.php.file.FileSystem.class);
-      context.addJavaClass("Vertx\\SharedData", org.vertx.java.core.shareddata.SharedData.class);
       context.addJavaClass("Vertx\\ParseTools\\RecordParser", com.blankstyle.vertx.php.parsetools.RecordParser.class);
 
       // Add PHP test helpers.
