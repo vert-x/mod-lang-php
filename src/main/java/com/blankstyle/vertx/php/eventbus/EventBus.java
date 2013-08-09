@@ -188,10 +188,17 @@ public final class EventBus {
         eventBus.send(address.toString(), message.toInt());
       }
     }
+    else if (message.isObject()) {
+      if (hasHandler) {
+        eventBus.send(address.toString(), (org.vertx.java.core.buffer.Buffer) message.toJavaObject(env, org.vertx.java.core.buffer.Buffer.class), sendHandler);
+      }
+      else {
+        eventBus.send(address.toString(), (org.vertx.java.core.buffer.Buffer) message.toJavaObject(env, org.vertx.java.core.buffer.Buffer.class));
+      }
+    }
     else if (message.isArray()) {
       if (hasHandler) {
-        eventBus.send(address.toString(), new JsonObject(message.toArray().toJavaMap(env, new HashMap<String, Object>().getClass())),
-            sendHandler);
+        eventBus.send(address.toString(), new JsonObject(message.toArray().toJavaMap(env, new HashMap<String, Object>().getClass())), sendHandler);
       }
       else {
         eventBus.send(address.toString(), new JsonObject(message.toArray().toJavaMap(env, new HashMap<String, Object>().getClass())));
@@ -212,16 +219,19 @@ public final class EventBus {
   @SuppressWarnings("unchecked")
   public EventBus publish(Env env, Value address, Value message) {
     if (message.isBoolean()) {
-      eventBus.send(address.toString(), message.toBoolean());
+      eventBus.publish(address.toString(), message.toBoolean());
     }
     else if (message.isString()) {
-      eventBus.send(address.toString(), message.toString());
+      eventBus.publish(address.toString(), message.toString());
     }
     else if (message.isNumeric()) {
-      eventBus.send(address.toString(), message.toInt());
+      eventBus.publish(address.toString(), message.toInt());
+    }
+    else if (message.isObject()) {
+      eventBus.publish(address.toString(), (org.vertx.java.core.buffer.Buffer) message.toJavaObject(env, org.vertx.java.core.buffer.Buffer.class));
     }
     else if (message.isArray()) {
-      eventBus.send(address.toString(), new JsonObject(message.toArray().toJavaMap(env, new HashMap<String, Object>().getClass())));
+      eventBus.publish(address.toString(), new JsonObject(message.toArray().toJavaMap(env, new HashMap<String, Object>().getClass())));
     }
     return this;
   }

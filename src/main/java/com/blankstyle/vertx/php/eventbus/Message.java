@@ -22,6 +22,7 @@ import org.vertx.java.core.json.JsonObject;
 import com.blankstyle.vertx.php.ResultModifier;
 import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.Handler;
+import com.blankstyle.vertx.php.buffer.Buffer;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
 import com.caucho.quercus.env.ArrayValue;
@@ -49,10 +50,15 @@ public class Message<T> implements Gettable {
   }
 
   private void initCache() {
-    if (message.body() instanceof JsonObject) {
+    Object body = message.body();
+    if (body instanceof JsonObject) {
       isCache = true;
       Env env = Env.getCurrent();
       cache = JsonModule.json_decode(env, env.createString(((JsonObject) message.body()).encode()), true);
+    }
+    else if (body instanceof org.vertx.java.core.buffer.Buffer) {
+      isCache = true;
+      cache = Env.getCurrent().wrapJava(new Buffer((org.vertx.java.core.buffer.Buffer) body));
     }
   }
 
@@ -71,7 +77,7 @@ public class Message<T> implements Gettable {
    */
   public Value body(Env env) {
     if (isCache) {
-      return env.wrapJava(cache);
+      return cache;
     }
     return env.wrapJava(message.body());
   }
