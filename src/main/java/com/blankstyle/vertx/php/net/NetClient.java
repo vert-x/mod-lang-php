@@ -15,11 +15,8 @@
  */
 package com.blankstyle.vertx.php.net;
 
-import org.vertx.java.core.AsyncResult;
-
 import com.blankstyle.vertx.php.AsyncResultHandler;
 import com.blankstyle.vertx.php.AsyncResultWrapper;
-import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.TCPClient;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
@@ -59,7 +56,7 @@ public class NetClient extends TCPClient<org.vertx.java.core.net.NetClient> {
     }
     else {
       client.connect(port.toInt(),
-          new Handler<AsyncResult<org.vertx.java.core.net.NetSocket>>(env, PhpTypes.toCallable(handler),
+          new AsyncResultHandler<org.vertx.java.core.net.NetSocket>(env, PhpTypes.toCallable(handler),
               new AsyncResultWrapper<org.vertx.java.core.net.NetSocket, NetSocket>() {
                 @Override
                 public NetSocket wrap(org.vertx.java.core.net.NetSocket socket) {

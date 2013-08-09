@@ -1,6 +1,6 @@
 <?php
 
-use Vertx\Streams\Pump;
+use Vertx\Pump;
 
 Vertx::createNetServer()->connectHandler(function($socket) {
   $pump = new Pump($socket, $socket);

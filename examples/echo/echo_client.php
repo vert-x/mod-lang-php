@@ -1,14 +1,18 @@
 <?php
 
+use Vertx\Buffer;
+
 $client = Vertx::createNetClient();
 $logger = Vertx::logger();
 
-$client->connectTimeout = 'invalid';
+$client->connectTimeout = 30;
 
 $client->connect(1234, NULL, function($socket, $error) use ($logger) {
   if (!$error) {
+    $buffer = new Buffer();
     $socket->dataHandler(function($buffer) use ($logger) {
       $logger->info("Client receiving ". $buffer);
+      $buffer->appendBuffer($buffer);
     });
 
     for ($i = 0; $i < 10; $i++) {
