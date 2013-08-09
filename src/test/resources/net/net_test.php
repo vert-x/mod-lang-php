@@ -17,6 +17,7 @@
 
 use Vertx\Test\TestRunner;
 use Vertx\Test\PhpTestCase;
+use Vertx\Buffer;
 
 /**
  * A Vert.x Net test case.
@@ -51,6 +52,53 @@ class NetTestCase extends PhpTestCase {
         $this->assertNotNull($socket->localAddress);
         $this->assertNotNull($socket->remoteAddress);
         $this->complete();
+      });
+    });
+  }
+
+  /**
+   * Tests echoing data back to the client.
+   */
+  public function testEcho() {
+    $this->server->connectHandler(function($socket) {
+      $this->assertNotNull($socket);
+
+      $socket->dataHandler(function($buffer) use ($socket) {
+        $socket->write($buffer);
+      });
+    });
+
+    $this->server->listen(8080, '0.0.0.0', function($server, $error) {
+      $this->assertNotNull($server);
+      $this->assertNull($error);
+      $this->client->connect(8080, 'localhost', function($socket, $error) {
+        $this->assertNotNull($socket);
+        $this->assertNull($error);
+
+        $sends = 10;
+        $size = 100;
+
+        $sent = new Buffer();
+        $received = new Buffer();
+
+        $socket->dataHandler(function($buffer) use ($sent, $received, $sends, $size) {
+          $received->appendBuffer($buffer);
+          if ($received->length == $sends * $size) {
+            $this->assertEquals((string) $sent, (string) $received);
+            $this->complete();
+          }
+        });
+
+        $socket->pause();
+        $socket->resume();
+        $socket->writeQueueFull;
+        $socket->writeQueueMaxSize = 100000;
+
+        for ($i = 0; $i < $sends; $i++) {
+          $buffer = $this->createBuffer($size);
+          $sent->appendBuffer($buffer);
+          $socket->write($buffer);
+        }
       });
     });
   }
@@ -190,6 +238,14 @@ class NetTestCase extends PhpTestCase {
     $this->assertEquals($client->trafficClass, 12345);
 
     $this->complete();
+  }
+
+  private function createBuffer($size) {
+    $str = '';
+    while (strlen($str) < $size) {
+      $str .= 'abcdefghijklmnopqrstuvwxyz';
+    }
+    return new Buffer(substr($str, 0, $size));
   }
 
   public function tearDown() {
