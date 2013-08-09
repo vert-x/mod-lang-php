@@ -1287,7 +1287,7 @@ $server = Vertx::createNetServer();
 
 $server->connectHandler(function($socket) use ($log) {
   $socket->dataHandler(function($buffer) use ($log) {
-    $log->info('I received '. $buffer->length() .' bytes of data.');
+    $log->info('I received '. count($buffer) .' bytes of data.');
   });
 })->listen(1234, 'localhost');
 ```
@@ -2040,7 +2040,7 @@ $server = Vertx::createHttpServer();
 $server->requestHandler(function($request) use ($log) {
 
   $request->dataHandler(function($buffer) use ($log) {
-    $log->info('I received '. $buffer->length() .' bytes.');
+    $log->info('I received '. count($buffer) .' bytes.');
   });
 
 })->listen(8080, 'localhost');
@@ -2655,7 +2655,7 @@ $client = Vertx::createHttpClient()->host('foo.com');
 
 $client->getNow('/some-path', function($response) use ($log) {
   $response->dataHandler(function($buffer) use ($log) {
-    $log->info('I received '. $buffer->length() .' bytes.');
+    $log->info('I received '. $buffer->length .' bytes.');
   });
 });
 ```
@@ -2683,7 +2683,7 @@ $client->getNow('/some-path', function($response) use ($log) {
   });
 
   $response->endHandler(function() use ($log) {
-    $log->info('The total body received was '. $buffer->length() .' bytes.');
+    $log->info('The total body received was '. $buffer->length .' bytes.');
   });
 
 });
@@ -3842,7 +3842,7 @@ Vertx::fileSystem()->open('some-file.dat', function($asyncFile, $error) use ($lo
     // File open, write a buffer 5 times into a file.
     $buffer = new Buffer('foo');
     for ($i = 0; $i < 5; $i++) {
-      $asyncFile->write($buffer, $buffer->length() * $i, function($error) use ($log) {
+      $asyncFile->write($buffer, count($buffer) * $i, function($error) use ($log) {
         if ($error) {
           $log->info('Failed to write '. $error);
         }
