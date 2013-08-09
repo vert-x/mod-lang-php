@@ -37,8 +37,8 @@ class RecordParserTestCase extends PhpTestCase {
     }
 
     $lines = array();
-    $parser = RecordParser::newDelimited("\n", function($line) use (&$lines) {
-      $lines[] = trim($line);
+    $parser = RecordParser::newDelimited("\n", function($buffer) use (&$lines) {
+      $lines[] = trim((string) $buffer);
     });
 
     $parser->handle(new Vertx\Buffer($input));

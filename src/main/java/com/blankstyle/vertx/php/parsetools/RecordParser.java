@@ -1,5 +1,6 @@
 package com.blankstyle.vertx.php.parsetools;
 
+import com.blankstyle.vertx.php.buffer.Buffer;
 import com.blankstyle.vertx.php.util.HandlerFactory;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.env.Env;
@@ -66,6 +67,13 @@ public class RecordParser {
    */
   public void handle(org.vertx.java.core.buffer.Buffer buffer) {
     parser.handle(buffer);
+  }
+
+  /**
+   * Feeds the parser with data.
+   */
+  public void handle(Env env, Buffer buffer) {
+    handle(buffer.__toVertxBuffer());
   }
 
   /**
