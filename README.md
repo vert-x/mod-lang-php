@@ -22,10 +22,10 @@ with the core Vert.x API.
 Vert.x PHP is under heavy development and is currently only recommended for
 evaluation and testing purposes. To install Vert.x PHP language support:
 
-* Clone the repository with `git clone --branch master git@github.com:jordanhalterman/vertx-php.git`
-* CD into the Vert.x PHP directory with `cd vertx-php`
-* Build the module with `mvn install`
-* Update `langs.properties` in your `VERTX_HOME/conf` directory with:
+1. Clone the repository with `git clone --branch master git@github.com:jordanhalterman/vertx-php.git`
+1. CD into the Vert.x PHP directory with `cd vertx-php`
+1. Build the module with `mvn install`
+1. Update `langs.properties` in your `VERTX_HOME/conf` directory with:
 
 ```
 php=com.blankstyle~vertx-lang-php~2.0.0-SNAPSHOT:com.blankstyle.vertx.php.PhpVerticleFactory
