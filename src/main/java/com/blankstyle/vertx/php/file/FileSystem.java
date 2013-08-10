@@ -15,12 +15,8 @@
  */
 package com.blankstyle.vertx.php.file;
 
-import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.file.FileSystemProps;
-
 import com.blankstyle.vertx.php.AsyncResultHandler;
 import com.blankstyle.vertx.php.AsyncResultWrapper;
-import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.buffer.Buffer;
 import com.blankstyle.vertx.php.util.HandlerFactory;
 import com.blankstyle.vertx.php.util.PhpTypes;
@@ -169,7 +165,7 @@ public final class FileSystem {
    */
   public FileSystem exists(Env env, StringValue path, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::exists() must be callable.");
-    fileSystem.exists(path.toString(), new Handler<AsyncResult<Boolean>>(env, PhpTypes.toCallable(handler)));
+    fileSystem.exists(path.toString(), new AsyncResultHandler<Boolean>(env, PhpTypes.toCallable(handler)));
     return this;
   }
 
@@ -185,7 +181,12 @@ public final class FileSystem {
    */
   public FileSystem fsProps(Env env, StringValue path, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::fsProps() must be callable.");
-    fileSystem.fsProps(path.toString(), new Handler<AsyncResult<FileSystemProps>>(env, PhpTypes.toCallable(handler)));
+    fileSystem.fsProps(path.toString(), new AsyncResultHandler<org.vertx.java.core.file.FileSystemProps>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.file.FileSystemProps, FileSystemProps>() {
+      @Override
+      public FileSystemProps wrap(org.vertx.java.core.file.FileSystemProps props) {
+        return new FileSystemProps(props);
+      }
+    }));
     return this;
   }
 
@@ -193,7 +194,7 @@ public final class FileSystem {
    * Executes a synchronous fsprops call.
    */
   public FileSystemProps fsPropsSync(Env env, StringValue path) {
-    return fileSystem.fsPropsSync(path.toString());
+    return new FileSystemProps(fileSystem.fsPropsSync(path.toString()));
   }
 
   /**
@@ -231,9 +232,8 @@ public final class FileSystem {
   /**
    * Executes a synchronous lprops call.
    */
-  public FileSystem lpropsSync(Env env, StringValue path) {
-    fileSystem.lpropsSync(path.toString());
-    return this;
+  public FileProps lpropsSync(Env env, StringValue path) {
+    return new FileProps(fileSystem.lpropsSync(path.toString()));
   }
 
   /**
@@ -405,9 +405,8 @@ public final class FileSystem {
   /**
    * Executes a synchronous props call.
    */
-  public FileSystem propsSync(Env env, StringValue path) {
-    fileSystem.propsSync(path.toString());
-    return this;
+  public FileProps propsSync(Env env, StringValue path) {
+    return new FileProps(fileSystem.propsSync(path.toString()));
   }
 
   /**
