@@ -49,7 +49,7 @@ public final class FileSystem {
   /**
    * Executes an asynchronous chmod call.
    */
-  public FileSystem chmod(Env env, StringValue path, StringValue perms, @Optional StringValue dirPerms, Value handler) {
+  public FileSystem chmod(Env env, StringValue path, StringValue perms, @Optional Value dirPerms, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::chmod() must be callable.");
     if (PhpTypes.notNull(dirPerms)) {
       fileSystem.chmod(path.toString(), perms.toString(), dirPerms.toString(),
@@ -65,7 +65,7 @@ public final class FileSystem {
   /**
    * Executes a synchronous chmod call.
    */
-  public FileSystem chmodSync(Env env, StringValue path, StringValue perms, @Optional StringValue dirPerms) {
+  public FileSystem chmodSync(Env env, StringValue path, StringValue perms, @Optional Value dirPerms) {
     if (PhpTypes.notNull(dirPerms)) {
       fileSystem.chmodSync(path.toString(), perms.toString(), dirPerms.toString());
     }
@@ -78,28 +78,34 @@ public final class FileSystem {
   /**
    * Executes an asynchronous copy call.
    */
-  public FileSystem copy(Env env, StringValue from, StringValue to, @Optional BooleanValue recursive, Value handler) {
+  public FileSystem copy(Env env, StringValue from, StringValue to, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::copy() must be callable.");
-    if (PhpTypes.notNull(recursive)) {
-      fileSystem.copy(from.toString(), to.toString(), recursive.toBoolean(),
-          HandlerFactory.createAsyncVoidHandler(env, handler));
-    }
-    else {
-      fileSystem.copy(from.toString(), to.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
-    }
+    fileSystem.copy(from.toString(), to.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
     return this;
   }
 
   /**
    * Executes a synchronous copy call.
    */
-  public FileSystem copySync(Env env, StringValue from, StringValue to, @Optional BooleanValue recursive) {
-    if (PhpTypes.notNull(recursive)) {
-      fileSystem.copySync(from.toString(), to.toString(), recursive.toBoolean());
-    }
-    else {
-      fileSystem.copySync(from.toString(), to.toString());
-    }
+  public FileSystem copySync(Env env, StringValue from, StringValue to) {
+    fileSystem.copySync(from.toString(), to.toString());
+    return this;
+  }
+
+  /**
+   * Executes an asynchronous recursive copy call.
+   */
+  public FileSystem copyRecursive(Env env, StringValue from, StringValue to, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::copyRecursive() must be callable.");
+    fileSystem.copy(from.toString(), to.toString(), true, HandlerFactory.createAsyncVoidHandler(env, handler));
+    return this;
+  }
+
+  /**
+   * Executes a synchronous recursive copy call.
+   */
+  public FileSystem copyRecursiveSync(Env env, StringValue from, StringValue to) {
+    fileSystem.copySync(from.toString(), to.toString(), true);
     return this;
   }
 
@@ -135,28 +141,34 @@ public final class FileSystem {
   /**
    * Executes an asynchronous delete call.
    */
-  public FileSystem delete(Env env, StringValue path, @Optional BooleanValue recursive, Value handler) {
+  public FileSystem delete(Env env, StringValue path, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::delete() must be callable.");
-    if (PhpTypes.notNull(recursive)) {
-      fileSystem.delete(path.toString(), recursive.toBoolean(),
-          HandlerFactory.createAsyncVoidHandler(env, handler));
-    }
-    else {
-      fileSystem.delete(path.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
-    }
+    fileSystem.delete(path.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
     return this;
   }
 
   /**
    * Executes a synchronous delete call.
    */
-  public FileSystem deleteSync(Env env, StringValue path, @Optional BooleanValue recursive) {
-    if (PhpTypes.notNull(recursive)) {
-      fileSystem.deleteSync(path.toString(), recursive.toBoolean());
-    }
-    else {
-      fileSystem.deleteSync(path.toString());
-    }
+  public FileSystem deleteSync(Env env, StringValue path) {
+    fileSystem.deleteSync(path.toString());
+    return this;
+  }
+
+  /**
+   * Executes an asynchronous recursive delete call.
+   */
+  public FileSystem deleteRecursive(Env env, StringValue path, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::deleteRecursive() must be callable.");
+    fileSystem.delete(path.toString(), true, HandlerFactory.createAsyncVoidHandler(env, handler));
+    return this;
+  }
+
+  /**
+   * Executes a synchronous recursive delete call.
+   */
+  public FileSystem deleteRecursiveSync(Env env, StringValue path) {
+    fileSystem.deleteSync(path.toString(), true);
     return this;
   }
 
@@ -239,24 +251,13 @@ public final class FileSystem {
   /**
    * Executes an asynchronous mkdir call.
    */
-  public FileSystem mkdir(Env env, StringValue path, @Optional StringValue perms, @Optional BooleanValue createParents,
-      Value handler) {
+  public FileSystem mkdir(Env env, StringValue path, @Optional StringValue perms, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::mkdir() must be callable.");
     if (PhpTypes.notNull(perms)) {
-      if (PhpTypes.notNull(createParents)) {
-        fileSystem.mkdir(path.toString(), perms.toString(), createParents.toBoolean(), HandlerFactory.createAsyncVoidHandler(env, handler));
-      }
-      else {
-        fileSystem.mkdir(path.toString(), perms.toString(),
-            HandlerFactory.createAsyncVoidHandler(env, handler));
-      }
-    }
-    else if (PhpTypes.notNull(createParents)) {
-      fileSystem.mkdir(path.toString(), createParents.toBoolean(),
-          HandlerFactory.createAsyncVoidHandler(env, handler));
+      fileSystem.mkdir(path.toString(), perms.toString(), true, HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     else {
-      fileSystem.mkdir(path.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
+      fileSystem.mkdir(path.toString(), true, HandlerFactory.createAsyncVoidHandler(env, handler));
     }
     return this;
   }
@@ -264,21 +265,12 @@ public final class FileSystem {
   /**
    * Executes a synchronous mkdir call.
    */
-  public FileSystem mkdirSync(Env env, StringValue path, @Optional StringValue perms,
-      @Optional BooleanValue createParents) {
+  public FileSystem mkdirSync(Env env, StringValue path, @Optional StringValue perms) {
     if (PhpTypes.notNull(perms)) {
-      if (PhpTypes.notNull(createParents)) {
-        fileSystem.mkdirSync(path.toString(), perms.toString(), createParents.toBoolean());
-      }
-      else {
-        fileSystem.mkdirSync(path.toString(), perms.toString());
-      }
-    }
-    else if (PhpTypes.notNull(createParents)) {
-      fileSystem.mkdirSync(path.toString(), createParents.toBoolean());
+      fileSystem.mkdirSync(path.toString(), perms.toString(), true);
     }
     else {
-      fileSystem.mkdirSync(path.toString());
+      fileSystem.mkdirSync(path.toString(), true);
     }
     return this;
   }

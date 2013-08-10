@@ -143,6 +143,34 @@ class FileSystemTestCase extends PhpTestCase {
     $this->complete();
   }
 
+  /**
+   * Tests deleting a file.
+   */
+  public function testDelete() {
+    $filename = TEST_OUTPUT_DIRECTORY .'/test-file.txt';
+    $this->fileSystem->createFile($filename, 'rwxr-xr-x', function($error) use ($filename) {
+      $this->assertNull($error);
+      $this->assertTrue($this->fileSystem->existsSync($filename));
+      $this->fileSystem->delete($file, FALSE, function($error) {
+        $this->assertNull($error);
+        $this->assertFalse($this->fileSystem->existsSync($filename));
+        $this->complete();
+      });
+    });
+  }
+
+  /**
+   * Tests deleting a file synchronously.
+   */
+  public function testDeleteSync() {
+    $filename = TEST_OUTPUT_DIRECTORY .'/test-file.txt';
+    $this->fileSystem->createFile($filename, 'rwxr-xr-x');
+    $this->assertTrue($this->fileSystem->existsSync($filename));
+    $this->fileSystem->deleteSync($filename);
+    $this->assertFalse($this->fileSystem->existsSync($filename));
+    $this->complete();
+  }
+
   public function tearDown() {
     $this->fileSystem->deleteSync(TEST_OUTPUT_DIRECTORY, TRUE);
   }
