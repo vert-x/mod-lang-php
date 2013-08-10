@@ -3663,7 +3663,7 @@ Writes an entire `Buffer` or a string into a new file on disk.
 
 Creates a new empty file.
 
-`createFile($file, $handler)`. Where `$file` is the file name.
+`createFile($file, $perms, $handler)`. Where `$file` is the file name.
 
 ## exists
 

@@ -16,7 +16,6 @@
 package com.blankstyle.vertx.php.file;
 
 import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.file.FileProps;
 import org.vertx.java.core.file.FileSystemProps;
 
 import com.blankstyle.vertx.php.AsyncResultHandler;
@@ -220,7 +219,12 @@ public final class FileSystem {
    */
   public FileSystem lprops(Env env, StringValue path, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::lprops() must be callable.");
-    fileSystem.lprops(path.toString(), new Handler<AsyncResult<FileProps>>(env, PhpTypes.toCallable(handler)));
+    fileSystem.lprops(path.toString(), new AsyncResultHandler<org.vertx.java.core.file.FileProps>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.file.FileProps, FileProps>() {
+      @Override
+      public FileProps wrap(org.vertx.java.core.file.FileProps props) {
+        return new FileProps(props);
+      }
+    }));
     return this;
   }
 
@@ -389,7 +393,12 @@ public final class FileSystem {
    */
   public FileSystem props(Env env, StringValue path, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::props() must be callable.");
-    fileSystem.props(path.toString(), new AsyncResultHandler<FileProps>(env, PhpTypes.toCallable(handler)));
+    fileSystem.props(path.toString(), new AsyncResultHandler<org.vertx.java.core.file.FileProps>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.file.FileProps, FileProps>() {
+      @Override
+      public FileProps wrap(org.vertx.java.core.file.FileProps props) {
+        return new FileProps(props);
+      }
+    }));
     return this;
   }
 
@@ -408,7 +417,7 @@ public final class FileSystem {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::readDir() must be callable.");
     if (PhpTypes.notNull(filter)) {
       fileSystem.readDir(path.toString(), filter.toString(),
-          new Handler<AsyncResult<String[]>>(env, PhpTypes.toCallable(handler)));
+          new AsyncResultHandler<String[]>(env, PhpTypes.toCallable(handler)));
     }
     else {
       fileSystem.readDir(path.toString(), new AsyncResultHandler<String[]>(env, PhpTypes.toCallable(handler)));
