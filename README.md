@@ -564,7 +564,8 @@ $eventBus = Vertx::eventBus();
 
 ### Registering and Unregistering Handlers
 
-##### public string *Vertx\EventBus::registerHandler* ( string *$address* , callable *$handler* )
+#### Interface
+public string **Vertx\EventBus::registerHandler** ( string *$address* , callable *$handler* )
 
 To set a message handler on the address `test.address`, you do the following:
 
@@ -603,7 +604,8 @@ $handler_id = $eventBus->registerHandler('test.address', $myHandler, function() 
 
 ### Unregistering handlers
 
-##### public void *Vertx\EventBus::unregisterHandler* ( string *$address* , string *$handler_id* )
+#### Interface
+public void **Vertx\EventBus::unregisterHandler** ( string *$address* , string *$handler_id* )
 
 To unregister a handler it's just as straightforward. You simply call
 `unregisterHandler` passing in the address and the handler:
@@ -634,7 +636,8 @@ handlers when the verticle is stopped.
 
 ### Publishing messages
 
-##### public void *Vertx\EventBus::publish* ( string *$address* , mixed *$message* )
+#### Interface
+public void **Vertx\EventBus::publish** ( string *$address* , mixed *$message* )
 
 Publishing a message is also trivially easy. Just publish it specifying the address,
 for example:
@@ -648,7 +651,8 @@ That message will then be delivered to any handlers registered against the addre
 
 ### Sending messages
 
-##### public void **Vertx\EventBus::send** ( string *$address* , mixed *$message* [, callable *$reply_handler = NULL* ] )
+#### API
+public void **Vertx\EventBus::send** ( string *$address* , mixed *$message* [, callable *$reply_handler = NULL* ] )
 
 Sending a message will result in at most one handler registered at the address
 receiving the message. This is the point to point messaging pattern.
@@ -659,7 +663,8 @@ $eventBus->send('test.address', 'Hello world!');
 
 ### Replying to messages
 
-##### public void *Vertx\EventBus\Message::reply* ( [ mixed *$reply = NULL* ] )
+#### Interface
+public void **Vertx\EventBus\Message::reply** ( [ mixed *$reply = NULL* ] )
 
 Sometimes after you send a message you want to receive a reply from the recipient.
 This is known as the *request-response pattern*.
@@ -760,7 +765,8 @@ to form a distributed event bus.
       
 # Shared Data
 
-##### public static Vertx\SharedData *Vertx::sharedData* ( )
+#### Interface
+public static Vertx\SharedData **Vertx::sharedData** ( )
 
 Sometimes it makes sense to allow different verticles instances to share data
 in a safe way. Vert.x allows simple *Map* and *Set* data structures to be
@@ -787,7 +793,8 @@ $sharedData = Vertx::sharedData();
 
 ## Shared Maps
 
-##### public Vertx\SharedData\Map *Vertx\SharedData::getMap* ( string *$name* )
+#### Interface
+public Vertx\SharedData\Map **Vertx\SharedData::getMap** ( string *$name* )
 
 To use a shared map to share data between verticles first we get a reference to
 the map. Shared maps are simply objects that mimic PHP's associative arrays. Note
@@ -808,7 +815,8 @@ Vertx::logger()->info('value of some-key is '. $map['some-key']);
 
 ## Shared Sets
 
-##### public Vertx\SharedData\Set *Vertx\SharedData::getSet* ( string *$name* )
+#### Interface
+public public Vertx\SharedData\Set **Vertx\SharedData::getSet** ( string *$name* )
 
 To use a shared set to share data between verticles first we get a reference
 to the set.
@@ -1050,7 +1058,8 @@ discuss both
 
 ## One-shot Timers
 
-##### public static void *Vertx::setTimer* ( int *$delay* , callable *$handler* )
+#### Interface
+public static void **Vertx::setTimer** ( int *$delay* , callable *$handler* )
 
 A one shot timer calls an event handler after a certain delay, expressed in
 milliseconds. 
@@ -1066,7 +1075,8 @@ Vertx::setTimer(1000, function() use ($log) {
 
 ## Periodic Timers
 
-##### public static string *Vertx::setPeriodic* ( int *$interval* , callable *$handler* )
+#### Interface
+public static string **Vertx::setPeriodic** ( int *$interval* , callable *$handler* )
 
 You can also set a timer to fire periodically by using the `setPeriodic`
 function. There will be an initial delay equal to the period. The return value
@@ -1084,7 +1094,8 @@ $log->info('First this is printed.');
 
 ## Cancelling timers
 
-##### public static void *Vertx::cancelTimer* ( string *$timer_id* )
+#### Interface
+public static void **Vertx::cancelTimer** ( string *$timer_id* )
 
 To cancel a periodic timer, call the `cancelTimer` function specifying the
 timer id. For example:
@@ -1120,7 +1131,8 @@ Creating TCP servers and clients is incredibly easy with vert.x.
 
 ### Creating a Net Server
 
-##### public static Vertx\Net\NetServer *Vertx::createNetServer* ( )
+#### Interface
+public static Vertx\Net\NetServer **Vertx::createNetServer** ( )
 
 To create a TCP server you invoke the static `createNetServer` method on the
 `Vertx` class.
@@ -1131,7 +1143,8 @@ $server = Vertx::createNetServer();
 
 ### Start the Server Listening
 
-##### public Vertx\Net\NetServer *Vertx\Net\NetServer::listen* ( int *port* [, string *host = NULL* [, callable *$listen_handler = NULL* ]] )
+#### Interface
+public Vertx\Net\NetServer **Vertx\Net\NetServer::listen** ( int *$port* [, string *$host = NULL* [, callable *$handler = NULL* ]] )
 
 To tell that server to listen for connections we do:    
 
@@ -1147,7 +1160,8 @@ it will listen at all available interfaces.
 
 ### Getting Notified of Incoming Connections
 
-##### public Vertx\Net\NetServer *Vertx\Net\NetServer::connectHandler* ( callable *$handler* )
+#### Interface
+public Vertx\Net\NetServer **Vertx\Net\NetServer::connectHandler** ( callable *$handler* )
 
 Just having a TCP server listening creates a working server that you can connect
 to (try it with telnet!), however it's not very useful since it doesn't do anything
@@ -1197,7 +1211,8 @@ This is a common pattern throughout the vert.x API.
 
 ### Closing a Net Server
 
-##### public void *Vertx\Net\NetServer::close* ( [ callable *$close_handler = NULL* ] )
+#### Interface
+public void **Vertx\Net\NetServer::close** ( [ callable *$handler = NULL* ] )
 
 To close a net server just call the `close` function.
 
@@ -1271,7 +1286,8 @@ to read and write data as well as do various other things like close the socket.
 
 ### Reading Data from the Socket
 
-##### public Vertx\Net\NetSocket *Vertx\Net\NetSocket::dataHandler* ( callable *$handler* )
+#### Interface
+public Vertx\Net\NetSocket **Vertx\Net\NetSocket::dataHandler** ( callable *$handler* )
 
 To read data from the socket you need to set the `dataHandler` on the socket. This
 handler will be called with a `Buffer` every time data is received on the socket.
@@ -1289,7 +1305,8 @@ $server->connectHandler(function($socket) use ($log) {
 
 ### Writing Data to a Socket
 
-##### public Vertx\Net\NetSocket *Vertx\Net\NetSocket::write* ( Vertx\Buffer *$buffer* )
+#### Interface
+public Vertx\Net\NetSocket **Vertx\Net\NetSocket::write** ( Vertx\Buffer *$buffer* )
 
 To write data to a socket, you invoke the `write` function. This function can be
 invoked in a few ways:
@@ -1341,7 +1358,8 @@ underlying TCP connection.
 
 ### Close Handler
 
-##### public Vertx\Net\NetSocket *Vertx\Net\NetSocket::closeHandler* ( callable *$handler* )
+#### Interface
+public Vertx\Net\NetSocket **Vertx\Net\NetSocket::closeHandler** ( callable *$handler* )
 
 If you want to be notified when a socket is closed, you can set the `closeHandler':
 
@@ -1362,7 +1380,8 @@ initiated by the client or server.
 
 ### Exception handler
 
-##### public Vertx\Net\NetSocket *Vertx\Net\NetSocket::exceptionHandler* ( callable *$handler* )
+#### Interface
+public Vertx\Net\NetSocket **Vertx\Net\NetSocket::exceptionHandler** ( callable *$handler* )
 
 You can set an exception handler on the socket that will be called if an
 exception occurs:
@@ -1435,7 +1454,8 @@ A NetClient is used to make TCP connections to servers.
 
 ### Creating a Net Client
 
-##### public static Vertx\Net\NetClient *Vertx::createNetClient* ( )
+#### Interface
+public static Vertx\Net\NetClient **Vertx::createNetClient** ( )
 
 To create a TCP client you invoke the static `createNetClient` method on the
 `Vertx` class.
@@ -1446,7 +1466,8 @@ $client = Vertx::createNetClient();
 
 ### Making a Connection
 
-##### public Vertx\Net\NetClient *Vertx\Net\NetClient::connect* ( int *port* , string *host* , callable *$handler* )
+#### Interface
+public Vertx\Net\NetClient **Vertx\Net\NetClient::connect** ( int *$port* , string *$host* , callable *$handler* )
 
 To actually connect to a server you invoke the `connect` method:
 
@@ -1472,7 +1493,8 @@ it as a `ReadStream` or `WriteStream` exactly the same as the server side `NetSo
 
 ### Catching exceptions on the Net Client
 
-##### public Vertx\Net\NetClient *Vertx\Net\NetClient::exceptionHandler* ( callable *$handler* )
+#### Interface
+public Vertx\Net\NetClient **Vertx\Net\NetClient::exceptionHandler** ( callable *$handler* )
 
 You can set an exception handler on the `NetClient`. This will catch any exceptions
 that occur during connection.
@@ -1491,9 +1513,10 @@ $client->connect(4242, 'host-that-doesnt-exist', function($socket) use ($log) {
 
 ### Configuring Reconnection
 
-##### public Vertx\Net\NetServer *Vertx\Net\NetServer::reconnectAttempts* ( int *attempts* )
+#### Interface
+public Vertx\Net\NetServer **Vertx\Net\NetServer::reconnectAttempts** ( int *attempts* )
 
-##### public Vertx\Net\NetServer *Vertx\Net\NetServer::reconnectInterval* ( int *interval* )
+public Vertx\Net\NetServer **Vertx\Net\NetServer::reconnectInterval** ( int *interval* )
 
 A NetClient can be configured to automatically retry connecting or reconnecting to
 the server in the event that it cannot connect or has lost its connection. This is
@@ -1863,7 +1886,8 @@ HTTP servers.
 
 ### Creating an HTTP Server
 
-##### public Vertx\Http\HttpServer *Vertx::createHttpServer* ( )
+#### Interface
+public Vertx\Http\HttpServer **Vertx::createHttpServer** ( )
 
 To create an HTTP server you invoke the static `createHttpServer` method on the
 `Vertx` class.
@@ -1874,7 +1898,8 @@ $server = Vertx::createHttpServer();
 
 ### Start the Server Listening
 
-##### public Vertx\Http\HttpServer *Vertx\Http\HttpServer::listen* ( int *port* [, string *host = NULL* [, callable *$handler = NULL* ]] )
+#### Interface
+public Vertx\Http\HttpServer **Vertx\Http\HttpServer::listen** ( int *$port* [, string *$host = NULL* [, callable *$handler = NULL* ]] )
 
 To tell that server to listen for incoming requests you use the `listen` method:
 
@@ -1890,7 +1915,8 @@ it will listen at all available interfaces.
 
 ### Getting Notified of Incoming Requests
 
-##### public Vertx\Http\HttpServer *Vertx\Http\HttpServer::requestHandler* ( callable *$handler* )
+#### Interface
+public Vertx\Http\HttpServer **Vertx\Http\HttpServer::requestHandler** ( callable *$handler* )
 
 To be notified when a request arrives you need to set a request handler. This is
 done by calling the `requestHandler` function of the server, passing in the handler:
@@ -2027,7 +2053,8 @@ Then the params array would be the following:
 
 #### Reading Data from the Request Body
 
-##### public Vertx\Http\HttpServerRequest *Vertx\Http\HttpServerRequest::dataHandler* ( *$handler* )
+#### Interface
+public Vertx\Http\HttpServerRequest **Vertx\Http\HttpServerRequest::dataHandler** ( *$handler* )
 
 Sometimes an HTTP request contains a request body that we want to read. As
 previously mentioned the request handler is called when only the headers of
@@ -2060,7 +2087,8 @@ The request object implements the `ReadStream` interface so you can pump the
 request body to a `WriteStream`. See the chapter on streams and pumps for a
 detailed explanation.
 
-##### public Vertx\Http\HttpServerRequest *Vertx\Http\HttpServerRequest::endHandler* ( callable *$handler* )
+#### Interface
+public Vertx\Http\HttpServerRequest **Vertx\Http\HttpServerRequest::endHandler** ( callable *$handler* )
 
 In many cases, you know the body is not large and you just want to receive
 it in one go. To do this you could do something like the following:
@@ -2098,7 +2126,8 @@ read.
 *Beware of doing this with very large requests since the entire request body
 will be stored in memory.*
 
-##### public Vertx\Http\HttpServerRequest *Vertx\Http\HttpServerRequest::bodyHandler* ( callable *handler* )
+#### Interface
+public Vertx\Http\HttpServerRequest **Vertx\Http\HttpServerRequest::bodyHandler** ( callable *handler* )
 
 Here's an example using `bodyHandler`:
 
@@ -2143,7 +2172,8 @@ The default value for `$statusCode` is `200`.
 
 #### Writing HTTP responses
 
-##### public Vertx\Http\HttpServerResponse *Vertx\Http\HttpServerResponse::write* ( Vertx\Buffer *$buffer* )
+#### Interface
+public Vertx\Http\HttpServerResponse **Vertx\Http\HttpServerResponse::write** ( Vertx\Buffer *$buffer* )
 
 To write data to an HTTP response, you invoke the `write` method. This
 function can be invoked multiple times before the response is ended. It can
@@ -2195,7 +2225,8 @@ late otherwise. If you are using HTTP chunking you do not have to worry.
    
 #### Ending HTTP responses
 
-##### public Vertx\Http\HttpServerResponse *Vertx\Http\HttpServerResponse::end* ( [ Vertx\Buffer *$buffer = NULL* ] )
+#### Interface
+public Vertx\Http\HttpServerResponse **Vertx\Http\HttpServerResponse::end** ( [ Vertx\Buffer *$buffer = NULL* ] )
 
 Once you have finished with the HTTP response you must call the `end` method
 on it.
@@ -2218,7 +2249,8 @@ $request->response->end("That's all folks.");
 
 #### Closing the underlying connection
 
-##### public Vertx\Http\HttpServerResponse *Vertx\Http\HttpServerResponse::close* ( )
+#### Interface
+public Vertx\Http\HttpServerResponse **Vertx\Http\HttpServerResponse::close** ( )
 
 You can close the underlying TCP connection of the request by calling the
 `close` method.
@@ -2281,7 +2313,8 @@ $request->response->putAllTrailers(array('Some-Trailer' => 'foo', 'Other-Trailer
 
 ### Serving files directly from disk
 
-##### public Vertx\Http\HttpServerResponse *Vertx\Http\HttpServerResponse::sendFile* ( string *$uri* )
+#### Interface
+public Vertx\Http\HttpServerResponse **Vertx\Http\HttpServerResponse::sendFile** ( string *$uri* )
 
 If you were writing a web server, one way to serve a file from disk would be
 to open it as an `AsyncFile` and pump it to the HTTP response. Or you could
@@ -2357,7 +2390,8 @@ $server->requestHandler(function($request) {
 
 ### Creating an HTTP Client
 
-##### public Vertx\Http\HttpClient *Vertx::createHttpClient* ( )
+#### Interface
+public Vertx\Http\HttpClient **Vertx::createHttpClient** ( )
 
 To create an HTTP client you invoke the static `createHttpClient` method on the
 `Vertx` class.
@@ -2441,7 +2475,8 @@ The default value is `1`.
 
 ### Closing the client
 
-##### public void *Vertx\Http\HttpClient::close* ( )
+#### Interface
+public void **Vertx\Http\HttpClient::close** ( )
 
 Vert.x will automatically close any clients when the verticle is stopped, but if
 you want to close it explicitly you can:
@@ -2522,7 +2557,8 @@ With `getNow` there is no return value.
 
 #### Writing to the request body
 
-##### public Vertx\Http\HttpClientRequest *Vertx\Http\HttpClientRequest::write* ( Vertx\Buffer *$buffer* )
+#### Interface
+public Vertx\Http\HttpClientRequest **Vertx\Http\HttpClientRequest::write** ( Vertx\Buffer *$buffer* )
 
 Writing to the client request body has a very similar API to writing to the
 server response body.
@@ -2566,7 +2602,8 @@ otherwise. If you are using HTTP chunking you do not have to worry.
 
 #### Ending HTTP requests
 
-##### public void *Vertx\Http\HttpClientRequest::end* ( [ Vertx\Buffer *$buffer = NULL* ] )
+#### Interface
+public void **Vertx\Http\HttpClientRequest::end** ( [ Vertx\Buffer *$buffer = NULL* ] )
 
 Once you have finished with the HTTP request you must call the `end` function
 on it.
@@ -2652,7 +2689,8 @@ $client->getNow('/some-path', function($response) use ($log) {
 
 #### Reading Data from the Response Body
 
-##### public Vertx\Http\HttpClientResponse *Vertx\Http\HttpClientResponse::dataHandler* ( callable *$handler* )
+#### Interface
+public Vertx\Http\HttpClientResponse **Vertx\Http\HttpClientResponse::dataHandler** ( callable *$handler* )
 
 The API for reading a http client response body is very similar to the API for
 reading a http server request body.
@@ -2709,7 +2747,8 @@ reached - in this case at the end of the response.
 If the HTTP response is using HTTP chunking, then each chunk of the response
 body will correspond to a single call to the `dataHandler`.
 
-##### public Vertx\Http\HttpClientResponse *Vertx\Http\HttpClientResponse::bodyHandler* ( callable *$handler* )
+#### Interface
+public Vertx\Http\HttpClientResponse **Vertx\Http\HttpClientResponse::bodyHandler** ( callable *$handler* )
 
 It's a very common use case to want to read the entire body in one go, so vert.x
 allows a `bodyHandler` to be set on the response object.
