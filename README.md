@@ -14,16 +14,26 @@ Since Vert.x runs on the JVM, this module is built on the Java-based
 [Quercus](http://quercus.caucho.com/) PHP implementation, one which is
 kept up to date and supports many useful new PHP features. The Vert.x PHP
 API closely resembles that of the JavaScript module, using shorter method
-names and closures for event handlers. The PHP Vert.x API is implemented
-entirely through the Quercus Java API so as to allow more control over
-interaction with the core Vert.x API.
+names and closures for event handlers. The API is implemented entirely on
+top of the Quercus Java API so as to allow more control over interaction
+with the core Vert.x API.
 
-## Project status
-This project is young and is still undergoing heavy development. Some amount of
-integration tests have been completed for all areas of the API except for WebSockets
-and SSL support. Still, this project is immature and it is therefore not recommended
-that it be used in production at this time. That said, I intend to _begin_
-development of applications on Vert.x PHP in the very near future.
+## Installation and Setup
+Vert.x PHP is under heavy development and is currently only recommended for
+evaluation and testing purposes. To install Vert.x PHP language support:
+
+* Clone the repository with `git clone --branch master git@github.com:jordanhalterman/vertx-php.git`
+* CD into the Vert.x PHP directory with `cd vertx-php`
+* Build the module with `mvn install`
+* Update `langs.properties` in your `VERTX_HOME/conf` directory with:
+
+```
+php=com.blankstyle~vertx-lang-php~2.0.0-SNAPSHOT:com.blankstyle.vertx.php.PhpVerticleFactory
+.php=php
+```
+
+#### See the [PHP User Manual](#php-api-manual) for tutorials on creating and running
+PHP verticles and modules.
 
 ## Contributing
 Please feel free to send pull requests. _Contributors to this project will be
