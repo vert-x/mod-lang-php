@@ -445,9 +445,8 @@ public final class FileSystem {
   /**
    * Executes a synchronous readfile call.
    */
-  public FileSystem readFileSync(Env env, StringValue path) {
-    fileSystem.readFileSync(path.toString());
-    return this;
+  public Buffer readFileSync(Env env, StringValue path) {
+    return new Buffer(fileSystem.readFileSync(path.toString()));
   }
 
   /**
