@@ -32,8 +32,7 @@ php=com.blankstyle~vertx-lang-php~2.0.0-SNAPSHOT:com.blankstyle.vertx.php.PhpVer
 .php=php
 ```
 
-#### See the [PHP User Manual](#php-api-manual) for tutorials on creating and running
-PHP verticles and modules.
+##### See the [PHP User Manual](#php-api-manual) for tutorials on creating and running PHP verticles and modules.
 
 ## Contributing
 Please feel free to send pull requests. _Contributors to this project will be
