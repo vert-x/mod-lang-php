@@ -327,17 +327,20 @@ parent verticle.
 
 ## Deploying a simple verticle
 
+* public static void **Vertx::deployVerticle** ( string *$main* [, array *$config = NULL* [, int *$instances = 1* [, callable *$handler = NULL* ]]] )
+
 To deploy a verticle programmatically call the static method `Vertx::deployVerticle`.
-The return value of `Vertx::deployVerticle` is the unique id of the deployment,
-which can be used later to undeploy the verticle.
+The value to the deploy callback is the deployment ID.
 
 To deploy a single instance of a verticle :
 
 ```php
-$id = Vertx::deployVerticle('my_verticle.php');
+Vertx::deployVerticle('my_verticle.php');
 ```
 
 ## Deploying a module programmatically
+
+* public static void **Vertx::deployModule** ( string *$module_name* [, array *$config = NULL* [, int *$instances = 1* [, callable *$handler = NULL* ]]] )
 
 You should use `deployModule` to deploy a module, for example:
 
@@ -454,6 +457,8 @@ with the same meanings.
 
 ## Undeploying a Verticle
 
+* public static void **Vertx::undeployVerticle** ( string *$deployment_id* [, callable *$handler = NULL* ] )
+
 Any verticles that you deploy programmatically from within a verticle, and
 all of their children are automatically undeployed when the parent verticle
 is undeployed, so in most cases you will not need to undeploy a verticle
@@ -462,9 +467,9 @@ static `Vertx::undeployVerticle` method and passing in the deployment id
 that was returned from the call to `Vertx::deployVerticle`
 
 ```php
-$deployID = Vertx::deployVerticle('my_verticle.php');
-
-Vertx::undeployVerticle($deployID);
+Vertx::deployVerticle('my_verticle.php', NULL, 1, function($deploy_id) {
+  Vertx::undeployVerticle($deploy_id);
+});
 ```
 
 # The Event Bus
@@ -1602,13 +1607,13 @@ the connection attempt will not succeed.
 
 ## SSL Clients
 
-* public [Vertx\Net\NetClient](#net-client) **ssl** ( bool $ssl )
-* public [Vertx\Net\NetClient](#net-client) **trustAll** ( bool $trust_all )
-* public [Vertx\Net\NetClient](#net-client) **trustStorePath** ( string $path )
-* public [Vertx\Net\NetClient](#net-client) **trustStorePassword** ( string $password )
-* public [Vertx\Net\NetClient](#net-client) **keyStorePath** ( string $path )
-* public [Vertx\Net\NetClient](#net-client) **keyStorePassword** ( string $password )
-* public [Vertx\Net\NetClient](#net-client) **clientAuthRequired** ( bool $required )
+* public [Vertx\Net\NetClient](#net-client) **ssl** ( bool *$ssl* )
+* public [Vertx\Net\NetClient](#net-client) **trustAll** ( bool *$trust_all* )
+* public [Vertx\Net\NetClient](#net-client) **trustStorePath** ( string *$path* )
+* public [Vertx\Net\NetClient](#net-client) **trustStorePassword** ( string *$password* )
+* public [Vertx\Net\NetClient](#net-client) **keyStorePath** ( string *$path* )
+* public [Vertx\Net\NetClient](#net-client) **keyStorePassword** ( string *$password* )
+* public [Vertx\Net\NetClient](#net-client) **clientAuthRequired** ( bool *$required* )
 
 Net Clients can also be easily configured to use SSL. They have the exact same
 API when using SSL as when using standard sockets.
@@ -2034,7 +2039,7 @@ Then the params array would be the following:
 
 #### Reading Data from the Request Body
 
-* public [Vertx\Http\HttpServerRequest](#handling-http-requests) **Vertx\Http\HttpServerRequest::dataHandler** ( *$handler* )
+* public [Vertx\Http\HttpServerRequest](#handling-http-requests) **Vertx\Http\HttpServerRequest::dataHandler** ( callable *$handler* )
 
 Sometimes an HTTP request contains a request body that we want to read. As
 previously mentioned the request handler is called when only the headers of
@@ -2459,6 +2464,16 @@ $client->close();
 
 ### Making Requests
 
+* public [Vertx\Http\HttpClientRequest](#making-requests) **Vertx\Http\HttpClient::request** ( string *$method* , string *$uri* , callable *$handler* )
+* public [Vertx\Http\HttpClientRequest](#making-requests) **Vertx\Http\HttpClient::get** ( string *$uri* , callable *$handler* )
+* public [Vertx\Http\HttpClientRequest](#making-requests) **Vertx\Http\HttpClient::put** ( string *$uri* , callable *$handler* )
+* public [Vertx\Http\HttpClientRequest](#making-requests) **Vertx\Http\HttpClient::post** ( string *$uri* , callable *$handler* )
+* public [Vertx\Http\HttpClientRequest](#making-requests) **Vertx\Http\HttpClient::delete** ( string *$uri* , callable *$handler* )
+* public [Vertx\Http\HttpClientRequest](#making-requests) **Vertx\Http\HttpClient::head** ( string *$uri* , callable *$handler* )
+* public [Vertx\Http\HttpClientRequest](#making-requests) **Vertx\Http\HttpClient::patch** ( string *$uri* , callable *$handler* )
+* public [Vertx\Http\HttpClientRequest](#making-requests) **Vertx\Http\HttpClient::trace** ( string *$uri* , callable *$handler* )
+* public [Vertx\Http\HttpClientRequest](#making-requests) **Vertx\Http\HttpClient::options** ( string *$uri* , callable *$handler* )
+
 To make a request using the client you invoke one the methods named after the HTTP
 method that you want to invoke.
 
@@ -2497,6 +2512,8 @@ object. You can use this to add headers to the request, and to write to the requ
 body. The request object implements `WriteStream`.
 
 Once you have finished with the request you must call the `end` function.
+
+* public [Vertx\Http\HttpClientRequest](#making-requests) **Vertx\Http\HttpClientRequest::end** ( [ [Vertx\Buffer](#buffers) *$buffer = NULL* ] )
 
 If you don't know the name of the request method in advance there is a general
 `request` method which takes the HTTP method as a parameter:
@@ -2616,6 +2633,8 @@ $client->post('/some-uri', function($response) use ($log) {
 ```
 
 #### HTTP chunked requests
+
+* public [Vertx\Http\HttpClientRequest](#making-requests) **Vertx\Http\HttpClientRequest::chunked** ( bool *$chunked* )
 
 Vert.x supports [HTTP Chunked Transfer Encoding](http://en.wikipedia.org/wiki/Chunked_transfer_encoding)
 for requests. This allows the HTTP request body to be written in chunks, and is
@@ -2817,6 +2836,28 @@ The scaling works in the same way as scaling a `NetServer`. Please see the chapt
 on scaling Net Servers for a detailed explanation of how this works.
 
 # Routing HTTP requests with Pattern Matching
+
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::all** ( string *$pattern* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::allWithRegex** ( string *$regex* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::connect** ( string *$pattern* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::connectWithRegex** ( string *$regex* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::get** ( string *$pattern* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::getWithRegex** ( string *$regex* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::put** ( string *$pattern* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::putWithRegex** ( string *$regex* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::post** ( string *$pattern* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::postWithRegex** ( string *$regex* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::delete** ( string *$pattern* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::deleteWithRegex** ( string *$regex* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::head** ( string *$pattern* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::headWithRegex** ( string *$regex* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::trace** ( string *$pattern* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::traceWithRegex** ( string *$regex* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::patch** ( string *$pattern* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::patchWithRegex** ( string *$regex* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::options** ( string *$pattern* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::optionsWithRegex** ( string *$regex* , callable *$handler* )
+* public [Vertx\Http\RouteMatcher](#routing-http-requests-with-pattern-matching) **Vertx\Http\RouteMatcher::noMatch** ( callable *$handler* )
 
 Vert.x lets you route HTTP requests to different handlers based on pattern matching
 on the request path. It also enables you to extract values from the path and use
