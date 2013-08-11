@@ -18,7 +18,7 @@ names and closures for event handlers. The API is implemented entirely on
 top of the Quercus Java API so as to allow more control over interaction
 with the core Vert.x API.
 
-## Installation and Setup
+## Installation
 1. Clone the repository with `git clone --branch master git@github.com:jordanhalterman/vertx-php.git`
 1. CD into the Vert.x PHP directory with `cd vertx-php`
 1. Build the module with `mvn install`
@@ -28,6 +28,9 @@ with the core Vert.x API.
 php=com.blankstyle~vertx-lang-php~2.0.0-SNAPSHOT:com.blankstyle.vertx.php.PhpVerticleFactory
 .php=php
 ```
+
+### Integration testing
+Run the PHP integration tests with `mvn verify`
 
 ##### See the [PHP User Manual](#php-api-manual) for tutorials on creating and running PHP verticles and modules.
 
@@ -45,8 +48,6 @@ as well as many other common interfaces. There is an analogue for most every
 core Vert.x interface in the PHP API.
 
 ### Ways to contribute
-* Performance issues - Not much attention has been focused on performance
-issues, particularly in the area of starting up PHP Vert.x verticles.
 * Reporting of PHP errors - Currently, error messages often times do not
 have enough useful information such as file names or line numbers, not to
 mention meaningful stack traces, each of which are vital to development.
