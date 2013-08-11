@@ -135,7 +135,7 @@
         <version>${maven.resources.plugin.version}</version>
         <executions>
           <execution>
-            <id>copy-resources</id>
+            <id>copy-classes</id>
             <phase>process-classes</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -152,7 +152,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>copy-config</id>
+            <id>copy-resources</id>
             <phase>process-resources</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -162,7 +162,7 @@
               <outputDirectory>${basedir}/target/mods/${module.name}</outputDirectory>
               <resources>
                 <resource>
-                  <directory>src/main/conf</directory>
+                  <directory>src/main/resources</directory>
                   <filtering>true</filtering>
                   <includes>
                     <include>mod.json</include>
