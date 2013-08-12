@@ -18,7 +18,18 @@ names and closures for event handlers. The API is implemented entirely on
 top of the Quercus Java API so as to allow more control over interaction
 with the core Vert.x API.
 
+#### Performance
+*Anyone up for a heated debate? In informal benchmarks (on my desktop)
+the PHP implementation performed significantly better in various forms of
+communication than the current Javascript and Python implementations.*
+
 ## Installation
+Please note that Vert.x PHP is still young and has not yet had an official
+release. Large strides have been made towards stablizing the API, but a
+few issues remain with NetSockets and the file system. *This project is not
+recommended for production until an official release has been made some
+time in the comming weeks.*
+
 1. Clone the repository with `git clone --branch master git@github.com:jordanhalterman/vertx-php.git`
 1. CD into the Vert.x PHP directory with `cd vertx-php`
 1. Build the module with `mvn install`
