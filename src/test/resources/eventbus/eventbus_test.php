@@ -209,10 +209,17 @@ class EventBusTestCase extends PhpTestCase {
   }
 
   /**
+   * Tests echoing a multi-dimensional associative array.
+   */
+  public function testEchoMultiAssoc() {
+    $this->doEcho(array('foo' => 'bar', 'bar' => array('baz' => 'boo')));
+  }
+
+  /**
    * Tests echoing a multi-dimensional array.
    */
-  public function testEchoMulti() {
-    $this->doEcho(array('foo' => 'bar', 'bar' => array('baz' => 'boo')));
+  public function testEchoMultiArray() {
+    $this->doEcho(array('a' => 'b', 'c' => array('d', 'e')));
   }
 
 }
