@@ -15,12 +15,6 @@
  */
 package com.blankstyle.vertx.php.sockjs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
-
 import com.blankstyle.vertx.php.ResultModifier;
 import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.util.PhpTypes;
@@ -29,7 +23,6 @@ import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.ArrayValue;
 import com.caucho.quercus.env.ObjectValue;
-import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.LongValue;
 
 /**
@@ -48,24 +41,19 @@ public class SockJSServer {
   /**
    * Bridges the SockJS app to the event bus.
    */
-  @SuppressWarnings("unchecked")
   public SockJSServer bridge(Env env, ArrayValue config, ArrayValue inboundPermitted, ArrayValue outboundPermitted,
-      @Optional LongValue authTimeout, @Optional StringValue authAddress) {
-    if (authTimeout != null && !authTimeout.isDefault() && authAddress != null && !authAddress.isDefault()) {
-      server.bridge(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), new JsonArray(
-          inboundPermitted.toArray().toJavaList(env, new ArrayList<Object>().getClass())), new JsonArray(
-          outboundPermitted.toJavaList(env, new ArrayList<Object>().getClass())), authTimeout.toLong(), authAddress
-          .toString());
+      @Optional LongValue authTimeout, @Optional Value authAddress) {
+    if (PhpTypes.notNull(authTimeout) && PhpTypes.notNull(authAddress)) {
+      server.bridge(PhpTypes.arrayToJson(env, config), PhpTypes.arrayToJsonArray(env, inboundPermitted),
+          PhpTypes.arrayToJsonArray(env, outboundPermitted), authTimeout.toLong(), authAddress.toString());
     }
-    else if (authTimeout != null && !authTimeout.isDefault()) {
-      server.bridge(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), new JsonArray(
-          inboundPermitted.toArray().toJavaList(env, new ArrayList<Object>().getClass())), new JsonArray(
-          outboundPermitted.toJavaList(env, new ArrayList<Object>().getClass())), authTimeout.toLong());
+    else if (PhpTypes.notNull(authTimeout)) {
+      server.bridge(PhpTypes.arrayToJson(env, config), PhpTypes.arrayToJsonArray(env, inboundPermitted),
+          PhpTypes.arrayToJsonArray(env, outboundPermitted), authTimeout.toLong());
     }
     else {
-      server.bridge(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), new JsonArray(
-          inboundPermitted.toArray().toJavaList(env, new ArrayList<Object>().getClass())), new JsonArray(
-          outboundPermitted.toJavaList(env, new ArrayList<Object>().getClass())));
+      server.bridge(PhpTypes.arrayToJson(env, config), PhpTypes.arrayToJsonArray(env, inboundPermitted),
+          PhpTypes.arrayToJsonArray(env, outboundPermitted));
     }
     return this;
   }
@@ -73,11 +61,9 @@ public class SockJSServer {
   /**
    * Installs an app.
    */
-  @SuppressWarnings("unchecked")
   public SockJSServer installApp(Env env, ArrayValue config, Value handler) {
-    PhpTypes.assertCallable(env, handler,
-        "Handler argument to Vertx\\SockJS\\SockJSServer::installApp() must be callable.");
-    server.installApp(new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())),
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\SockJS\\SockJSServer::installApp() must be callable.");
+    server.installApp(PhpTypes.arrayToJson(env, config),
         new Handler<org.vertx.java.core.sockjs.SockJSSocket>(env, PhpTypes.toCallable(handler),
             new ResultModifier<org.vertx.java.core.sockjs.SockJSSocket, SockJSSocket>() {
               @Override

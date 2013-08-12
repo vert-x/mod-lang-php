@@ -17,6 +17,7 @@ package com.blankstyle.vertx.php.sockjs;
 
 import org.vertx.java.core.buffer.Buffer;
 
+import com.blankstyle.vertx.php.Gettable;
 import com.blankstyle.vertx.php.streams.ReadStream;
 import com.blankstyle.vertx.php.streams.WriteStream;
 import com.blankstyle.vertx.php.util.HandlerFactory;
@@ -32,7 +33,7 @@ import com.caucho.quercus.env.Value;
  * 
  * @author Jordan Halterman
  */
-public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJSSocket> {
+public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJSSocket>, Gettable {
 
   private org.vertx.java.core.sockjs.SockJSSocket socket;
 
@@ -48,6 +49,11 @@ public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJ
   public SockJSSocket write(Env env, Value data, StringValue enc) {
     socket.write(new Buffer(data.toString()));
     return this;
+  }
+
+  @Override
+  public Value __getField(Env env, StringValue name) {
+    return env.wrapJava(this).callMethod(env, name);
   }
 
   @Override
