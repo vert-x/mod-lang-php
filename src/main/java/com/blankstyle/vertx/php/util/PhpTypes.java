@@ -15,7 +15,15 @@
  */
 package com.blankstyle.vertx.php.util;
 
+import java.util.Iterator;
+import java.util.Map;
+
+import org.vertx.java.core.json.JsonArray;
+import org.vertx.java.core.json.JsonObject;
+
 import com.caucho.quercus.Location;
+import com.caucho.quercus.env.ArrayValue;
+import com.caucho.quercus.env.ArrayValueImpl;
 import com.caucho.quercus.env.Callable;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
@@ -275,6 +283,163 @@ public class PhpTypes {
 
     builder.append(" on line ").append(location.getLineNumber()).append(".");
     return builder.toString();
+  }
+
+  /**
+   * Converts a PHP array to JSON.
+   *
+   * @param env The Quercus environment.
+   * @param array A PHP array value.
+   * @return A populated JsonObject instance.
+   */
+  public static JsonObject arrayToJson(Env env, Value array) {
+    return PhpTypes.arrayToJsonObject(env, array);
+  }
+
+  /**
+   * Converts a PHP array to a JsonObject.
+   *
+   * @param env The Quercus environment.
+   * @param array A PHP array value.
+   * @return A populated JsonObject instance.
+   */
+  public static JsonObject arrayToJsonObject(Env env, Value array) {
+    JsonObject json = new JsonObject();
+    Iterator<Value> iter = array.getKeyIterator(env);
+    while (iter.hasNext()) {
+      Value key = iter.next();
+      Value value = array.get(key);
+      if (value.isArray()) {
+        // Determine whether this is an associative array.
+        if (PhpTypes.arrayIsAssoc(env, value)) {
+          json.putObject(key.toString(), PhpTypes.arrayToJsonObject(env, value));
+        }
+        else {
+          json.putArray(key.toString(), PhpTypes.arrayToJsonArray(env, value));
+        }
+      }
+      else if (value.isBoolean()) {
+        json.putBoolean(key.toString(), value.toBoolean());
+      }
+      else if (value.isDouble()) {
+        json.putNumber(key.toString(), value.toJavaDouble());
+      }
+      else if (value.isNumeric()) {
+        json.putNumber(key.toString(), value.toInt());
+      }
+      else if (value.isString()) {
+        json.putString(key.toString(), value.toString());
+      }
+      else {
+        json.putValue(key.toString(), value.toJavaObject());
+      }
+    }
+    return json;
+  }
+
+  /**
+   * Converts a PHP array to a JSON array.
+   *
+   * @param env The Quercus environment.
+   * @param array A PHP array value.
+   * @return A populated JsonArray instance.
+   */
+  public static JsonArray arrayToJsonArray(Env env, Value array) {
+    JsonArray json = new JsonArray();
+    Iterator<Value> iter = array.getValueIterator(env);
+    while (iter.hasNext()) {
+      Value value = iter.next();
+      if (value.isArray()) {
+        if (PhpTypes.arrayIsAssoc(env, value)) {
+          json.addObject(PhpTypes.arrayToJsonObject(env, value));
+        }
+        else {
+          json.addArray(PhpTypes.arrayToJsonArray(env, value));
+        }
+      }
+      else if (value.isBoolean()) {
+        json.addBoolean(value.toBoolean());
+      }
+      else if (value.isDouble()) {
+        json.addNumber(value.toJavaDouble());
+      }
+      else if (value.isNumeric()) {
+        json.addNumber(value.toInt());
+      }
+      else if (value.isString()) {
+        json.addString(value.toString());
+      }
+      else {
+        json.add(value.toJavaObject());
+      }
+    }
+    return json;
+  }
+
+  /**
+   * Determines whether a PHP array is associative by looking at the keys.
+   */
+  private static boolean arrayIsAssoc(Env env, Value array) {
+    Iterator<Value> iter = array.getKeyIterator(env);
+    while (iter.hasNext()) {
+      Value key = iter.next();
+      if (key.isString() || key.isBoolean()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Converts a JSON object to a PHP array.
+   *
+   * @param env The Quercus environment.
+   * @param json A Vert.x json object.
+   * @return A populated PHP array.
+   */
+  public static ArrayValue arrayFromJson(Env env, JsonObject json) {
+    ArrayValue result = new ArrayValueImpl();
+    Map<String, Object> map = json.toMap();
+    Iterator<String> iter = map.keySet().iterator();
+    while (iter.hasNext()) {
+      String key = iter.next();
+      Object value = map.get(key);
+      if (value instanceof JsonObject) {
+        result.put(env.createString(key), PhpTypes.arrayFromJson(env, (JsonObject) value));;
+      }
+      else if (value instanceof JsonArray) {
+        result.put(env.createString(key), PhpTypes.arrayFromJson(env, (JsonArray) value));;
+      }
+      else {
+        result.put(env.createString(key), env.wrapJava(value));
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Converts a JSON array to a PHP array.
+   *
+   * @param env The Quercus environment.
+   * @param json A Vert.x json array.
+   * @return A populated PHP array.
+   */
+  public static ArrayValue arrayFromJson(Env env, JsonArray json) {
+    ArrayValue result = new ArrayValueImpl();
+    Iterator<Object> iter = json.iterator();
+    while (iter.hasNext()) {
+      Object value = iter.next();
+      if (value instanceof JsonObject) {
+        result.put(PhpTypes.arrayFromJson(env, (JsonObject) value));
+      }
+      else if (value instanceof JsonArray) {
+        result.put(PhpTypes.arrayFromJson(env, (JsonArray) value));
+      }
+      else {
+        result.put(env.wrapJava(iter.next()));
+      }
+    }
+    return result;
   }
 
 }

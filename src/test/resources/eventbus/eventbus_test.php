@@ -208,6 +208,13 @@ class EventBusTestCase extends PhpTestCase {
     $this->doEcho(array('foo' => 'bar', 'bar' => 'baz'));
   }
 
+  /**
+   * Tests echoing a multi-dimensional array.
+   */
+  public function testEchoMulti() {
+    $this->doEcho(array('foo' => 'bar', 'bar' => array('baz' => 'boo')));
+  }
+
 }
 
 TestRunner::run(new EventBusTestCase());

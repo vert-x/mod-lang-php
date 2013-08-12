@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.vertx.java.core.AsyncResult;
-import org.vertx.java.core.json.JsonObject;
 
 import com.blankstyle.vertx.php.ResultModifier;
 import com.blankstyle.vertx.php.Handler;
@@ -147,7 +146,6 @@ public final class EventBus {
    *          An optional handler to be invoked in response to the message.
    * @return The called object.
    */
-  @SuppressWarnings("unchecked")
   public EventBus send(Env env, StringValue address, Value message, @Optional Value handler) {
     boolean hasHandler = false;
     Handler<org.vertx.java.core.eventbus.Message<Object>> sendHandler = null;
@@ -198,10 +196,10 @@ public final class EventBus {
     }
     else if (message.isArray()) {
       if (hasHandler) {
-        eventBus.send(address.toString(), new JsonObject(message.toArray().toJavaMap(env, new HashMap<String, Object>().getClass())), sendHandler);
+        eventBus.send(address.toString(), PhpTypes.arrayToJson(env, message), sendHandler);
       }
       else {
-        eventBus.send(address.toString(), new JsonObject(message.toArray().toJavaMap(env, new HashMap<String, Object>().getClass())));
+        eventBus.send(address.toString(), PhpTypes.arrayToJson(env, message));
       }
     }
     return this;
@@ -216,7 +214,6 @@ public final class EventBus {
    *          A mixed value message to send.
    * @return The called object.
    */
-  @SuppressWarnings("unchecked")
   public EventBus publish(Env env, Value address, Value message) {
     if (message.isBoolean()) {
       eventBus.publish(address.toString(), message.toBoolean());
@@ -231,7 +228,7 @@ public final class EventBus {
       eventBus.publish(address.toString(), (org.vertx.java.core.buffer.Buffer) message.toJavaObject(env, org.vertx.java.core.buffer.Buffer.class));
     }
     else if (message.isArray()) {
-      eventBus.publish(address.toString(), new JsonObject(message.toArray().toJavaMap(env, new HashMap<String, Object>().getClass())));
+      eventBus.publish(address.toString(), PhpTypes.arrayToJson(env, message));
     }
     return this;
   }

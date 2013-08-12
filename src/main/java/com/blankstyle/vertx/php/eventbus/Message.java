@@ -15,8 +15,6 @@
  */
 package com.blankstyle.vertx.php.eventbus;
 
-import java.util.HashMap;
-
 import org.vertx.java.core.json.JsonObject;
 
 import com.blankstyle.vertx.php.ResultModifier;
@@ -25,11 +23,9 @@ import com.blankstyle.vertx.php.Handler;
 import com.blankstyle.vertx.php.buffer.Buffer;
 import com.blankstyle.vertx.php.util.PhpTypes;
 import com.caucho.quercus.annotation.Optional;
-import com.caucho.quercus.env.ArrayValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.env.StringValue;
-import com.caucho.quercus.lib.json.JsonModule;
 
 /**
  * A PHP compatible implementation of the Vert.x message.
@@ -54,7 +50,7 @@ public class Message<T> implements Gettable {
     if (body instanceof JsonObject) {
       isCache = true;
       Env env = Env.getCurrent();
-      cache = JsonModule.json_decode(env, env.createString(((JsonObject) message.body()).encode()), true);
+      cache = PhpTypes.arrayFromJson(env, (JsonObject) message.body());
     }
     else if (body instanceof org.vertx.java.core.buffer.Buffer) {
       isCache = true;
@@ -92,7 +88,6 @@ public class Message<T> implements Gettable {
    *          An optional reply handler.
    * @return The called object.
    */
-  @SuppressWarnings("unchecked")
   public void reply(Env env, @Optional Value message, @Optional Value replyHandler) {
     if (PhpTypes.notNull(message)) {
       if (PhpTypes.notNull(replyHandler)) {
@@ -121,8 +116,7 @@ public class Message<T> implements Gettable {
           this.message.reply(message.toDouble(), handler);
         }
         else if (message.isArray()) {
-          ArrayValue arr = (ArrayValue) message;
-          this.message.reply(new JsonObject(arr.toJavaMap(env, new HashMap<String, Object>().getClass())), handler);
+          this.message.reply(PhpTypes.arrayToJson(env, message), handler);
         }
       }
       else {
@@ -139,8 +133,7 @@ public class Message<T> implements Gettable {
           this.message.reply(message.toDouble());
         }
         else if (message.isArray()) {
-          ArrayValue arr = (ArrayValue) message;
-          this.message.reply(new JsonObject(arr.toJavaMap(env, new HashMap<String, Object>().getClass())));
+          this.message.reply(PhpTypes.arrayToJson(env, message));
         }
       }
     }

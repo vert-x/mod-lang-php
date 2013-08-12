@@ -189,12 +189,12 @@ public final class Vertx {
     if (hasConfig && hasHandler) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployModule() must be callable.");
       PhpVerticleFactory.container.deployModule(moduleName.toString(),
-          new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(),
+          PhpTypes.arrayToJson(env, config), instances.toInt(),
           HandlerFactory.<String>createAsyncGenericHandler(env, handler));
     }
     else if (hasConfig) {
       PhpVerticleFactory.container.deployModule(moduleName.toString(),
-          new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
+          PhpTypes.arrayToJson(env, config), instances.toInt());
     }
     else if (hasHandler) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployModule() must be callable.");
@@ -231,12 +231,12 @@ public final class Vertx {
     if (hasConfig && hasHandler) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployVerticle() must be callable.");
       PhpVerticleFactory.container.deployVerticle(main.toString(),
-          new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt(),
+          PhpTypes.arrayToJson(env, config), instances.toInt(),
           HandlerFactory.<String>createAsyncGenericHandler(env, handler));
     }
     else if (hasConfig) {
       PhpVerticleFactory.container.deployVerticle(main.toString(),
-          new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
+          PhpTypes.arrayToJson(env, config), instances.toInt());
     }
     else if (hasHandler) {
       PhpTypes.assertCallable(env, handler, "Handler argument to Vertx::deployVerticle() must be callable.");
@@ -270,7 +270,7 @@ public final class Vertx {
     boolean hasConfig = config != null && !config.isDefault();
     if (hasConfig) {
       PhpVerticleFactory.container.deployWorkerVerticle(main.toString(),
-          new JsonObject(config.toJavaMap(env, new HashMap<String, Object>().getClass())), instances.toInt());
+          PhpTypes.arrayToJson(env, config), instances.toInt());
     }
     else {
       PhpVerticleFactory.container.deployWorkerVerticle(main.toString(), instances.toInt());
@@ -307,12 +307,7 @@ public final class Vertx {
    * Returns the Vertx configuration.
    */
   public static ArrayValue config(Env env) {
-    JsonObject config = PhpVerticleFactory.container.config();
-    ArrayValue array = new ArrayValueImpl();
-    for (Map.Entry<String, Object> entry : config.toMap().entrySet()) {
-      array.append(env.createString(entry.getKey()), env.wrapJava(entry.getValue()));
-    }
-    return array;
+    return PhpTypes.arrayFromJson(env, PhpVerticleFactory.container.config());
   }
 
   public String toString() {
