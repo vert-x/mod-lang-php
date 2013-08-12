@@ -29,9 +29,6 @@ php=com.blankstyle~vertx-lang-php~2.0.0-SNAPSHOT:com.blankstyle.vertx.php.PhpVer
 .php=php
 ```
 
-### Integration testing
-Run the PHP integration tests with `mvn verify`
-
 ##### See the [PHP User Manual](#php-api-manual) for tutorials on creating and running PHP verticles and modules.
 
 ## Contributing
@@ -194,6 +191,7 @@ In the interest of consistency, this manual is adapted from the
 1. [File System](#file-system)
    * [Synchronous forms](#synchronous-forms)
    * [copy](#copy)
+   * [copyRecursive](#copyrecursive)
    * [move](#move)
    * [truncate](#truncate)
    * [chmod](#chmod)
@@ -204,6 +202,7 @@ In the interest of consistency, this manual is adapted from the
    * [unlink](#unlink)
    * [readSymLink](#readsymlink)
    * [delete](#delete)
+   * [deleteRecursive](#deleterecursive)
    * [mkdir](#mkdir)
    * [readDir](#readdir)
    * [readFile](#readfile)
@@ -3513,7 +3512,8 @@ Copies a file.
 
 This method can be called in two different ways:
 
-* `copy($source, $destination, $handler)`
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::copy** ( string *$source* , string *$destination* , callable *$handler* )
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::copySync** ( string *$source* , string *$destination* )
 
 Non recursive file copy. `$source` is the source file name. `$destination` is the
 destination file name.
@@ -3528,7 +3528,10 @@ Vertx::fileSystem()->copy('foo.dat', 'bar.dat', function($error) use ($log) {
 });
 ```
 
-* `copy($source, $destination, $recursive, $handler)`
+## copyRecursive
+
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::copyRecursive** ( string *$source* , string *$destination* , callable *$handler* )
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::copyRecursiveSync** ( string *$source* , string *$destination* )
 
 Recursive copy. `$source` is the source file name. `$destination` is the destination
 file name. `$recursive` is a boolean flag - if `TRUE` and source is a directory, then
@@ -3536,57 +3539,34 @@ a recursive copy of the directory and all its contents will be attempted.
 
 ## move
 
-Moves a file.
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::move** ( string *$source* , string *$destination* , callable *$handler* )
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::moveSync** ( string *$source* , string *$destination* )
 
-`move($source, $destination, $handler)`
+Moves a file.
 
 `$source` is the source file name. `$destination` is the destination file name.
 
 ## truncate
 
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::truncate** ( string *$file* , int *$length* , callable *$handler* )
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::truncateSync** ( string *$file* , int *$length* )
+
 Truncates a file.
 
-`truncate($file, $len, $handler)`
-
-`$file` is the file name of the file to truncate. `$len` is the length in bytes to
+`$file` is the file name of the file to truncate. `$length` is the length in bytes to
 truncate it to.
-
-## chmod
-
-Changes permissions on a file or directory.
-
-This method can be called in two different ways:
-
-* `chmod($file, $perms, $handler)`.
-
-Change permissions on a file.
-
-`$file` is the file name. `$perms` is a Unix style permissions string made up of 9
-characters. The first three are the owner's permissions. The second three are the
-group's permissions and the third three are others permissions. In each group of
-three if the first character is `r` then it represents a read permission. If the
-second character is `w`  it represents write permission. If the third character is
-`x` it represents execute permission. If the entity does not have the permission
-the letter is replaced with `-`. Some examples:
-
-    rwxr-xr-x
-    r--r--r--
-  
-* `chmod($file, $perms, $dirPerms, $handler)`.  
-
-Recursively change permissions on a directory. `$file` is the directory name.
-`$perms` is a Unix style permissions to apply recursively to any files in the
-directory. `$dirPerms` is a Unix style permissions string to apply to the directory
-and any other child directories recursively.
 
 ## props
 
-Retrieve properties of a file.
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::props** ( string *$file* , callable *$handler* )
+* public [Vertx\File\FileProps](#fileprops) **Vertx\File\FileSystem::propsSync** ( string *$file* )
 
-`props($file, $handler)`
+Retrieve properties of a file.
 
 `$file` is the file name. The props are returned in the handler. The results is
 an object with the following properties:
+
+### FileProps
 
 * `creationTime`. Time of file creation.
 * `lastAccessTime`. Time of last file access.
@@ -3614,6 +3594,9 @@ Vertx::fileSystem()->props('some-file.txt', function($props, $error) use ($log) 
 
 ## lprops
 
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::lprops** ( string *$file* , callable *$handler* )
+* public [Vertx\File\FileProps](#fileprops) **Vertx\File\FileSystem::lpropsSync** ( string *$file* )
+
 Retrieve properties of a link. This is like `props` but should be used when you
 want to retrieve properties of a link itself without following it.
 
@@ -3621,36 +3604,40 @@ It takes the same arguments and provides the same results as `props`.
 
 ## link
 
-Create a hard link.
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::link** ( string *$link* , string *$existing* , callable *$handler* )
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::linkSync** ( string *$link* , string *$existing* )
 
-`link($link, $existing, $handler)`
+Create a hard link.
 
 `$link` is the name of the link. `$existing` is the existing file (i.e. where to
 point the link at).
 
 ## symlink
 
-Create a symbolic link.
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::symlink** ( string *$link* , string *$existing* , callable *$handler* )
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::symlinkSync** ( string *$link* , string *$existing* )
 
-`symlink($link, $existing, $handler)`
+Create a symbolic link.
 
 `$link` is the name of the symlink. `$existing` is the existing file (i.e. where
 to point the symlink at).
 
 ## unlink
 
-Unlink (delete) a link.
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::unlink** ( string *$link* , callable *$handler* )
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::unlinkSync** ( string *$link* )
 
-`unlink($link, $handler)`
+Unlink (delete) a link.
 
 `$link` is the name of the link to unlink.
 
 ## readSymLink
 
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::readSymLink** ( string *$link* , callable *$handler* )
+* public string **Vertx\File\FileSystem::readSymLinkSync** ( string *$link* )
+
 Reads a symbolic link. I.e returns the path representing the file that the
 symbolic link specified by `$link` points to.
-
-`readSymLink($link, $handler)`
 
 `link` is the name of the link to read. An usage example would be:
 
@@ -3664,62 +3651,43 @@ Vertx::fileSystem()->readSymLink('somelinke', function($result, $error) use ($lo
 
 ## delete
 
-Deletes a file or recursively deletes a directory.
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::delete** ( string *$source* , string *$destination* , callable *$handler* )
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::deleteSync** ( string *$source* , string *$destination* )
 
-This method can be called in two ways:
+Deletes a file.
 
-* `delete($file, $handler)`
+`$file` is the file name.
 
-Deletes a file. `$file` is the file name.
+## deleteRecursive
 
-* `delete($file, $recursive, $handler)`
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::deleteRecursive** ( string *$directory* , callable *$handler* )
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::deleteRecursiveSync** ( string *$directory* )
 
-If `$recursive` is `TRUE`, it deletes a directory with name `$file`, recursively.
-Otherwise it just deletes a file.
+Deletes a directory recursively.
+
+`$directory` is the directory name.
 
 ## mkdir
 
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::mkdir** ( string *$path* , string|null *$perms* , callable *$handler* )
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::mkdirSync** ( string *$path* [, string *$perms = NULL* ] )
+
 Creates a directory.
 
-This method can be called in three ways:
-
-* `mkdir($dirname, $handler)`
-
-Makes a new empty directory with name `$dirname`, and default permissions `
-
-* `mkdir($dirname, $createParents, $handler)`
-
-If `$createParents` is `true`, this creates a new directory and creates any of
-its parents too. Here's an example
-
 ```php
-Vertx::fileSystem()->mkdir('a/b/c', TRUE, function($result, $error) {
+Vertx::fileSystem()->mkdir('a/b/c', NULL, function($result, $error) {
   if (!$error) {
     $log->info('Directory created ok.');
   }
 });
 ```
-  
-* `mkdir($dirname, $createParents, $perms, $handler)`
-
-Like `mkdir($dirname, $createParents, $handler)`, but also allows permissions for
-the newly created director(ies) to be specified. `$perms` is a Unix style
-permissions string as explained earlier.
 
 ## readDir
 
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::readDir** ( string *$path* , string|null *$filter* , callable *$handler* )
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::readDirSync** ( string *$path* [, string *$filter = NULL* ] )
+
 Reads a directory. I.e. lists the contents of the directory.
-
-This method can be called in two ways:
-
-* `readDir($dirName)`
-
-Lists the contents of a directory
-
-* `readDir($dirName, $filter)`
-
-List only the contents of a directory which match the filter. Here's an example
-which only lists files with an extension `txt` in a directory.
 
 ```php
 Vertx::fileSystem()->readDir('mydirectory', '.*\.txt', function($results, $error) use ($log) {
@@ -3736,10 +3704,13 @@ The filter is a regular expression.
   
 ## readFile
 
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::readFile** ( string *$file* , callable *$handler* )
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::readFileSync** ( string *$file* )
+
 Read the entire contents of a file in one go. *Be careful if using this with
 large files since the entire file will be stored in memory at once*.
 
-`readFile($file)`. Where `$file` is the file name of the file to read.
+`$file` is the file name of the file to read.
 
 The body of the file will be returned as a `Buffer` in the handler.
 
@@ -3755,22 +3726,28 @@ Vertx::fileSystem()->readFile('myfile.dat', function($result, $error) use ($log)
 
 ## writeFile
 
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::writeFile** ( string *$file* , [Vertx\Buffer](#buffers) *$buffer* , callable *$handler* )
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::writeFileSync** ( string *$file* , [Vertx\Buffer](#buffers) *$buffer* )
+
 Writes an entire `Buffer` or a string into a new file on disk.
 
-`writeFile($file, $data, $handler)` Where `$file` is the file name. `$data` is a
-`Buffer` or string.
+`$file` is the file name. `$data` is a `Buffer` or string.
 
 ## createFile
 
-Creates a new empty file.
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::createFile** ( string *$file* , string|null *$perms* , callable *$handler* )
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::createFileSync** ( string *$file* [, string *$perms = NULL* ] )
 
-`createFile($file, $perms, $handler)`. Where `$file` is the file name.
+Creates a new empty file.
 
 ## exists
 
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::exists** ( string *$file* , callable *$handler* )
+* public bool **Vertx\File\FileSystem::existsSync** ( string *$file* )
+
 Checks if a file exists.
 
-`exists($file, $handler)`. Where `$file` is the file name.
+`$file` is the file name.
 
 The result is returned in the handler.
 
@@ -3784,9 +3761,14 @@ Vertx::fileSystem()->exists('some-file.txt', function($result, $error) use ($log
 
 ## fsProps
 
+* public [Vertx\File\FileSystem](#file-system) **Vertx\File\FileSystem::fsProps** ( string *$file* , callable *$handler* )
+* public [Vertx\File\FileSystemProps](#filesystemprops) **Vertx\File\FileSystem::fsPropsSync** ( string *$file* )
+
 Get properties for the file system.
 
-`fsProps($file, $handler)`. Where `$file` is any file on the file system.
+`$file` is any file on the file system.
+
+### FileSystemProps
 
 The result is returned in the handler. The result object has the following fields:
 
@@ -3806,69 +3788,7 @@ Vertx::fileSystem()->fsProps('mydir', function($result, $error) use ($log) {
 
 ## open
 
-Opens an asynchronous file for reading/writing.
-
-This method can be called in four different ways:
-
-* `open($file, $handler)`
-
-Opens a file for reading and writing. `$file` is the file name. It creates
-it if it does not already exist.
-
-* `open($file, $openFlags, $handler)`
-
-Opens a file using the specified open flags. `$file` is the file name. `$openFlags`
-is an integer representing whether to open the flag for reading or writing and
-whether to create it if it doesn't already exist.
-
-`$openFlags` is constructed from a combination of these three constants.
-
-```php
-Vertx\FileSystem::OPEN_READ = 1;
-Vertx\FileSystem::OPEN_WRITE = 2;
-Vertx\FileSystem::CREATE_NEW = 4;
-```
-
-For example:
-
-```php
-// Open for reading only.
-$flags = Vertx\FileSystem::OPEN_READ;
-
-// Open for reading and writing.
-$flags = Vertx\FileSystem::OPEN_READ | Vertx\FileSystem::OPEN_WRITE;
-```
-
-When the file is opened, an instance of `AsyncFile` is passed into the result
-handler:
-
-```php
-use Vertx\FileSystem;
-
-Vertx::fileSystem()->open('some-file.dat', FileSystem::OPEN_READ | FileSystem::OPEN_WRITE, function($asyncFile, $error) use ($log) {
-  if ($error) {
-    $log->info('Failed to open file '. $error);
-  }
-  else {
-    $log->info('File opened ok.');
-    $asyncFile->close();
-  }
-});
-```
-
-* `open($file, $openFlags, $flush, $handler)`
-
-This is the same as `open($file, $openFlags, $handler)` but you can also specify
-whether any file write are flushed immediately to disk (sync'd).
-
-Default is `$flush = FALSE`, so writes are just written into the OS cache.
-
-* `open($file, $openFlags, $flush, $perms, $handler)`
-
-This is the same as `open($file, $openFlags, $flush, $handler)` but you can also
-specify the file permissions to give the file if it is created. Permissions
-is a Unix-style permissions string as explained earlier in the chapter.
-
+#### TODO
 
 ## AsyncFile
 
@@ -3879,122 +3799,27 @@ file access.
 AsyncFile implements the `ReadStream` and `WriteStream` interfaces, allowing
 them to be used in related APIs.
 
-They also allow you to read and write directly to them.
+They also allow you to read and write directly to them with the following methods:
+
+* public [Vertx\File\AsyncFile](#asyncfile) **Vertx\File\AsyncFile::read** ( [Vertx\Buffer](#buffers) *$buffer* , int *$offset* , int *$position* , int *$length* , callable *$handler* )
+* public [Vertx\File\AsyncFile](#asyncfile) **Vertx\File\AsyncFile::write** ( [Vertx\Buffer](#buffers) *$buffer* , int *$position* , callable *$handler* )
 
 ### Random access writes
 
-To use an AsyncFile for random access writing you use the `write` method.
-
-`write($buffer, $position, $handler)`.
-
-The parameters to the method are: 
-
-* `$buffer`: the buffer to write.
-* `$position`: an integer position in the file where to write the buffer. If the
-position is greater or equal to the size of the file, the file will be enlarged
-to accomodate the offset.
-
-Here is an example of random access writes:
-
-```php
-use Vertx\Buffer;
-
-Vertx::fileSystem()->open('some-file.dat', function($asyncFile, $error) use ($log) {
-  if ($error) {
-    $log->info('Failed to open file '. $error);
-  }
-  else {
-    // File open, write a buffer 5 times into a file.
-    $buffer = new Buffer('foo');
-    for ($i = 0; $i < 5; $i++) {
-      $asyncFile->write($buffer, count($buffer) * $i, function($error) use ($log) {
-        if ($error) {
-          $log->info('Failed to write '. $error);
-        }
-        else {
-          $log->info('Written ok');
-        }
-      });
-    }
-  }
-});
-```
+#### TODO
 
 ### Random access reads
 
-To use an AsyncFile for random access reads you use the `read` method.
-
-`read($buffer, $offset, $position, $length, $handler)`.
-
-The parameters to the method are: 
-
-* `$buffer`: the buffer into which the data will be read.
-* `$offset`: an integer offset into the buffer where the read data will be placed.
-* `$position`: the position in the file where to read data from.
-* `$length`: the number of bytes of data to read
-
-Here's an example of random access reads:
-
-```php
-use Vertx\Buffer;
-
-Vertx::fileSystem()->open('some-file.dat', function($asyncFile, $error) use ($log) {
-  if ($error) {
-    $log->info('Failed to open file '. $error);
-  }
-  else {
-    $buffer = new Buffer(1000);
-    for ($i = 0; $i < 10; $i++) {
-      $asyncFile->read($buffer, $i * 100, $i * 100, 100, function($error) use ($log) {
-        if ($error) {
-          $log->info('Failed to read '. $error);
-        }
-        else {
-          $log->info('Read ok');
-        }
-      });
-    }
-  }
-});
-```
+#### TODO
 
 ### Flushing data to underlying storage
 
-If the AsyncFile was not opened with `flush = TRUE`, then you can manually
+If the AsyncFile was not opened with `$flush = TRUE`, then you can manually
 flush any writes from the OS cache by calling the `flush` method.
 
 ### Using AsyncFile as `ReadStream` and `WriteStream`
 
-The PHP implementation of the Vert.x `AsyncFile` does implement both the
-`ReadStream` and `WriteStream` interfaces. Therefore, it can be used in
-pumps and other related APIs.
-
-Here's an example of pumping data from a file on a client to a HTTP request:
-
-```php
-use Vertx\Pump;
-
-$client = Vertx::createHttpClient()->host('foo.com');
-
-Vertx::fileSystem()->open('some-file.dat', function($asyncFile, $error) use ($client, $log) {
-  if ($error) {
-    $log->info('Failed to open file '. $error);
-  }
-  else {
-    $request = $client->put('/uploads', function($response) use ($log) {
-      $log->info('Response status code: '. $response->statusCode);
-    });
-
-    $pump = new Pump($asyncFile, $request);
-    $pump->start();
-
-    $asyncFile->endHandler(function() use ($request) {
-      // File sent, end the HTTP request.
-      $request->end();
-    })
-  }
-});
-```
+#### TODO
 
 ### Closing an AsyncFile
 

@@ -214,8 +214,7 @@ public final class FileSystem {
    */
   public FileSystem link(Env env, StringValue link, StringValue existing, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\File\\FileSystem::link() must be callable.");
-    fileSystem
-        .link(link.toString(), existing.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
+    fileSystem.link(link.toString(), existing.toString(), HandlerFactory.createAsyncVoidHandler(env, handler));
     return this;
   }
 
