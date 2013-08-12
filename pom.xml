@@ -1,18 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.blankstyle</groupId>
-  <artifactId>vertx-lang-php</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
-  <name>PHP Vert.x module</name>
-  <url>http://github.com/jordanhalterman/vertx-php</url>
-
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
     <version>7</version>
   </parent>
+
+  <groupId>com.blankstyle</groupId>
+  <artifactId>vertx-lang-php</artifactId>
+  <version>2.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>Vert.x PHP</name>
+  <description>A PHP language implementation for the Vert.x application platform.</description>
+  <url>http://github.com/jordanhalterman/vertx-php</url>
+  <inceptionYear>2013</inceptionYear>
 
   <properties>
     <module.name>${project.groupId}~${project.artifactId}~${project.version}</module.name>
@@ -45,6 +47,12 @@
       <url>https://www.github.com/jordanhalterman</url>
     </developer>
   </developers>
+
+  <scm>
+    <connection>scm:git:git@github.com:jordanhalterman/vertx-php.git</connection>
+    <developerConnection>scm:git:git@github.com:jordanhalterman/vertx-php.git</developerConnection>
+    <url>git@github.com:jordanhalterman/vertx-php.git</url>
+  </scm>
 
   <dependencies>
     <dependency>
@@ -164,7 +172,7 @@
                 <resource>
                   <directory>src/main/resources</directory>
                   <filtering>true</filtering>
-                  <includes>
+                  <includes> 	
                     <include>mod.json</include>
                   </includes>
                 </resource>
@@ -284,6 +292,14 @@
           </manifest>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.1</version><!--$NO-MVN-MAN-VER$ -->
+        <configuration>
+          <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+        </configuration>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -315,5 +331,29 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.1</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>  
