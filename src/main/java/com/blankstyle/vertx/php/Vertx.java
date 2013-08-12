@@ -15,10 +15,8 @@
  */
 package com.blankstyle.vertx.php;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.core.logging.Logger;
 
 import com.blankstyle.vertx.php.eventbus.EventBus;
@@ -181,7 +179,6 @@ public final class Vertx {
   /**
    * Deploys a module. AsyncResultHandler<Void>
    */
-  @SuppressWarnings("unchecked")
   public static void deployModule(Env env, StringValue moduleName, @Optional ArrayValue config,
       @Optional("1") NumberValue instances, @Optional Value handler) {
     boolean hasConfig = PhpTypes.notNull(config);
@@ -223,7 +220,6 @@ public final class Vertx {
   /**
    * Deploys a verticle.
    */
-  @SuppressWarnings("unchecked")
   public static void deployVerticle(Env env, StringValue main, @Optional ArrayValue config,
       @Optional("1") NumberValue instances, @Optional Value handler) {
     boolean hasConfig = PhpTypes.notNull(config);
@@ -264,7 +260,6 @@ public final class Vertx {
   /**
    * Deploys a verticle.
    */
-  @SuppressWarnings("unchecked")
   public static void deployWorkerVerticle(Env env, StringValue main, @Optional ArrayValue config,
       @Optional("1") NumberValue instances) {
     boolean hasConfig = config != null && !config.isDefault();
