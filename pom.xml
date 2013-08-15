@@ -22,7 +22,7 @@
     <vertx.version>2.0.0-final</vertx.version>
     <junit.version>4.8.2</junit.version>
     <quercus.version>4.0.36</quercus.version>
-    <servlet.version>5.5.15</servlet.version>
+    <servlet.version>2.5</servlet.version>
 
     <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
     <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
@@ -99,9 +99,7 @@
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>${servlet.version}</version>
-      <type>jar</type>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/servlet-api-5.5.15.jar</systemPath>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
@@ -228,7 +226,7 @@
             </property>
             <property>
               <name>vertx.test.timeout</name>
-              <value>15</value>
+              <value>30</value>
             </property>
           </systemProperties>
           <includes>
