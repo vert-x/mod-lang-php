@@ -1,7 +1,7 @@
 Vert.x PHP
 ==========
 
-### For API documentation and tutorials see the [PHP User Manual](#php-api-manual)
+### For API documentation and tutorials see the [PHP User Manual](https://github.com/jordanhalterman/vertx-php/blob/master/docs/core_manual_php.md)
 
 This project provides PHP language integration for [Vert.x](http://vertx.io/).
 Since Vert.x runs on the JVM, this module is built on the Java-based
