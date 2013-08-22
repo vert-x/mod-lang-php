@@ -222,6 +222,20 @@ class EventBusTestCase extends PhpTestCase {
     $this->doEcho(array('a' => 'b', 'c' => array('d', 'e')));
   }
 
+  public function testPrintInProc() {
+    $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($echo) use($complete) {
+      try {
+      print("message:" . $echo);
+      } catch (Exception $e) {
+        $this->assertNull($e);
+      }
+      $this->complete();
+    });
+
+    $this->assertNotNull($this->currentHandlerId);
+    $this->eventBus->send(self::TEST_ADDRESS, array());
+  }
+
 }
 
 TestRunner::run(new EventBusTestCase());
