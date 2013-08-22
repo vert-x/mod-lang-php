@@ -30,8 +30,8 @@ php=com.blankstyle~vertx-lang-php~2.0.0-SNAPSHOT:com.blankstyle.vertx.php.PhpVer
 ```
 
 ### Maven/Gradle project installation
-Because both, Maven and Gradle are not using your global `langs.porperties` but the default one from the vert.x jar.
-Thats why you have to add a lang.properties file to the projects class path, with the specific php settings.
+Because both, Maven and Gradle are not using your global `langs.porperties` but the default one from the vert.x jar,
+you have to add a lang.properties file to the projects class path, with the specific php settings.
 If you've done step 4, you can do following:
 ```
 cp VERTX_HOME/conf/langs.properties [YOUR PROJECT ROOT]/src/main/resources
