@@ -7,13 +7,13 @@
     <version>7</version>
   </parent>
 
-  <groupId>com.blankstyle</groupId>
-  <artifactId>vertx-lang-php</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
+  <groupId>io.vertx</groupId>
+  <artifactId>lang-php</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>Vert.x PHP</name>
+  <name>PHP Vert.x lang module</name>
   <description>A PHP language implementation for the Vert.x application platform.</description>
-  <url>http://github.com/jordanhalterman/vertx-php</url>
+  <url>https://github.com/vert-x/mod-lang-php</url>
   <inceptionYear>2013</inceptionYear>
 
   <properties>
@@ -49,9 +49,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git@github.com:jordanhalterman/vertx-php.git</connection>
-    <developerConnection>scm:git:git@github.com:jordanhalterman/vertx-php.git</developerConnection>
-    <url>git@github.com:jordanhalterman/vertx-php.git</url>
+    <connection>scm:git:git@github.com:vert-x/mod-lang-php.git</connection>
+    <developerConnection>scm:git:git@github.com:vert-x/mod-lang-php.git</developerConnection>
+    <url>git@github.com:vert-x/mod-lang-php.git</url>
   </scm>
 
   <dependencies>
