@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.blankstyle.vertx.php;
+package io.vertx.lang.php;
 
 import java.io.File;
 import java.io.IOException;
@@ -150,17 +150,11 @@ public class PhpVerticleFactory implements VerticleFactory {
     @Override
     public void start() {
       engine = new QuercusEngine();
-      engine.setOutputStream(System.out);
-      
       QuercusContext context = engine.getQuercus();
-      
-      
+
       // Setting PHP's error_reporting to 0 makes Quercus give us more
       // interesting exception messages and thus better error reporting.
       context.setIni("error_reporting", "0");
-
-      
-      System.out.println("---------My Local version---------");
 
       // Make vertx-php classes available in the PHP code context.
       // Note that for now we only make available classes which should
@@ -168,21 +162,21 @@ public class PhpVerticleFactory implements VerticleFactory {
       // library. However, once default constructors have been supplied
       // for the various wrapper classes, we should expose as many classes
       // as possible for extensibility's sake.
-      context.addJavaClass("Vertx", com.blankstyle.vertx.php.Vertx.class);
-      context.addJavaClass("Vertx\\Http\\HttpServer", com.blankstyle.vertx.php.http.HttpServer.class);
-      context.addJavaClass("Vertx\\Http\\HttpClient", com.blankstyle.vertx.php.http.HttpClient.class);
-      context.addJavaClass("Vertx\\Http\\RouteMatcher", com.blankstyle.vertx.php.http.RouteMatcher.class);
-      context.addJavaClass("Vertx\\Net\\NetServer", com.blankstyle.vertx.php.net.NetServer.class);
-      context.addJavaClass("Vertx\\Net\\NetClient", com.blankstyle.vertx.php.net.NetClient.class);
-      context.addJavaClass("Vertx\\Net\\NetSocket", com.blankstyle.vertx.php.net.NetSocket.class);
-      context.addJavaClass("Vertx\\Buffer", com.blankstyle.vertx.php.buffer.Buffer.class);
+      context.addJavaClass("Vertx", io.vertx.lang.php.Vertx.class);
+      context.addJavaClass("Vertx\\Http\\HttpServer", io.vertx.lang.php.http.HttpServer.class);
+      context.addJavaClass("Vertx\\Http\\HttpClient", io.vertx.lang.php.http.HttpClient.class);
+      context.addJavaClass("Vertx\\Http\\RouteMatcher", io.vertx.lang.php.http.RouteMatcher.class);
+      context.addJavaClass("Vertx\\Net\\NetServer", io.vertx.lang.php.net.NetServer.class);
+      context.addJavaClass("Vertx\\Net\\NetClient", io.vertx.lang.php.net.NetClient.class);
+      context.addJavaClass("Vertx\\Net\\NetSocket", io.vertx.lang.php.net.NetSocket.class);
+      context.addJavaClass("Vertx\\Buffer", io.vertx.lang.php.buffer.Buffer.class);
       context.addJavaClass("Vertx\\Logger", org.vertx.java.core.logging.Logger.class);
-      context.addJavaClass("Vertx\\Pump", com.blankstyle.vertx.php.streams.Pump.class);
-      context.addJavaClass("Vertx\\ParseTools\\RecordParser", com.blankstyle.vertx.php.parsetools.RecordParser.class);
+      context.addJavaClass("Vertx\\Pump", io.vertx.lang.php.streams.Pump.class);
+      context.addJavaClass("Vertx\\ParseTools\\RecordParser", io.vertx.lang.php.parsetools.RecordParser.class);
 
       // Add PHP test helpers.
-      context.addJavaClass("Vertx\\Test\\TestRunner", com.blankstyle.vertx.php.testtools.PhpTestRunner.class);
-      context.addJavaClass("Vertx\\Test\\PhpTestCase", com.blankstyle.vertx.php.testtools.PhpTestCase.class);
+      context.addJavaClass("Vertx\\Test\\TestRunner", io.vertx.lang.php.testtools.PhpTestRunner.class);
+      context.addJavaClass("Vertx\\Test\\PhpTestCase", io.vertx.lang.php.testtools.PhpTestCase.class);
 
       // Evaluate a single line script which includes the verticle
       // script. This ensures that exceptions can be accurately logged
