@@ -150,17 +150,11 @@ public class PhpVerticleFactory implements VerticleFactory {
     @Override
     public void start() {
       engine = new QuercusEngine();
-      engine.setOutputStream(System.out);
-      
       QuercusContext context = engine.getQuercus();
-      
-      
+
       // Setting PHP's error_reporting to 0 makes Quercus give us more
       // interesting exception messages and thus better error reporting.
       context.setIni("error_reporting", "0");
-
-      
-      System.out.println("---------My Local version---------");
 
       // Make vertx-php classes available in the PHP code context.
       // Note that for now we only make available classes which should
