@@ -16,6 +16,8 @@
 package io.vertx.lang.php;
 
 
+import io.vertx.lang.php.streams.impl.InstantWriteStream;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -283,7 +285,7 @@ public class PhpVerticleFactory implements VerticleFactory {
         QuercusProgram program = QuercusParser.parse(context, null, reader);
         QuercusPage page = new InterpretedPage(program);
 
-        out = new WriteStream(StdoutStream.create());
+        out = new InstantWriteStream(StdoutStream.create());
         globalEnv = new Env(context, page, out, null, null);
         globalEnv.start();
 
