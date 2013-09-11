@@ -1,4 +1,0 @@
-{
-  "includes": "io.vertx~php-includetest-lib~v1.0",
-  "main": "vertx.php"
-}

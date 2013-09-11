@@ -26,11 +26,28 @@ class IncludeTestCase extends PhpTestCase {
     }
 }
 
-Vertx::deployModule('io.vertx~php-includetest-mod~v1.0', NULL, 1, function($id, $error) {
-    if ($error == null) {
-        TestRunner::run(new IncludeTestCase());
-        Vertx::undeployModule($id);
-    } else {
+
+function copyMods() {
+  Vertx::fileSystem()->copyRecursive("src/test/resources/includemod/mods", "target/mods", function($error) {
+    if($error) {
         Vertx::logger()->error($error);
+        return;
+    } else {
+        Vertx::deployModule('io.vertx~php-includetest-mod~v1.0', NULL, 1, function($id, $error) {
+            if ($error) {
+                Vertx::logger()->error($error);
+                return;
+            } else {
+                TestRunner::run(new IncludeTestCase());
+                Vertx::undeployModule($id);
+            }
+        });
     }
+  });
+}
+
+Vertx::fileSystem()->deleteRecursive("target/mods/io.vertx~php-includetest-lib~v1.0", function() {
+    Vertx::fileSystem()->deleteRecursive("target/mods/io.vertx~php-includetest-mod~v1.0", function() {
+        copyMods();
+    });
 });
