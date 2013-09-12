@@ -12,15 +12,22 @@ class IncludeTestCase extends PhpTestCase {
 
     public function testRequireVertx() {
         $this->eventBus->send("test.require_vertx", "hello", function($reply) {
-            $this->assertEquals($reply->body,"Hello Test");
+            $this->assertEquals($reply->body, "Hello Test");
             $this->complete();
         });
 
     }
 
-    public function testAutoload() {
-        $this->eventBus->send("test.autoload", "hello", function($reply) {
-            $this->assertEquals($reply->body,"Hello Test");
+    public function testAutoloadExternal() {
+        $this->eventBus->send("test.autoload.external", "hello", function($reply) {
+            $this->assertEquals($reply->body, "Hello Test from an external Class");
+            $this->complete();
+        });
+    }
+
+    public function testAutoloadInternal() {
+        $this->eventBus->send("test.autoload.internal", "hello", function($reply) {
+            $this->assertEquals($reply->body, "Hello Test from an internal Class");
             $this->complete();
         });
     }

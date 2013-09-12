@@ -2,7 +2,7 @@
 
 namespace lib;
 
-class HelloClass {
+class ExternalHelloClass {
     private $name = "Anonymous";
 
     public function __construct($name) {
@@ -10,6 +10,6 @@ class HelloClass {
     }
 
     public function sayHello() {
-        return "Hello $this->name";
+        return "Hello $this->name from an external Class";
     }
 }

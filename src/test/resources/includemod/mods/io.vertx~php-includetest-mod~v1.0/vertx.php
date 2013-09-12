@@ -14,9 +14,19 @@ $eventBus->registerHandler('test.require_vertx', function($message) {
 });
 
 /**
- * test if the Autoclassloader is using the Vertx ClassLoader
+ * test if the Autoclassloader is using the Vertx Classloader to load
+ * internal classes
  */
-$eventBus->registerHandler('test.autoload', function($message) {
-    $helloObject = new lib\HelloClass("Test");
+$eventBus->registerHandler('test.autoload.internal', function($message) {
+    $helloObject = new InternalHelloClass("Test");
+    $message->reply($helloObject->sayHello());
+});
+
+/**
+ * test if the Autoclassloader is using the Vertx ClassLoader, so it can find
+ * included module classes
+ */
+$eventBus->registerHandler('test.autoload.external', function($message) {
+    $helloObject = new lib\ExternalHelloClass("Test");
     $message->reply($helloObject->sayHello());
 });
