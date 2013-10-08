@@ -27,6 +27,7 @@ import java.util.UUID;
 import org.vertx.java.core.AsyncResult;
 
 import com.caucho.quercus.annotation.Optional;
+import com.caucho.quercus.env.LongValue;
 import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
@@ -279,6 +280,27 @@ public final class EventBus {
   public void close(Env env, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::close() must be callable.");
     eventBus.close(HandlerFactory.createAsyncVoidHandler(env, handler));
+  }
+
+  /**
+   * Sets the default reply timeout.
+   *
+   * @param timeout
+   *          A reply timeout.
+   * @return The called object
+   */
+  public EventBus setDefaultReplyTimeout(Env env, Value timeout) {
+    eventBus.setDefaultReplyTimeout(timeout.toLong());
+    return this;
+  }
+
+  /**
+   * Gets the default reply timeout.
+   *
+   * @return The default event bus reply timeout.
+   */
+  public LongValue getDefaultReplyTimeout(Env env) {
+    return LongValue.create(eventBus.getDefaultReplyTimeout());
   }
 
   public String toString() {
