@@ -72,6 +72,41 @@ class EventBusTestCase extends PhpTestCase {
   }
 
   /**
+   * Tests sending a message with a timeout.
+   */
+  public function testSendWithTimeout() {
+    $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
+      $this->assertNotNull($message->replyAddress);
+      $this->assertEquals($message->body['message'], self::$jsonMessage['message']);
+      $message->reply(array());
+    });
+
+    $this->assertNotNull($this->currentHandlerId);
+    $this->eventBus->sendWithTimeout(self::TEST_ADDRESS, self::$jsonMessage, 5000, function($reply, $error) {
+      $this->assertNull($error);
+      $this->assertEquals($reply->body, array());
+      $this->eventBus->unregisterHandler($this->currentHandlerId);
+      $this->complete();
+    });
+  }
+
+  /**
+   * Tests sending a message with a timeout that times out.
+   */
+  public function testSendWithTimeout() {
+    $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
+      // Do nothing and let the message time out.
+    });
+
+    $this->assertNotNull($this->currentHandlerId);
+    $this->eventBus->sendWithTimeout(self::TEST_ADDRESS, self::$jsonMessage, 10, function($reply, $error) {
+      $this->assertNotNull($error);
+      $this->eventBus->unregisterHandler($this->currentHandlerId);
+      $this->complete();
+    });
+  }
+
+  /**
    * Tests sending an empty reply on the event bus.
    */
   public function testReplyEmpty() {

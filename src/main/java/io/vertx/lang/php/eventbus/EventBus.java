@@ -207,6 +207,39 @@ public final class EventBus {
   }
 
   /**
+   * Sends a point-to-point message on the bus with a timeout.
+   * 
+   * @param address
+   *          The address to which to send the message.
+   * @param message
+   *          A mixed value message to send.
+   * @param handler
+   *          An optional handler to be invoked in response to the message.
+   * @return The called object.
+   */
+  public EventBus sendWithTimeout(Env env, StringValue address, Value message, Value timeout, Value handler) {
+    PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::sendWithTimeout() must be callable.");
+    org.vertx.java.core.Handler<AsyncResult<org.vertx.java.core.eventbus.Message<Object>>> sendHandler = HandlerFactory.createAsyncGenericHandler(env, handler);
+
+    if (message.isBoolean()) {
+      eventBus.sendWithTimeout(address.toString(), message.toBoolean(), timeout.toLong(), sendHandler);
+    }
+    else if (message.isString()) {
+      eventBus.sendWithTimeout(address.toString(), message.toString(), timeout.toLong(), sendHandler);
+    }
+    else if (message.isNumeric()) {
+      eventBus.sendWithTimeout(address.toString(), message.toInt(), timeout.toLong(), sendHandler);
+    }
+    else if (message.isObject()) {
+      eventBus.sendWithTimeout(address.toString(), (org.vertx.java.core.buffer.Buffer) message.toJavaObject(env, org.vertx.java.core.buffer.Buffer.class), timeout.toLong(), sendHandler);
+    }
+    else if (message.isArray()) {
+      eventBus.sendWithTimeout(address.toString(), PhpTypes.arrayToJson(env, message), timeout.toLong(), sendHandler);
+    }
+    return this;
+  }
+
+  /**
    * Publishes a message to the event bus.
    * 
    * @param address
