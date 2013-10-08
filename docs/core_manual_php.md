@@ -645,6 +645,22 @@ It is legal also to send an empty reply or null reply.
 The replies themselves can also be replied to so you can create a dialog between
 two different verticles consisting of multiple rounds.
 
+To supply a reply timeout, use the `sendWithTimeout()` method, passing a timeout
+in milliseconds as the third arguments.
+
+```php
+$log = Vertx::logger();
+
+$eventBus->sendWithTimeout('test.address', 'This is a message', 15000, function($reply, $error) use ($log) {
+  if (!$error) {
+    $log->info('I received a reply '. $reply->body);
+  }
+  else {
+    $log->info('The send timed out.');
+  }
+});
+```
+
 ### Message types
 
 The message you send can be any of the following types:
