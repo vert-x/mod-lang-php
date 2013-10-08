@@ -25,7 +25,7 @@ time in the comming weeks.*
 1. Update `langs.properties` in your `VERTX_HOME/conf` directory with:
 
 ```
-php=com.blankstyle~vertx-lang-php~2.0.0-SNAPSHOT:com.blankstyle.vertx.php.PhpVerticleFactory
+php=io.vertx~lang-php~0.1.0-SNAPSHOT:io.vertx.lang.php.PhpVerticleFactory
 .php=php
 ```
 

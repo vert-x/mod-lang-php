@@ -2,8 +2,8 @@
   "system": true,
   "resident": true,
   "description":"PHP language implementation module for Vert.x - uses Quercus as the PHP engine.",
-  "licenses": ["The Apache Software License Version 2.0"],
+  "licenses": ["MIT License"],
   "author": "jordanhalterman",
   "keywords": ["php", "quercus", "scripting", "language"],
-  "homepage": "https://github.com/blankstyle/vertx-php"
+  "homepage": "https://github.com/vert-x/mod-lang-php"
 }
