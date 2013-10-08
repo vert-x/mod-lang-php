@@ -38,7 +38,7 @@ cp VERTX_HOME/conf/langs.properties [YOUR PROJECT ROOT]/src/main/resources
 ```
 
 ## Documentation
-See the [PHP User Manual](https://github.com/jordanhalterman/vertx-php/blob/master/docs/core_manual_php.md)
+See the [PHP User Manual](https://github.com/vert-x/mod-lang-php/blob/master/docs/core_manual_php.md)
 
 ## Examples
-See [examples](https://github.com/jordanhalterman/vertx-php/tree/master/examples)
+See [examples](https://github.com/vert-x/mod-lang-php/tree/master/examples)
