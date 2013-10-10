@@ -78,13 +78,13 @@ class EventBusTestCase extends PhpTestCase {
     $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
       $this->assertNotNull($message->replyAddress);
       $this->assertEquals($message->body['message'], self::$jsonMessage['message']);
-      $message->reply(array());
+      $message->reply(self::$jsonMessage);
     });
 
     $this->assertNotNull($this->currentHandlerId);
     $this->eventBus->sendWithTimeout(self::TEST_ADDRESS, self::$jsonMessage, 5000, function($reply, $error) {
       $this->assertNull($error);
-      $this->assertEquals($reply->body, array());
+      $this->assertEquals($reply->body['message'], self::$jsonMessage['message']);
       $this->eventBus->unregisterHandler($this->currentHandlerId);
       $this->complete();
     });
@@ -93,7 +93,7 @@ class EventBusTestCase extends PhpTestCase {
   /**
    * Tests sending a message with a timeout that times out.
    */
-  public function testSendWithTimeout() {
+  public function testSendWithTimeoutTimeout() {
     $this->currentHandlerId = $this->eventBus->registerHandler(self::TEST_ADDRESS, function($message) {
       // Do nothing and let the message time out.
     });

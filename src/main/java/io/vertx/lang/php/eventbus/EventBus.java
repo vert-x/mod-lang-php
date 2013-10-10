@@ -15,6 +15,8 @@
  */
 package io.vertx.lang.php.eventbus;
 
+import io.vertx.lang.php.AsyncResultHandler;
+import io.vertx.lang.php.AsyncResultWrapper;
 import io.vertx.lang.php.Handler;
 import io.vertx.lang.php.ResultModifier;
 import io.vertx.lang.php.util.HandlerFactory;
@@ -220,7 +222,12 @@ public final class EventBus {
    */
   public EventBus sendWithTimeout(Env env, StringValue address, Value message, Value timeout, Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::sendWithTimeout() must be callable.");
-    org.vertx.java.core.Handler<AsyncResult<org.vertx.java.core.eventbus.Message<Object>>> sendHandler = HandlerFactory.createAsyncGenericHandler(env, handler);
+    org.vertx.java.core.Handler<AsyncResult<org.vertx.java.core.eventbus.Message<Object>>> sendHandler = new AsyncResultHandler<org.vertx.java.core.eventbus.Message<Object>>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
+      @Override
+      public Message<Object> wrap(org.vertx.java.core.eventbus.Message<Object> message) {
+        return new Message<Object>(message);
+      }
+    });
 
     if (message.isBoolean()) {
       eventBus.sendWithTimeout(address.toString(), message.toBoolean(), timeout.toLong(), sendHandler);
