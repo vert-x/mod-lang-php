@@ -128,7 +128,7 @@ public class PhpVerticleFactory implements VerticleFactory {
   }
 
   private void addRequireVertexToContext() {
-      context.setFunction(context.createString("require_vertx"), new AbstractFunction() {
+    context.setFunction(context.createString("require_vertx"), new AbstractFunction() {
 
 		private static final long serialVersionUID = 5350698219672910902L;
 
@@ -138,17 +138,17 @@ public class PhpVerticleFactory implements VerticleFactory {
 				throw new IllegalArgumentException("require_vertx: missing Argument path");
 			}
 
-			String ressourceName = args[0].toString();
-			URL ressourcePath = cl.getResource(args[0].toString());
+			String resourceName = args[0].toString();
+			URL resourcePath = cl.getResource(args[0].toString());
 			try {
-				String script = String.format("require('%s');", ressourcePath.toString());
+				String script = String.format("require('%s');", resourcePath.toString());
 				QuercusProgram program = context.parseCode(context.createString(script));
 				program.execute(env);
 			} catch (NullPointerException np) {
 				if (Vertx.logger() == null) {
-					System.out.println(String.format("could not find Vertx Ressource '%s''", ressourceName));
+					System.out.println(String.format("could not find Vertx resource '%s''", resourceName));
 				} else {
-					Vertx.logger().error(String.format("could not find Vertx Ressource '%s''", ressourceName));
+					Vertx.logger().error(String.format("could not find Vertx resource '%s''", resourceName));
 				}
 				np.printStackTrace();
 			} catch (IOException e) {
@@ -176,6 +176,9 @@ public class PhpVerticleFactory implements VerticleFactory {
      this.initQuercusContext();
     }
     String scriptPath = findScript(main);
+    if (scriptPath == null) {
+      throw new VertxException(String.format("%s is not a valid PHP verticle.", main));
+    }
     return new PhpVerticle(context, scriptPath);
   }
 
@@ -183,15 +186,14 @@ public class PhpVerticleFactory implements VerticleFactory {
    * Finds the full path to a PHP script.
    */
   private String findScript(String script) {
-      URL filename = cl.getResource(script);
-      if (filename != null) {
-    	  File scriptFile = new File(filename.getPath());
-	      if (scriptFile.exists()) {
-	        return scriptFile.toPath().toString();
-	      }
-      }
-     
-    return "not found";
+    URL filename = cl.getResource(script);
+    if (filename != null) {
+      File scriptFile = new File(filename.getPath());
+	    if (scriptFile.exists()) {
+	      return scriptFile.toPath().toString();
+	    }
+    }
+    return null;
   }
 
   /**
