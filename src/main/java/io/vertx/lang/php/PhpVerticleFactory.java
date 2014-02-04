@@ -32,6 +32,7 @@ import com.caucho.quercus.QuercusContext;
 import com.caucho.quercus.QuercusException;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.NullValue;
+import com.caucho.quercus.env.StringValue;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.function.AbstractFunction;
 import com.caucho.quercus.page.InterpretedPage;
@@ -240,6 +241,7 @@ public class PhpVerticleFactory implements VerticleFactory {
    */
   @Override
   public void close() {
+    context.findFunction(StringValue.create("vertx_stop").toStringValue()).call(Env.getCurrent());
     context.close();
     context = null;
   }
