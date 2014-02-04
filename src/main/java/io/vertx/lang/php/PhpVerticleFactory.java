@@ -101,6 +101,8 @@ public class PhpVerticleFactory implements VerticleFactory {
 	      context.addJavaClass("Vertx\\Logger", org.vertx.java.core.logging.Logger.class);
 	      context.addJavaClass("Vertx\\Pump", io.vertx.lang.php.streams.Pump.class);
 	      context.addJavaClass("Vertx\\ParseTools\\RecordParser", io.vertx.lang.php.parsetools.RecordParser.class);
+        context.addJavaClass("Vertx\\ReadStream", io.vertx.lang.php.streams.ReadStream.class);
+        context.addJavaClass("Vertx\\WriteStream", io.vertx.lang.php.streams.WriteStream.class);
 	
 	      // Add PHP test helpers.
 	      context.addJavaClass("Vertx\\Test\\TestRunner", io.vertx.lang.php.testtools.PhpTestRunner.class);
@@ -109,7 +111,7 @@ public class PhpVerticleFactory implements VerticleFactory {
 	      context.init();
 	      context.start();
 	      
-	      addRequireVertexToContext();
+	      addRequireVertxToContext();
 
 	      context.start();
 	
@@ -127,7 +129,7 @@ public class PhpVerticleFactory implements VerticleFactory {
       }
   }
 
-  private void addRequireVertexToContext() {
+  private void addRequireVertxToContext() {
     context.setFunction(context.createString("require_vertx"), new AbstractFunction() {
 
 		private static final long serialVersionUID = 5350698219672910902L;
@@ -146,9 +148,9 @@ public class PhpVerticleFactory implements VerticleFactory {
 				program.execute(env);
 			} catch (NullPointerException np) {
 				if (Vertx.logger() == null) {
-					System.out.println(String.format("could not find Vertx resource '%s''", resourceName));
+					System.out.println(String.format("Could not find Vertx resource '%s''", resourceName));
 				} else {
-					Vertx.logger().error(String.format("could not find Vertx resource '%s''", resourceName));
+					Vertx.logger().error(String.format("Could not find Vertx resource '%s''", resourceName));
 				}
 				np.printStackTrace();
 			} catch (IOException e) {
