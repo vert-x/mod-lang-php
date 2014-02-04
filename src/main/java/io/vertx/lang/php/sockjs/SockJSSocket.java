@@ -35,8 +35,7 @@ import com.caucho.quercus.env.Value;
  * @author Jordan Halterman
  */
 public class SockJSSocket implements ReadStream<SockJSSocket>, WriteStream<SockJSSocket>, Gettable {
-
-  private org.vertx.java.core.sockjs.SockJSSocket socket;
+  org.vertx.java.core.sockjs.SockJSSocket socket;
 
   public SockJSSocket(org.vertx.java.core.sockjs.SockJSSocket socket) {
     this.socket = socket;
