@@ -92,6 +92,8 @@ public class PhpVerticleFactory implements VerticleFactory {
 	      // for the various wrapper classes, we should expose as many classes
 	      // as possible for extensibility's sake.
 	      context.addJavaClass("Vertx", io.vertx.lang.php.Vertx.class);
+        context.addJavaClass("Vertx\\EventBus\\ReplyException", io.vertx.lang.php.eventbus.ReplyException.class);
+        context.addJavaClass("Vertx\\EventBus\\ReplyFailure", io.vertx.lang.php.eventbus.ReplyFailure.class);
 	      context.addJavaClass("Vertx\\Http\\HttpServer", io.vertx.lang.php.http.HttpServer.class);
 	      context.addJavaClass("Vertx\\Http\\HttpClient", io.vertx.lang.php.http.HttpClient.class);
 	      context.addJavaClass("Vertx\\Http\\RouteMatcher", io.vertx.lang.php.http.RouteMatcher.class);

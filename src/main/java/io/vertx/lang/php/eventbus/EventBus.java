@@ -15,8 +15,6 @@
  */
 package io.vertx.lang.php.eventbus;
 
-import io.vertx.lang.php.AsyncResultHandler;
-import io.vertx.lang.php.AsyncResultWrapper;
 import io.vertx.lang.php.Handler;
 import io.vertx.lang.php.ResultModifier;
 import io.vertx.lang.php.util.HandlerFactory;
@@ -220,14 +218,19 @@ public final class EventBus {
    *          An optional handler to be invoked in response to the message.
    * @return The called object.
    */
-  public EventBus sendWithTimeout(Env env, StringValue address, Value message, Value timeout, Value handler) {
+  public EventBus sendWithTimeout(final Env env, StringValue address, Value message, Value timeout, final Value handler) {
     PhpTypes.assertCallable(env, handler, "Handler argument to Vertx\\EventBus::sendWithTimeout() must be callable.");
-    org.vertx.java.core.Handler<AsyncResult<org.vertx.java.core.eventbus.Message<Object>>> sendHandler = new AsyncResultHandler<org.vertx.java.core.eventbus.Message<Object>>(env, PhpTypes.toCallable(handler), new AsyncResultWrapper<org.vertx.java.core.eventbus.Message<Object>, Message<Object>>() {
+    org.vertx.java.core.Handler<AsyncResult<org.vertx.java.core.eventbus.Message<Object>>> sendHandler = new org.vertx.java.core.Handler<AsyncResult<org.vertx.java.core.eventbus.Message<Object>>>() {
       @Override
-      public Message<Object> wrap(org.vertx.java.core.eventbus.Message<Object> message) {
-        return new Message<Object>(message);
+      public void handle(AsyncResult<org.vertx.java.core.eventbus.Message<Object>> result) {
+        if (result.failed()) {
+          handler.call(env, env.wrapJava(null), env.wrapJava(new ReplyException((org.vertx.java.core.eventbus.ReplyException) result.cause())));
+        }
+        else {
+          handler.call(env, env.wrapJava(new Message<Object>(result.result())), env.wrapJava(null));
+        }
       }
-    });
+    };
 
     if (message.isBoolean()) {
       eventBus.sendWithTimeout(address.toString(), message.toBoolean(), timeout.toLong(), sendHandler);

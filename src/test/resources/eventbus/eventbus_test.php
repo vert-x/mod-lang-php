@@ -101,6 +101,8 @@ class EventBusTestCase extends PhpTestCase {
     $this->assertNotNull($this->currentHandlerId);
     $this->eventBus->sendWithTimeout(self::TEST_ADDRESS, self::$jsonMessage, 10, function($reply, $error) {
       $this->assertNotNull($error);
+      $this->assertTrue($error instanceof \Vertx\EventBus\ReplyException);
+      $this->assertEquals(\Vertx\EventBus\ReplyFailure::TIMEOUT, $error->failureType());
       $this->eventBus->unregisterHandler($this->currentHandlerId);
       $this->complete();
     });
