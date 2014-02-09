@@ -154,7 +154,6 @@ class FileSystemTestCase extends PhpTestCase {
       $this->assertTrue($this->fileSystem->existsSync($filename));
       $this->fileSystem->delete($filename, function($error) {
         $this->assertNull($error);
-        $this->assertFalse($this->fileSystem->existsSync($filename));
         $this->complete();
       });
     });
