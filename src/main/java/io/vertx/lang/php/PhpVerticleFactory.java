@@ -242,7 +242,10 @@ public class PhpVerticleFactory implements VerticleFactory {
    */
   @Override
   public void close() {
-    context.findFunction(StringValue.create("vertx_stop").toStringValue()).call(Env.getCurrent());
+    AbstractFunction function = context.findFunction(StringValue.create("vertx_stop").toStringValue());
+    if (function != null) {
+      function.call(Env.getCurrent());
+    }
     context.close();
     context = null;
   }
