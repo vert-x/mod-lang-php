@@ -19,22 +19,14 @@ few issues remain with various portions of the module. *This project is not
 recommended for production until an official release has been made some
 time in the comming weeks.*
 
-1. Clone the repository with `git clone --branch master git@github.com:jordanhalterman/vertx-php.git`
-1. CD into the Vert.x PHP directory with `cd vertx-php`
-1. Build the module with `mvn install`
-1. Update `langs.properties` in your `VERTX_HOME/conf` directory with:
+* Update `langs.properties` in your `VERTX_HOME/conf` directory with:
+
+Vert.x will automatically download and install the PHP language module when
+running a PHP verticle.
 
 ```
 php=io.vertx~lang-php~0.1.0-SNAPSHOT:io.vertx.lang.php.PhpVerticleFactory
 .php=php
-```
-
-### Maven/Gradle project installation
-Because both, Maven and Gradle are not using your global `langs.porperties` but the default one from the vert.x jar,
-you have to add a lang.properties file to the projects class path, with the specific php settings.
-If you've done step 4, you can do following:
-```
-cp VERTX_HOME/conf/langs.properties [YOUR PROJECT ROOT]/src/main/resources
 ```
 
 ## Documentation
