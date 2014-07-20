@@ -25,7 +25,7 @@ Vert.x will automatically download and install the PHP language module when
 running a PHP verticle.
 
 ```
-php=io.vertx~lang-php~0.1.0-SNAPSHOT:io.vertx.lang.php.PhpVerticleFactory
+php=io.vertx~lang-php~0.1.0-beta2-SNAPSHOT:io.vertx.lang.php.PhpVerticleFactory
 .php=php
 ```
 
