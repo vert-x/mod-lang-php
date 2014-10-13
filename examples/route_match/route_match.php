@@ -10,4 +10,4 @@ $routeMatcher->getWithRegEx('.*', function($request) {
   $request->response->sendFile('route_match/index.html');
 });
 
-Vertx::createHttpServer()->routeHandler($routeMatcher)->listen(8080);
+Vertx::createHttpServer()->requestHandler($routeMatcher)->listen(8080);
