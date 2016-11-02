@@ -1,7 +1,8 @@
-Vert.x PHP
-==========
+# Vert.x 2.x is **deprecated** - use instead http://vertx.io
 
-### For API documentation and tutorials see the [PHP User Manual](https://github.com/jordanhalterman/vertx-php/blob/master/docs/core_manual_php.md)
+## Vert.x PHP
+
+#### For API documentation and tutorials see the [PHP User Manual](https://github.com/jordanhalterman/vertx-php/blob/master/docs/core_manual_php.md)
 
 This project provides PHP language integration for [Vert.x](http://vertx.io/).
 Since Vert.x runs on the JVM, this module is built on the Java-based
@@ -12,7 +13,7 @@ names and closures for event handlers. The API is implemented entirely on
 top of the Quercus Java API so as to allow more control over interaction
 with the core Vert.x API.
 
-## Installation
+### Installation
 Please note that Vert.x PHP is still young and has not yet had an official
 release. Large strides have been made towards stablizing the API, but a
 few issues remain with various portions of the module. *This project is not
@@ -29,8 +30,8 @@ php=io.vertx~lang-php~0.1.0-beta2-SNAPSHOT:io.vertx.lang.php.PhpVerticleFactory
 .php=php
 ```
 
-## Documentation
+### Documentation
 See the [PHP User Manual](https://github.com/vert-x/mod-lang-php/blob/master/docs/core_manual_php.md)
 
-## Examples
+### Examples
 See [examples](https://github.com/vert-x/mod-lang-php/tree/master/examples)
